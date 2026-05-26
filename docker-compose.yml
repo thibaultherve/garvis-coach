@@ -1,28 +1,42 @@
 services:
   influxdb:
     image: influxdb:1.11
+    container_name: influxdb
+    hostname: influxdb
     ports: ["${INFLUXDB_EXTERNAL_PORT:-8087}:8086"]
+    expose: ["8086"]
     volumes:
       - influxdb-data:/var/lib/influxdb
     environment:
       INFLUXDB_DB: ${INFLUXDB_DATABASE:-GarminStats}
-      INFLUXDB_HTTP_AUTH_ENABLED: "true"
-      INFLUXDB_ADMIN_USER: ${INFLUXDB_USERNAME}
-      INFLUXDB_ADMIN_PASSWORD: ${INFLUXDB_PASSWORD}
+      INFLUXDB_USER: ${INFLUXDB_USERNAME:-influxdb_user}
+      INFLUXDB_USER_PASSWORD: ${INFLUXDB_PASSWORD}
+      INFLUXDB_DATA_INDEX_VERSION: tsi1
     restart: unless-stopped
 
   garmin-fetch-data:
     image: thisisarpanghosh/garmin-fetch-data:latest
-    env_file: .env
+    container_name: garmin-fetch-data
     volumes:
       - ./services/garmin-grafana/src/garmin_grafana/garmin_fetch.py:/app/garmin_grafana/garmin_fetch.py:ro
       - ./data/tokens:/home/appuser/.garminconnect
+    environment:
+      INFLUXDB_HOST: influxdb
+      INFLUXDB_PORT: "8086"
+      INFLUXDB_USERNAME: ${INFLUXDB_USERNAME}
+      INFLUXDB_PASSWORD: ${INFLUXDB_PASSWORD}
+      INFLUXDB_DATABASE: ${INFLUXDB_DATABASE:-GarminStats}
+      GARMINCONNECT_IS_CN: "False"
+      FETCH_SELECTION: "daily_avg,sleep,steps,heartrate,stress,breathing,hrv,fitness_age,vo2,activity,race_prediction,body_composition,lifestyle,training_status,training_readiness,hill_score,endurance_score,lactate_threshold,zones"
     depends_on: [influxdb]
     restart: unless-stopped
 
   grafana:
     image: grafana/grafana:latest
+    container_name: grafana
+    hostname: grafana
     ports: ["${GRAFANA_PORT:-3000}:3000"]
+    env_file: .env
     volumes:
       - grafana-data:/var/lib/grafana
       - ./dashboards:/var/lib/grafana/dashboards/garvis:ro
@@ -30,35 +44,83 @@ services:
       - ./provisioning/datasources.yml:/etc/grafana/provisioning/datasources/influxdb.yml:ro
     environment:
       GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_ADMIN_PASSWORD:-admin}
+      GF_PLUGINS_PREINSTALL: marcusolsson-hourly-heatmap-panel
+      GF_DATE_FORMATS_FULL_DATE: "MMM Do, YYYY - hh:mm:ss a"
+      GF_DATE_FORMATS_INTERVAL_SECOND: "hh:mm:ss a"
+      GF_DATE_FORMATS_INTERVAL_MINUTE: "hh:mm a"
+      GF_DATE_FORMATS_INTERVAL_HOUR: "MMM DD hh:mm a"
+      GF_DATE_FORMATS_INTERVAL_DAY: "MMM DD"
+      GF_DATE_FORMATS_INTERVAL_MONTH: "YYYY-MM"
+      GF_DATE_FORMATS_INTERVAL_YEAR: "YYYY"
     depends_on: [influxdb]
     restart: unless-stopped
 
   garmin-coach-mcp:
     build: ./services/garmin-coach-mcp
+    container_name: garmin-coach-mcp
     ports: ["${MCP_COACH_PORT:-8765}:8765"]
     env_file: .env
+    volumes:
+      - ./services/garmin-coach-mcp:/app
+    environment:
+      INFLUXDB_HOST: influxdb
+      MCP_HOST: "0.0.0.0"
+      MCP_PORT: "8765"
+    command: uvicorn server:app --host 0.0.0.0 --port 8765 --reload
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - python -c 'import urllib.request; urllib.request.urlopen("http://localhost:8765/health")'
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
     depends_on: [influxdb]
     restart: unless-stopped
 
   garmin-toolbox:
     build: ./services/garmin-toolbox
+    container_name: garmin-toolbox
     ports: ["${MCP_TOOLBOX_PORT:-8770}:8769"]
     env_file: .env
     volumes:
+      - ./services/garmin-toolbox:/app
       - ./data/activities:/app/activities
       - ./data/tokens:/root/.garminconnect
+    environment:
+      INFLUXDB_HOST: influxdb
+      MCP_HOST: "0.0.0.0"
+      MCP_PORT: "8769"
+    command: uvicorn server:app --host 0.0.0.0 --port 8769 --reload
+    healthcheck:
+      test: ["CMD-SHELL", "curl -sf http://localhost:8769/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
     depends_on: [influxdb]
     restart: unless-stopped
 
   grafana-mcp:
-    image: mcp/grafana:latest
+    image: grafana/mcp-grafana:latest
+    container_name: grafana-mcp-server
     ports: ["${MCP_GRAFANA_PORT:-8768}:8000"]
+    env_file: .env
     environment:
       GRAFANA_URL: http://grafana:3000
       GRAFANA_API_KEY: ${GRAFANA_TOKEN}
+    command:
+      - "-t"
+      - "streamable-http"
+      - "--address"
+      - "0.0.0.0:8000"
+      - "--enabled-tools"
+      - "search,dashboard,datasource,influxdb"
     depends_on: [grafana]
     restart: unless-stopped
 
 volumes:
   influxdb-data:
+    name: garmingrafana_influxdb_data
   grafana-data:
+    name: garmingrafana_grafana_data
