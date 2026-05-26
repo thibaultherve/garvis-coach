@@ -30,7 +30,7 @@
         "h": 4,
         "w": 4,
         "x": 0,
-        "y": 0
+        "y": 6
       },
       "datasource": {
         "type": "influxdb",
@@ -79,7 +79,7 @@
         "h": 4,
         "w": 4,
         "x": 4,
-        "y": 0
+        "y": 6
       },
       "datasource": {
         "type": "influxdb",
@@ -128,7 +128,7 @@
         "h": 4,
         "w": 4,
         "x": 8,
-        "y": 0
+        "y": 6
       },
       "datasource": {
         "type": "influxdb",
@@ -197,7 +197,7 @@
         "h": 4,
         "w": 4,
         "x": 12,
-        "y": 0
+        "y": 6
       },
       "datasource": {
         "type": "influxdb",
@@ -262,7 +262,7 @@
         "h": 4,
         "w": 4,
         "x": 16,
-        "y": 0
+        "y": 6
       },
       "datasource": {
         "type": "influxdb",
@@ -311,7 +311,7 @@
         "h": 4,
         "w": 4,
         "x": 20,
-        "y": 0
+        "y": 6
       },
       "datasource": {
         "type": "influxdb",
@@ -360,7 +360,7 @@
         "h": 4,
         "w": 4,
         "x": 0,
-        "y": 4
+        "y": 10
       },
       "datasource": {
         "type": "influxdb",
@@ -409,7 +409,7 @@
         "h": 4,
         "w": 4,
         "x": 4,
-        "y": 4
+        "y": 10
       },
       "datasource": {
         "type": "influxdb",
@@ -458,7 +458,7 @@
         "h": 4,
         "w": 4,
         "x": 8,
-        "y": 4
+        "y": 10
       },
       "datasource": {
         "type": "influxdb",
@@ -527,7 +527,7 @@
         "h": 4,
         "w": 4,
         "x": 12,
-        "y": 4
+        "y": 10
       },
       "datasource": {
         "type": "influxdb",
@@ -596,7 +596,7 @@
         "h": 4,
         "w": 4,
         "x": 16,
-        "y": 4
+        "y": 10
       },
       "datasource": {
         "type": "influxdb",
@@ -645,7 +645,7 @@
         "h": 4,
         "w": 4,
         "x": 20,
-        "y": 4
+        "y": 10
       },
       "datasource": {
         "type": "influxdb",
@@ -689,12 +689,12 @@
       "type": "geomap",
       "id": 13,
       "title": "GPS Track by Velocity",
-      "description": "Trace colore par vitesse (km/h). Vert lent -> rouge rapide. Basemap routes.",
+      "description": "Track colored by speed (km/h). Green = slow, red = fast.",
       "gridPos": {
         "h": 11,
         "w": 12,
         "x": 0,
-        "y": 8
+        "y": 18
       },
       "datasource": {
         "type": "influxdb",
@@ -864,12 +864,12 @@
       "type": "geomap",
       "id": 14,
       "title": "GPS Track by Heart Rate",
-      "description": "Trace colore par FC (bpm). Vert bas -> rouge haut. Basemap satellite.",
+      "description": "Track colored by HR (bpm). Green = low, red = high.",
       "gridPos": {
         "h": 11,
         "w": 12,
         "x": 12,
-        "y": 8
+        "y": 18
       },
       "datasource": {
         "type": "influxdb",
@@ -1039,12 +1039,12 @@
       "type": "bargauge",
       "id": 15,
       "title": "Time in HR Zones (%) - reference plan",
-      "description": "% du temps en activite par zone FC (Garmin avec zones du moment de l'enregistrement). Cible Z2-strict footings : >75% Z2.",
+      "description": "% time per HR zone (Garmin zones at time of recording). Target for Z2-strict easy runs: >75% Z2.",
       "gridPos": {
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 19
+        "y": 29
       },
       "datasource": {
         "type": "influxdb",
@@ -1216,13 +1216,13 @@
     {
       "type": "bargauge",
       "id": 16,
-      "title": "Time in Power Zones (%) - calcule from per-second",
-      "description": "% du temps par zone power calcule on-the-fly depuis ActivityGPS (1 sample = 1s). Zones Garmin auto-FTP.",
+      "title": "Time in Power Zones (%) - computed from per-second",
+      "description": "% time per power zone computed on-the-fly from per-second ActivityGPS data. Garmin auto-FTP zones.",
       "gridPos": {
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 19
+        "y": 29
       },
       "datasource": {
         "type": "influxdb",
@@ -1394,13 +1394,13 @@
     {
       "type": "trend",
       "id": 17,
-      "title": "Heart Rate (bpm) avec bandes zones FC + overlay target prescrit",
-      "description": "Bandes Z1-Z5 (auto-populated from InfluxDB HRZones). Bande purple = target HR prescrit. Staircase pointillee orange = HR moy / step. Axe Y auto-fit sur l'union HR + Target.",
+      "title": "Heart Rate (bpm) with HR zone bands + prescribed target overlay",
+      "description": "Z1-Z5 bands (auto-populated from InfluxDB HRZones). Purple band = prescribed HR target. Dashed orange staircase = avg HR per step. Y-axis auto-fits HR + target union.",
       "gridPos": {
         "h": 10,
         "w": 24,
         "x": 0,
-        "y": 41
+        "y": 51
       },
       "datasource": {
         "type": "influxdb",
@@ -2132,13 +2132,13 @@
     {
       "type": "table",
       "id": 18,
-      "title": "Workout steps prescrits + executes",
-      "description": "Une row par step de la prescription. TargetType=open = aucune cible HR (ex: tests, sprints). DurationS = duree prescrite en s. ActualDurationS = duree reellement executee.",
+      "title": "Workout steps — prescribed vs executed",
+      "description": "One row per prescription step. TargetType=open means no HR target (e.g. tests, sprints). DurationS = prescribed duration (s). ActualDurationS = actual executed duration.",
       "gridPos": {
         "h": 14,
         "w": 24,
         "x": 0,
-        "y": 27
+        "y": 37
       },
       "datasource": {
         "type": "influxdb",
@@ -2366,13 +2366,13 @@
     {
       "type": "trend",
       "id": 19,
-      "title": "Pace (min/km) - bas = rapide + moy / step",
-      "description": "Pace per-second (mm:ss/km). Convention Garmin : plus bas sur l'axe = plus rapide. Staircase orange = pace moy / step (1000/StepAvgSpeed, fetcher filtre Speed>0.5 m/s pour exclure pauses).",
+      "title": "Pace (min/km) — lower = faster + avg per step",
+      "description": "Per-second pace (mm:ss/km). Lower on Y-axis = faster. Orange staircase = avg pace per step (1000/StepAvgSpeed, fetcher filters Speed>0.5 m/s to exclude pauses).",
       "gridPos": {
         "h": 8,
         "w": 24,
         "x": 0,
-        "y": 51
+        "y": 61
       },
       "datasource": {
         "type": "influxdb",
@@ -2586,13 +2586,13 @@
     {
       "type": "trend",
       "id": 20,
-      "title": "Power (W) avec bandes zones power + overlay target prescrit",
-      "description": "Bandes Z1-Z5 (auto-populated from InfluxDB PowerZones). Bande purple = target power prescrit (vide si la seance ne cible que la FC). Staircase orange = power moy / step.",
+      "title": "Power (W) with power zone bands + prescribed target overlay",
+      "description": "Z1-Z5 bands (auto-populated from InfluxDB PowerZones). Purple band = prescribed power target (empty if session targets HR only). Orange staircase = avg power per step.",
       "gridPos": {
         "h": 8,
         "w": 24,
         "x": 0,
-        "y": 59
+        "y": 69
       },
       "datasource": {
         "type": "influxdb",
@@ -3324,13 +3324,13 @@
     {
       "type": "trend",
       "id": 21,
-      "title": "Cadence (spm) avec overlay target prescrit (si present)",
-      "description": "Cadence saine depend de l'allure (170 spm a 7:00/km c'est OK). Bande purple = target cadence (si prescrit). Staircase orange = cadence moy / step (toujours visible).",
+      "title": "Cadence (spm) with prescribed target overlay",
+      "description": "Healthy cadence depends on pace (170 spm at 7:00/km is OK). Purple band = target cadence (if prescribed). Orange staircase = avg cadence per step.",
       "gridPos": {
         "h": 8,
         "w": 24,
         "x": 0,
-        "y": 67
+        "y": 77
       },
       "datasource": {
         "type": "influxdb",
@@ -3760,13 +3760,13 @@
     {
       "type": "trend",
       "id": 22,
-      "title": "Stride length (m) + moy / step",
-      "description": "Longueur foulee par seconde (en metres). Staircase orange = stride moy / step (StepAvgStride/1000).",
+      "title": "Stride Length (m) + avg per step",
+      "description": "Per-second stride length (meters). Orange staircase = avg stride per step (StepAvgStride/1000).",
       "gridPos": {
         "h": 8,
         "w": 24,
         "x": 0,
-        "y": 75
+        "y": 85
       },
       "datasource": {
         "type": "influxdb",
@@ -3980,13 +3980,13 @@
     {
       "type": "trend",
       "id": 23,
-      "title": "Vertical Ratio (%) - cible <7% + moy / step",
-      "description": "Vertical Ratio (oscillation verticale / stride length, en %). <7% = bonne efficacite. Staircase orange = VR moy / step.",
+      "title": "Vertical Ratio (%) — target <7% + avg per step",
+      "description": "Vertical Ratio (vertical oscillation / stride length, %). <7% = good efficiency. Orange staircase = avg VR per step.",
       "gridPos": {
         "h": 8,
         "w": 24,
         "x": 0,
-        "y": 83
+        "y": 93
       },
       "datasource": {
         "type": "influxdb",
@@ -4225,7 +4225,7 @@
         "h": 8,
         "w": 24,
         "x": 0,
-        "y": 91
+        "y": 101
       },
       "datasource": {
         "type": "influxdb",
@@ -4357,13 +4357,13 @@
     {
       "type": "trend",
       "id": 25,
-      "title": "Ground Contact Time (ms) - cible <250",
+      "title": "Ground Contact Time (ms) — target <250",
       "description": "",
       "gridPos": {
         "h": 8,
         "w": 24,
         "x": 0,
-        "y": 99
+        "y": 109
       },
       "datasource": {
         "type": "influxdb",
@@ -4514,13 +4514,13 @@
     {
       "type": "trend",
       "id": 26,
-      "title": "Avg HR par lap (drift = decouplage aerobie) + altitude",
-      "description": "FC moyenne + max par lap (1 km). Altitude en fond leger pour distinguer drift cardiaque vs effort topographique. Axe X = duree de course.",
+      "title": "Avg HR per lap (drift = aerobic decoupling) + altitude",
+      "description": "Avg + max HR per lap (1 km). Altitude in light background to distinguish cardiac drift from topographic effort. X-axis = elapsed time.",
       "gridPos": {
         "h": 8,
         "w": 24,
         "x": 0,
-        "y": 107
+        "y": 117
       },
       "datasource": {
         "type": "influxdb",
@@ -4749,13 +4749,13 @@
     {
       "type": "table",
       "id": 27,
-      "title": "Splits par lap (km)",
-      "description": "Garmin auto-laps par km. La 1ere col 'Index' donne l'ordre. Pace = mm:ss/km, Power en W, HR en bpm.",
+      "title": "Splits per lap (km)",
+      "description": "Garmin auto-laps per km. First column 'Index' = order. Pace in mm:ss/km, Power in W, HR in bpm.",
       "gridPos": {
         "h": 10,
         "w": 24,
         "x": 0,
-        "y": 115
+        "y": 125
       },
       "datasource": {
         "type": "influxdb",
@@ -4931,6 +4931,214 @@
           "tags": []
         }
       ]
+    },
+    {
+      "type": "table",
+      "id": 420,
+      "title": "Weather Conditions",
+      "gridPos": {
+        "h": 4,
+        "w": 24,
+        "x": 0,
+        "y": 14
+      },
+      "datasource": {
+        "type": "influxdb",
+        "uid": "garmin_influxdb"
+      },
+      "targets": [
+        {
+          "alias": "",
+          "query": "SELECT \"temperature_c\" AS \"TempStart\", \"mid_temperature_c\" AS \"TempMid\", \"end_temperature_c\" AS \"TempEnd\", \"wbgt_estimated\" AS \"WBGT\", \"humidity_pct\" AS \"Humidity\", \"wind_speed_kmh\" AS \"Wind\", \"wind_gust_kmh\" AS \"Gusts\", \"apparent_temp_c\" AS \"FeelsLike\", \"cloud_cover_pct\" AS \"Clouds\", \"pressure_hpa\" AS \"Pressure\" FROM \"ActivityWeather\" WHERE \"ActivitySelector\" = '$activity'",
+          "rawQuery": true,
+          "refId": "A",
+          "resultFormat": "table"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "decimals": 1
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Time"
+            },
+            "properties": [
+              {
+                "id": "custom.hidden",
+                "value": true
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byRegexp",
+              "options": "Temp.*"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "celsius"
+              },
+              {
+                "id": "thresholds",
+                "value": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "#3B82F6"
+                    },
+                    {
+                      "color": "#10B981",
+                      "value": 7
+                    },
+                    {
+                      "color": "#F59E0B",
+                      "value": 15
+                    },
+                    {
+                      "color": "#EF4444",
+                      "value": 25
+                    }
+                  ]
+                }
+              },
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "type": "color-text"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "WBGT"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "celsius"
+              },
+              {
+                "id": "thresholds",
+                "value": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "#10B981"
+                    },
+                    {
+                      "color": "#F59E0B",
+                      "value": 18
+                    },
+                    {
+                      "color": "#EF4444",
+                      "value": 23
+                    },
+                    {
+                      "color": "#7F1D1D",
+                      "value": 28
+                    }
+                  ]
+                }
+              },
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "type": "color-text"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "FeelsLike"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "celsius"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Humidity"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "percent"
+              },
+              {
+                "id": "decimals",
+                "value": 0
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byRegexp",
+              "options": "Wind|Gusts"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "velocitykmh"
+              },
+              {
+                "id": "decimals",
+                "value": 0
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Clouds"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "percent"
+              },
+              {
+                "id": "decimals",
+                "value": 0
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Pressure"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "pressurehpa"
+              },
+              {
+                "id": "decimals",
+                "value": 0
+              }
+            ]
+          }
+        ]
+      },
+      "options": {
+        "showHeader": true,
+        "footer": {
+          "show": false
+        },
+        "frameIndex": 0
+      }
     }
   ],
   "refresh": "",

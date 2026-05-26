@@ -239,3 +239,9 @@ curl -G http://$INFLUXDB_HOST:$INFLUXDB_PORT/query \
 - **InfluxQL sub-queries with `TOP()` invalid** -> rethink as `GROUP BY ActivityID, time(30s)` + dashboard variable.
 - **New source to InfluxDB** -> check field types before first write (silent type conflict possible).
 - **Dashboard 03 xField=Duration**: query B (DurationSeconds) must ignore the metric filter (e.g. Cadence>0), otherwise NULL Duration at start breaks the trend.
+
+---
+
+## Panel catalog
+
+**Before any training analysis or bilan**, read `PANELS_CATALOG.md` (same directory) — it lists every panel across all 9 dashboards with title, description, and source query. Use it to know which metrics are available and what they measure.

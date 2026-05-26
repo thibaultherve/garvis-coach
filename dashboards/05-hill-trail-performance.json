@@ -256,7 +256,7 @@
       "type": "stat",
       "id": 4,
       "title": "Balance Gap (str - end)",
-      "description": "Positif = strength dominante (LR vallonnees a travailler). Cible : equilibre +/-5.",
+      "description": "Positive = strength dominant (hilly long runs need work). Target: balance within ±5.",
       "gridPos": {
         "h": 4,
         "w": 4,
@@ -626,7 +626,7 @@
     {
       "type": "barchart",
       "id": 8,
-      "title": "D+ par semaine - 12 dernieres (m)",
+      "title": "Weekly D+ — last 12 weeks (m)",
       "gridPos": {
         "h": 8,
         "w": 12,
@@ -668,8 +668,8 @@
     {
       "type": "timeseries",
       "id": 9,
-      "title": "D+/km par run (intensite vallonnee)",
-      "description": "Plus c'est haut, plus le parcours est vallonne. >50 m/km = trail soutenu.",
+      "title": "D+/km per run (hill intensity)",
+      "description": "Higher = hillier course. >50 m/km = sustained trail intensity.",
       "gridPos": {
         "h": 8,
         "w": 12,
@@ -745,8 +745,8 @@
     {
       "type": "timeseries",
       "id": 10,
-      "title": "Profil altitude des runs (7j)",
-      "description": "Altitude par seconde pour toutes les activites des 7 derniers jours. Chaque run apparait comme une serie distincte.",
+      "title": "Altitude profile — runs (7d)",
+      "description": "Per-second altitude for all activities in the last 7 days. Each run appears as a distinct series.",
       "gridPos": {
         "h": 8,
         "w": 12,

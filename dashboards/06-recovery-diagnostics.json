@@ -22,19 +22,6 @@
   "links": [],
   "panels": [
     {
-      "type": "row",
-      "id": 1,
-      "title": "Sleep (score, stages, HRV nuit, breathing, awakenings, sleep stress)",
-      "collapsed": false,
-      "gridPos": {
-        "h": 1,
-        "w": 24,
-        "x": 0,
-        "y": 0
-      },
-      "panels": []
-    },
-    {
       "type": "stat",
       "id": 2,
       "title": "Sleep Score (last)",
@@ -186,7 +173,7 @@
     {
       "type": "stat",
       "id": 4,
-      "title": "HRV nuit (last)",
+      "title": "Overnight HRV (last)",
       "gridPos": {
         "h": 4,
         "w": 4,
@@ -258,7 +245,7 @@
     {
       "type": "stat",
       "id": 5,
-      "title": "Breathing rate moy",
+      "title": "Avg Breathing Rate",
       "gridPos": {
         "h": 4,
         "w": 4,
@@ -386,7 +373,7 @@
     {
       "type": "stat",
       "id": 7,
-      "title": "SpO2 min nuit",
+      "title": "Overnight SpO2 min",
       "gridPos": {
         "h": 4,
         "w": 4,
@@ -562,8 +549,8 @@
     {
       "type": "barchart",
       "id": 9,
-      "title": "Sleep stages (h) par nuit - 14j",
-      "description": "Cible : >1h30 deep + >1h30 REM. Awake faible.",
+      "title": "Sleep Stages (h) per night — 14d",
+      "description": "Target: >1h30 deep + >1h30 REM. Low awake time.",
       "gridPos": {
         "h": 8,
         "w": 12,
@@ -811,7 +798,7 @@
     {
       "type": "timeseries",
       "id": 10,
-      "title": "HRV nuit + Breathing rate (30j)",
+      "title": "Overnight HRV + Breathing Rate (30d)",
       "gridPos": {
         "h": 8,
         "w": 12,
@@ -968,8 +955,8 @@
     {
       "type": "timeseries",
       "id": 11,
-      "title": "Avg sleep stress (30j)",
-      "description": "Stress moyen pendant la nuit. Cible: bas (<25). Eleve = mauvaise recuperation parasympathique.",
+      "title": "Avg Sleep Stress (30d)",
+      "description": "Average stress during sleep. Target: low (<25). High = poor parasympathetic recovery.",
       "gridPos": {
         "h": 8,
         "w": 12,
@@ -1064,19 +1051,6 @@
         }
       ],
       "timeFrom": "30d"
-    },
-    {
-      "type": "row",
-      "id": 12,
-      "title": "Stress diurne (intraday, body battery, heatmap, overreaching)",
-      "collapsed": false,
-      "gridPos": {
-        "h": 1,
-        "w": 24,
-        "x": 0,
-        "y": 21
-      },
-      "panels": []
     },
     {
       "type": "stat",
@@ -1672,8 +1646,8 @@
     {
       "type": "timeseries",
       "id": 21,
-      "title": "Stress vs Sleep score - corrélation",
-      "description": "Si stress monte ET sleep score baisse pendant plusieurs jours = signal de pre-overreaching ou anxiete.",
+      "title": "Stress vs Sleep Score — correlation",
+      "description": "Rising stress + falling sleep score over several days = pre-overreaching or anxiety signal.",
       "gridPos": {
         "h": 8,
         "w": 12,
@@ -1826,8 +1800,8 @@
     {
       "type": "timeseries",
       "id": 22,
-      "title": "Stress vs Training Load - overreaching detector",
-      "description": "Stress quotidien vs charge entrainement. Si les deux montent ensemble + perf baisse = signal pour reduire.",
+      "title": "Stress vs Training Load — overreaching detector",
+      "description": "Daily stress vs training load. Both rising together + declining performance = signal to reduce load.",
       "gridPos": {
         "h": 8,
         "w": 12,
@@ -1980,7 +1954,7 @@
     {
       "id": 23,
       "type": "marcusolsson-hourly-heatmap-panel",
-      "title": "Sleep Regularity (heatmap heure×jour)",
+      "title": "Sleep Regularity (heatmap hour × day)",
       "datasource": {
         "type": "influxdb",
         "uid": "garmin_influxdb"
@@ -2123,13 +2097,13 @@
           }
         }
       ],
-      "description": "Régularité couché/levé sur fenêtre. Bandes horizontales nettes = rythme stable.",
+      "description": "Bed/wake regularity over selected range. Clear horizontal bands = stable rhythm.",
       "pluginVersion": "2.0.1"
     },
     {
       "id": 24,
       "type": "state-timeline",
-      "title": "Month at a Glance — Intraday (30j)",
+      "title": "Month at a Glance — Intraday (30d)",
       "datasource": {
         "type": "influxdb",
         "uid": "garmin_influxdb"
@@ -2527,7 +2501,7 @@
           }
         }
       ],
-      "description": "Band Wearing (observance montre) + HR Zones + BB + Stress + Steps par heure.",
+      "description": "Band wearing (watch observance) + HR zones + BB + Stress + Steps per hour.",
       "pluginVersion": "12.4.2"
     },
     {
@@ -2650,13 +2624,13 @@
           }
         }
       ],
-      "description": "Distribution FC dans le temps. Bandes claires nuit (FC basse) / actif jour.",
+      "description": "HR distribution over time. Light night bands (low HR) / active daytime.",
       "pluginVersion": "12.4.2"
     },
     {
       "id": 26,
       "type": "barchart",
-      "title": "Body Battery Level Change (low/high par jour)",
+      "title": "Body Battery Level Change (low/high per day)",
       "datasource": {
         "type": "influxdb",
         "uid": "garmin_influxdb"
@@ -2846,13 +2820,13 @@
           }
         }
       ],
-      "description": "Trajectoire low/high BB par jour : différent du day-only stat.",
+      "description": "Daily low/high BB trajectory — different from day-only stat.",
       "pluginVersion": "12.4.2"
     },
     {
       "id": 27,
       "type": "timeseries",
-      "title": "Sleep Intraday — HR + SpO2 + HRV nuit",
+      "title": "Sleep Intraday — HR + SpO2 + Overnight HRV",
       "datasource": {
         "type": "influxdb",
         "uid": "garmin_influxdb"
@@ -3100,13 +3074,13 @@
           }
         }
       ],
-      "description": "Superposés : permet de corréler nuit pourrie ↔ desat ↔ HR élevé.",
+      "description": "Overlaid nightly metrics to correlate poor sleep with desaturation or elevated HR.",
       "pluginVersion": "12.4.2"
     },
     {
       "id": 28,
       "type": "piechart",
-      "title": "Last Sleep (piechart, dernière nuit)",
+      "title": "Last Sleep (piechart, last night)",
       "datasource": {
         "type": "influxdb",
         "uid": "garmin_influxdb"
@@ -3394,13 +3368,13 @@
           }
         }
       ],
-      "description": "Snapshot dernière nuit — complément du barchart 14j.",
+      "description": "Last night snapshot — complements the 14-day barchart.",
       "pluginVersion": "12.4.2"
     },
     {
       "id": 29,
       "type": "barchart",
-      "title": "Stress overview stacked (30j)",
+      "title": "Stress Overview stacked (30d)",
       "datasource": {
         "type": "influxdb",
         "uid": "garmin_influxdb"
@@ -3856,7 +3830,7 @@
           }
         }
       ],
-      "description": "Ventilation par niveau (low/rest/medium/uncategorized/high) sur fenêtre.",
+      "description": "Breakdown by level (low/rest/medium/uncategorized/high) over selected range.",
       "pluginVersion": "12.4.2"
     }
   ],

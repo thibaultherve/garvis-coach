@@ -24,8 +24,8 @@
     {
       "type": "timeseries",
       "id": 2,
-      "title": "Cadence moyenne par run (target 175-185 spm)",
-      "description": "Cadence Garmin x2 (la valeur native est 1/2 cadence sur ActivityGPS).",
+      "title": "Avg Cadence per run (target 175-185 spm)",
+      "description": "Garmin cadence ×2 (native ActivityGPS value is half-cadence).",
       "gridPos": {
         "h": 8,
         "w": 12,
@@ -97,8 +97,8 @@
     {
       "type": "timeseries",
       "id": 3,
-      "title": "Vertical Ratio (forme - cible <7%)",
-      "description": "Vertical oscillation / step length. Plus c'est bas, moins tu rebondis verticalement = meilleure economie.",
+      "title": "Vertical Ratio (form — target <7%)",
+      "description": "Vertical oscillation / step length. Lower = less vertical bounce = better running economy.",
       "gridPos": {
         "h": 8,
         "w": 12,
@@ -200,7 +200,7 @@
     {
       "type": "timeseries",
       "id": 4,
-      "title": "Ground Contact Time (cible <250 ms)",
+      "title": "Ground Contact Time (ms) — target <250",
       "gridPos": {
         "h": 8,
         "w": 12,
@@ -302,8 +302,8 @@
     {
       "type": "timeseries",
       "id": 5,
-      "title": "Step Length (longueur de foulee, m)",
-      "description": "Plus la foulee s'allonge a vitesse equivalente = mieux. Cible : 1.20-1.50 m en footing.",
+      "title": "Step Length (m)",
+      "description": "Longer stride at equivalent speed = improving. Target: 1.20-1.50 m at easy pace.",
       "gridPos": {
         "h": 8,
         "w": 12,
@@ -359,8 +359,8 @@
     {
       "type": "timeseries",
       "id": 6,
-      "title": "Vitesse moyenne par run (m/s)",
-      "description": "A correler avec EF : si vitesse monte mais EF stable, t'es plus fort.",
+      "title": "Avg Speed per run (m/s)",
+      "description": "Correlate with EF: speed rising while EF stable = fitness improvement.",
       "gridPos": {
         "h": 8,
         "w": 12,
@@ -416,7 +416,7 @@
     {
       "type": "table",
       "id": 7,
-      "title": "Recent runs (15 derniers)",
+      "title": "Recent Runs (last 15)",
       "gridPos": {
         "h": 12,
         "w": 24,
@@ -633,7 +633,7 @@
           }
         }
       ],
-      "description": "Spread FC per-séance. Spread qui shrink = capacité à pousser réduite (fatigue).",
+      "description": "Per-session HR spread. Shrinking spread may indicate reduced capacity to push (fatigue).",
       "pluginVersion": "12.4.2"
     }
   ],

@@ -25,7 +25,7 @@
         "type": "influxdb",
         "uid": "garmin_influxdb"
       },
-      "description": "Bandes colorees du statut Garmin (Productive / Peaking / Maintaining / Recovery / Strained / Unproductive / Detraining / Overreaching). Le suffixe _N de l'enum Garmin (ex PRODUCTIVE_3) indique la duree dans le state - ici on regroupe par categorie principale.",
+      "description": "Garmin training status bands (Productive / Peaking / Maintaining / Recovery / Strained / Unproductive / Detraining / Overreaching). Garmin enum suffix _N indicates duration in state — grouped by main category here.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -189,7 +189,7 @@
         "type": "influxdb",
         "uid": "garmin_influxdb"
       },
-      "description": "Phrase Garmin trainingBalanceFeedbackPhrase : BALANCED (ideal) / AEROBIC_LOW_FOCUS (focus base = OK pour plan polarise Seiler) / AEROBIC_LOW/HIGH_SHORTAGE / ANAEROBIC_SHORTAGE/FOCUS. Suffixes _N de Garmin elides via regex.",
+      "description": "Garmin trainingBalanceFeedbackPhrase: BALANCED (ideal) / AEROBIC_LOW_FOCUS (base focus = OK for Seiler polarized plan) / AEROBIC_LOW/HIGH_SHORTAGE / ANAEROBIC_SHORTAGE/FOCUS. Garmin _N suffixes stripped via regex.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -386,7 +386,7 @@
         "type": "influxdb",
         "uid": "garmin_influxdb"
       },
-      "description": "Phrase Garmin brute (ex. PRODUCTIVE_1, MAINTAINING_2, RECOVERY_2). Le code numerique trainingStatus n'est pas utilise (mapping incertain selon firmware).",
+      "description": "Raw Garmin phrase (e.g. PRODUCTIVE_1, MAINTAINING_2, RECOVERY_2). Numeric trainingStatus code not used (mapping uncertain across firmware).",
       "fieldConfig": {
         "defaults": {
           "mappings": [
@@ -545,7 +545,7 @@
         "type": "influxdb",
         "uid": "garmin_influxdb"
       },
-      "description": "Source de verite Garmin officielle (trainingBalanceFeedbackPhrase). Requires extended fetcher patch.",
+      "description": "Official Garmin source (trainingBalanceFeedbackPhrase). Requires extended fetcher patch.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -1052,7 +1052,7 @@
         "type": "influxdb",
         "uid": "garmin_influxdb"
       },
-      "description": "Bandes : bleu = shortage (sous target_min), vert = optimal range, rouge = overload (au-dessus target_max). Thresholds calibres sur target_min/max actuels Garmin (a recalibrer si Garmin ajuste).",
+      "description": "Bands: blue = shortage (below target_min), green = optimal range, red = overload (above target_max). Thresholds calibrated on current Garmin target_min/max (recalibrate if Garmin adjusts).",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -1216,7 +1216,7 @@
         "type": "influxdb",
         "uid": "garmin_influxdb"
       },
-      "description": "Repartition % du temps en zones HR par semaine (lundi-dimanche, fuseau Paris). Couleurs Garmin : Z1+Z2 bleu (cible >= 80%), Z3 vert (cible 10%), Z4+Z5 rouge (cible <= 10%). 12 semaines glissantes incluant la semaine en cours.",
+      "description": "Weekly % time in HR zones (Mon-Sun, Europe/Paris TZ). Garmin colors: Z1+Z2 blue (target >= 80%), Z3 green (target 10%), Z4+Z5 red (target <= 10%). Rolling 12 weeks including current week.",
       "fieldConfig": {
         "defaults": {
           "custom": {
@@ -1424,7 +1424,7 @@
         "type": "influxdb",
         "uid": "garmin_influxdb"
       },
-      "description": "Synthèse daily : TE aero/ana + acute/chronic load + endurance score.",
+      "description": "Daily summary: aerobic/anaerobic TE + acute/chronic load + endurance score.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -2035,7 +2035,7 @@
         "type": "influxdb",
         "uid": "garmin_influxdb"
       },
-      "description": "Foster Monotony & Strain - Carl Foster (Univ. Wisconsin-La Crosse, 1998 ; Foster JC et al., J Strength Cond Res 2001). Indicateurs de variabilite et surcharge cumulee, valides comme marqueurs d'overtraining et d'illness chez les athletes endurance.\n\nCE QUE CA MESURE\n- Monotony = moyenne(charge_quotidienne_7j) / ecart-type(charge_quotidienne_7j). Capte l'uniformite de la semaine. Une semaine 100/100/100/100/100/100/100 (tres monotone) est physiologiquement pire qu'une semaine 200/50/150/0/200/100/100 (variee, meme charge totale). L'organisme a besoin d'alternance stress/repos pour declencher la supercompensation.\n- Strain = charge_hebdo_totale x Monotony. Composite qui pondere charge ET uniformite.\n\nCALCUL\nSource : activityTrainingLoad Garmin sommee par jour, filtre running, jours OFF = 0. Fenetre glissante 7 jours.\nVariance via identite Var(X) = E[X^2] - E[X]^2 (InfluxQL n'a pas moving_stddev natif).\nStrain = (mean_7d * 7) * Monotony = sum_7j * Monotony.\n\nLECTURE MONOTONY\n< 1.5 : varie et sain (vert)\n1.5 - 2.0 : zone de vigilance (jaune)\n> 2.0 : risque accru illness/staleness (rouge, ref. Foster 1998)\n\nLECTURE STRAIN\nPas de seuil absolu - c'est la derive qui compte. Spike >50% au-dessus du baseline moyen 4 sem = red flag.\n\nPIEGES\n- Une Monotony elevee pendant un taper voulu n'est pas pathologique (contexte > seuil).\n- Filtre running uniquement (coherent avec dashboard 02). Muscu/velo non comptes.\n- Jours OFF comptes comme 0 (voulu : le repos EST la variation).\n- Different d'ACWR (orthogonal) : ACWR mesure la progression, Monotony mesure la variabilite.\n\nATTENTION BASE BUILDING\nBase aerobie = risque reel de Monotony elevee (seances Z2 repetitives de duree similaire). Foster 1998 a documente les illness rates les plus hauts chez ce profil. Si Monotony derive >1.8 sans varier les durees, alterner LR / EZ court / off.",
+      "description": "Foster Monotony & Strain (Foster et al., J Strength Cond Res 2001).\n\nMonotony = mean(daily_load_7d) / stddev(daily_load_7d). High monotony (>2.0) = increased illness/staleness risk. Strain = weekly_load × Monotony.\n\nSource: activityTrainingLoad summed daily, running only, rest days = 0. Variance via identity Var(X) = E[X²] - E[X]². Strain = (mean_7d × 7) × Monotony.\n\nMonotony thresholds: <1.5 green (varied), 1.5-2.0 yellow (caution), >2.0 red (risk). Strain: no absolute threshold — watch for >50% spikes above 4-week baseline.",
       "fieldConfig": {
         "defaults": {
           "custom": {
@@ -2210,7 +2210,7 @@
         "type": "influxdb",
         "uid": "garmin_influxdb"
       },
-      "description": "Rolling mean approximation of TrainingPeaks EWMA. CTL = forme aerobie 6 sem. ATL = fatigue 7j. TSB = CTL - ATL : negatif = surcharge, positif = pic de forme. Sweet spot competition : TSB +5 a +15.",
+      "description": "Rolling mean approximation of TrainingPeaks EWMA. CTL = 6-week aerobic fitness. ATL = 7-day fatigue. TSB = CTL - ATL: negative = overload, positive = peak form. Competition sweet spot: TSB +5 to +15.",
       "fieldConfig": {
         "defaults": {
           "custom": {
@@ -2345,7 +2345,7 @@
         "type": "influxdb",
         "uid": "garmin_influxdb"
       },
-      "description": "Replique du graphe HRV Status Garmin Connect. Bande grise = baseline personnel. Marqueurs colores par status : vert = Balanced, orange = Unbalanced, rouge = Low.",
+      "description": "Replicates Garmin Connect HRV Status graph. Grey band = personal baseline. Colored markers by status: green = Balanced, orange = Unbalanced, red = Low.",
       "fieldConfig": {
         "defaults": {
           "custom": {
@@ -2879,7 +2879,7 @@
         "type": "influxdb",
         "uid": "garmin_influxdb"
       },
-      "description": "Pourcentage d'acclimatation chaleur Garmin. Monte avec l'entrainement par temps chaud. >75% = bien acclimate. Pattern saisonnier attendu.",
+      "description": "Garmin heat acclimation %. Increases with training in hot conditions. >75% = well acclimated. Seasonal pattern expected.",
       "fieldConfig": {
         "defaults": {
           "color": {

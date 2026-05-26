@@ -22,118 +22,10 @@
   "links": [],
   "panels": [
     {
-      "type": "row",
-      "id": 100,
-      "title": "Top stats - valeurs actuelles",
-      "gridPos": {
-        "h": 1,
-        "w": 24,
-        "x": 0,
-        "y": 0
-      },
-      "panels": [],
-      "collapsed": false
-    },
-    {
-      "type": "stat",
-      "id": 1,
-      "title": "EF Average 30d",
-      "description": "Efficiency Factor (GAP/HR). Plus haut = mieux. Indicateur Daniels d'efficacite aerobie.",
-      "gridPos": {
-        "h": 4,
-        "w": 4,
-        "x": 0,
-        "y": 1
-      },
-      "datasource": {
-        "type": "influxdb",
-        "uid": "garmin_influxdb"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "unit": "none",
-          "decimals": 4,
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "red"
-              },
-              {
-                "color": "yellow",
-                "value": 0.018
-              },
-              {
-                "color": "green",
-                "value": 0.02
-              }
-            ]
-          }
-        }
-      },
-      "options": {
-        "colorMode": "value",
-        "graphMode": "area",
-        "reduceOptions": {
-          "calcs": [
-            "mean"
-          ],
-          "fields": "",
-          "values": false
-        }
-      },
-      "targets": [
-        {
-          "refId": "A",
-          "alias": "EF",
-          "measurement": "ActivityGPS",
-          "policy": "default",
-          "resultFormat": "time_series",
-          "orderByTime": "ASC",
-          "select": [
-            [
-              {
-                "params": [
-                  "RunningEfficiency"
-                ],
-                "type": "field"
-              },
-              {
-                "params": [],
-                "type": "median"
-              }
-            ]
-          ],
-          "groupBy": [
-            {
-              "params": [
-                "1d"
-              ],
-              "type": "time"
-            },
-            {
-              "params": [
-                "null"
-              ],
-              "type": "fill"
-            }
-          ],
-          "tags": [
-            {
-              "key": "ActivitySelector",
-              "operator": "=~",
-              "value": "/running/"
-            }
-          ]
-        }
-      ],
-      "timeFrom": "30d"
-    },
-    {
       "type": "stat",
       "id": 2,
-      "title": "Pace Z2 medianne 30j",
-      "description": "Allure mediane quand HR ∈ Z2 (auto from InfluxDB HRZones). Plus rapide a FC constante = endurance s'ameliore. Filtre Speed ∈ [1.5, 6] m/s.",
+      "title": "Z2 Pace median 30d",
+      "description": "Median pace when HR is in Z2 (auto from InfluxDB HRZones). Faster at constant HR = improving endurance. Speed filter: 1.5-6 m/s.",
       "gridPos": {
         "h": 4,
         "w": 4,
@@ -198,7 +90,7 @@
       "type": "stat",
       "id": 3,
       "title": "HRV CV (14j)",
-      "description": "Coefficient de variation HRV. Stable (<10%) = bon. Eleve (>15%) = stress systeme nerveux.",
+      "description": "HRV coefficient of variation. Stable (<10%) = good. High (>15%) = nervous system stress.",
       "gridPos": {
         "h": 4,
         "w": 4,
@@ -262,7 +154,7 @@
       "type": "stat",
       "id": 4,
       "title": "Avg HR at High Altitude",
-      "description": "FC moyenne quand altitude > 200m (= portions hautes des cotes locales).",
+      "description": "Average HR when altitude > 200m (high portions of local hills).",
       "gridPos": {
         "h": 4,
         "w": 4,
@@ -325,7 +217,7 @@
       "type": "stat",
       "id": 5,
       "title": "Avg Climb Rate 30d",
-      "description": "Vitesse verticale moyenne par run (m/h). Plus haut = plus de travail vertical.",
+      "description": "Average vertical speed per run (m/h). Higher = more vertical work.",
       "gridPos": {
         "h": 4,
         "w": 4,
@@ -393,7 +285,7 @@
       "type": "stat",
       "id": 6,
       "title": "Avg Decoupling %",
-      "description": "Drift EF: (1ere moitie - 2eme moitie) / 1ere moitie * 100. <5%=bonne base, >8%=trop rapide.",
+      "description": "EF drift: (1st half - 2nd half) / 1st half × 100. <5% = solid base, >8% = started too fast.",
       "gridPos": {
         "h": 4,
         "w": 4,
@@ -498,23 +390,10 @@
       "timeFrom": "30d"
     },
     {
-      "type": "row",
-      "id": 101,
-      "title": "1. Aerobic Decoupling - LR drift",
-      "gridPos": {
-        "h": 1,
-        "w": 24,
-        "x": 0,
-        "y": 5
-      },
-      "panels": [],
-      "collapsed": false
-    },
-    {
       "type": "timeseries",
       "id": 7,
-      "title": "Aerobic Decoupling : EF 1ere vs 2eme moitie de chaque run",
-      "description": "EF mediane sur les 30 premieres min vs les 30-90 min. Si la 2eme moitie chute = endurance pas assez solide. Cible : ecart < 5%.",
+      "title": "Aerobic Decoupling — EF 1st vs 2nd half per run",
+      "description": "Median EF over the first 30 min vs 30-90 min. If 2nd half drops = endurance not yet solid. Target: gap < 5%.",
       "gridPos": {
         "h": 9,
         "w": 24,
@@ -541,7 +420,7 @@
           {
             "matcher": {
               "id": "byName",
-              "options": "EF 1ere moitie (0-30min)"
+              "options": "EF 1st half (0-30min)"
             },
             "properties": [
               {
@@ -556,7 +435,7 @@
           {
             "matcher": {
               "id": "byName",
-              "options": "EF 2eme moitie (30-90min)"
+              "options": "EF 2nd half (30-90min)"
             },
             "properties": [
               {
@@ -588,24 +467,24 @@
       "targets": [
         {
           "refId": "A",
-          "alias": "EF 1ere moitie (0-30min)",
+          "alias": "EF 1st half (0-30min)",
           "measurement": "ActivityGPS",
           "policy": "default",
           "resultFormat": "time_series",
           "orderByTime": "ASC",
-          "query": "SELECT median(\"RunningEfficiency\") AS \"EF 1ere moitie (0-30min)\" FROM \"ActivityGPS\" WHERE $timeFilter AND \"ActivitySelector\" =~ /running/ AND \"DurationSeconds\" < 1800 AND \"RunningEfficiency\" > 0 GROUP BY time(1d) fill(null)",
+          "query": "SELECT median(\"RunningEfficiency\") AS \"EF 1st half (0-30min)\" FROM \"ActivityGPS\" WHERE $timeFilter AND \"ActivitySelector\" =~ /running/ AND \"DurationSeconds\" < 1800 AND \"RunningEfficiency\" > 0 GROUP BY time(1d) fill(null)",
           "rawQuery": true,
           "groupBy": [],
           "tags": []
         },
         {
           "refId": "B",
-          "alias": "EF 2eme moitie (30-90min)",
+          "alias": "EF 2nd half (30-90min)",
           "measurement": "ActivityGPS",
           "policy": "default",
           "resultFormat": "time_series",
           "orderByTime": "ASC",
-          "query": "SELECT median(\"RunningEfficiency\") AS \"EF 2eme moitie (30-90min)\" FROM \"ActivityGPS\" WHERE $timeFilter AND \"ActivitySelector\" =~ /running/ AND \"DurationSeconds\" >= 1800 AND \"DurationSeconds\" < 5400 AND \"RunningEfficiency\" > 0 GROUP BY time(1d) fill(null)",
+          "query": "SELECT median(\"RunningEfficiency\") AS \"EF 2nd half (30-90min)\" FROM \"ActivityGPS\" WHERE $timeFilter AND \"ActivitySelector\" =~ /running/ AND \"DurationSeconds\" >= 1800 AND \"DurationSeconds\" < 5400 AND \"RunningEfficiency\" > 0 GROUP BY time(1d) fill(null)",
           "rawQuery": true,
           "groupBy": [],
           "tags": []
@@ -613,23 +492,10 @@
       ]
     },
     {
-      "type": "row",
-      "id": 102,
-      "title": "2. Pace progression hebdo (Z2 base aérobie + Z4-Z5 intensité)",
-      "gridPos": {
-        "h": 1,
-        "w": 24,
-        "x": 0,
-        "y": 15
-      },
-      "panels": [],
-      "collapsed": false
-    },
-    {
       "type": "barchart",
       "id": 8,
-      "title": "Pace Z2 + Volume Z2 — hebdo Lun→Dim (barres côte à côte)",
-      "description": "Bucket hebdo Lun→Dim TZ Europe/Paris (la semaine en cours est incluse, partielle). Barre violette = pace moyen Z2 pondéré seconde par seconde (axe gauche, dthms, plus bas = mieux). Barre grise = volume Z2 en minutes (axe droit, fiabilité du point pace). Filtre Speed ∈ [1.5, 6] m/s pour exclure marche/spikes GPS. Cible : -10 sec/km sur 8 semaines à FC équivalente. Repères volume : <30 min/sem = bruité (ignorer le pace), 30-60 = correct, >60 = robuste.",
+      "title": "Pace Z2 + Volume Z2 — weekly Mon→Sun (side-by-side bars)",
+      "description": "Weekly bucket Mon-Sun (Europe/Paris TZ, current week included). Purple bar = mean Z2 pace weighted per-second (left axis, lower = faster). Grey bar = Z2 volume in minutes (right axis, pace reliability). Speed filter 1.5-6 m/s excludes walking/GPS spikes. Volume benchmarks: <30 min/wk = noisy (ignore pace), 30-60 = decent, >60 = robust.",
       "gridPos": {
         "h": 12,
         "w": 24,
@@ -654,7 +520,7 @@
           {
             "matcher": {
               "id": "byName",
-              "options": "Pace Z2 hebdo (pondérée)"
+              "options": "Z2 Pace weekly (weighted)"
             },
             "properties": [
               {
@@ -685,7 +551,7 @@
           {
             "matcher": {
               "id": "byName",
-              "options": "Volume Z2 (min)"
+              "options": "Z2 Volume (min)"
             },
             "properties": [
               {
@@ -743,24 +609,24 @@
       "targets": [
         {
           "refId": "A",
-          "alias": "Pace Z2 hebdo (pondérée)",
+          "alias": "Z2 Pace weekly (weighted)",
           "measurement": "ActivityGPS",
           "policy": "default",
           "resultFormat": "time_series",
           "orderByTime": "ASC",
-          "query": "SELECT 1000.0 / mean(\"Speed\") AS \"Pace Z2 hebdo (pondérée)\" FROM \"ActivityGPS\" WHERE $timeFilter AND \"ActivitySelector\" =~ /running/ AND \"HeartRate\" >= $z2_hr AND \"HeartRate\" <= $z3_hr AND \"Speed\" >= 1.5 AND \"Speed\" <= 6 GROUP BY time(7d, 4d) fill(null) tz('Europe/Paris')",
+          "query": "SELECT 1000.0 / mean(\"Speed\") AS \"Z2 Pace weekly (weighted)\" FROM \"ActivityGPS\" WHERE $timeFilter AND \"ActivitySelector\" =~ /running/ AND \"HeartRate\" >= $z2_hr AND \"HeartRate\" <= $z3_hr AND \"Speed\" >= 1.5 AND \"Speed\" <= 6 GROUP BY time(7d, 4d) fill(null) tz('Europe/Paris')",
           "rawQuery": true,
           "groupBy": [],
           "tags": []
         },
         {
           "refId": "B",
-          "alias": "Volume Z2 (min)",
+          "alias": "Z2 Volume (min)",
           "measurement": "ActivityGPS",
           "policy": "default",
           "resultFormat": "time_series",
           "orderByTime": "ASC",
-          "query": "SELECT count(\"HeartRate\") / 60.0 AS \"Volume Z2 (min)\" FROM \"ActivityGPS\" WHERE $timeFilter AND \"ActivitySelector\" =~ /running/ AND \"HeartRate\" >= $z2_hr AND \"HeartRate\" <= $z3_hr GROUP BY time(7d, 4d) fill(0) tz('Europe/Paris')",
+          "query": "SELECT count(\"HeartRate\") / 60.0 AS \"Z2 Volume (min)\" FROM \"ActivityGPS\" WHERE $timeFilter AND \"ActivitySelector\" =~ /running/ AND \"HeartRate\" >= $z2_hr AND \"HeartRate\" <= $z3_hr GROUP BY time(7d, 4d) fill(0) tz('Europe/Paris')",
           "rawQuery": true,
           "groupBy": [],
           "tags": []
@@ -779,8 +645,8 @@
     {
       "type": "barchart",
       "id": 13,
-      "title": "Pace Z4+Z5 + Volume Z4+Z5 — hebdo Lun→Dim (barres côte à côte)",
-      "description": "Bucket hebdo Lun→Dim TZ Europe/Paris (la semaine en cours est incluse, partielle). Barre rouge = pace moyen Z4+Z5 (HR ≥ 166) pondéré seconde par seconde (axe gauche, dthms, plus bas = mieux). Barre grise = volume Z4+Z5 en minutes (axe droit, fiabilité du point pace). Filtre Speed ∈ [1.5, 7] m/s. Sert à suivre la progression VO2max/seuil. Volume Z4+Z5 attendu : 5-15 min/sem en C1 (base), 15-40 min/sem en C2/C3 (intensité).",
+      "title": "Pace Z4+Z5 + Volume Z4+Z5 — weekly Mon→Sun (side-by-side bars)",
+      "description": "Weekly bucket Mon-Sun (Europe/Paris TZ, current week included). Red bar = mean Z4+Z5 pace (HR >= 166) weighted per-second (left axis, lower = faster). Grey bar = Z4+Z5 volume in minutes (right axis, pace reliability). Speed filter 1.5-7 m/s. Tracks VO2max/threshold progression.",
       "gridPos": {
         "h": 12,
         "w": 24,
@@ -805,7 +671,7 @@
           {
             "matcher": {
               "id": "byName",
-              "options": "Pace Z4+Z5 hebdo (pondérée)"
+              "options": "Z4+Z5 Pace weekly (weighted)"
             },
             "properties": [
               {
@@ -836,7 +702,7 @@
           {
             "matcher": {
               "id": "byName",
-              "options": "Volume Z4+Z5 (min)"
+              "options": "Z4+Z5 Volume (min)"
             },
             "properties": [
               {
@@ -894,24 +760,24 @@
       "targets": [
         {
           "refId": "A",
-          "alias": "Pace Z4+Z5 hebdo (pondérée)",
+          "alias": "Z4+Z5 Pace weekly (weighted)",
           "measurement": "ActivityGPS",
           "policy": "default",
           "resultFormat": "time_series",
           "orderByTime": "ASC",
-          "query": "SELECT 1000.0 / mean(\"Speed\") AS \"Pace Z4+Z5 hebdo (pondérée)\" FROM \"ActivityGPS\" WHERE $timeFilter AND \"ActivitySelector\" =~ /running/ AND \"HeartRate\" >= 166 AND \"HeartRate\" <= 195 AND \"Speed\" >= 1.5 AND \"Speed\" <= 7 GROUP BY time(7d, 4d) fill(null) tz('Europe/Paris')",
+          "query": "SELECT 1000.0 / mean(\"Speed\") AS \"Z4+Z5 Pace weekly (weighted)\" FROM \"ActivityGPS\" WHERE $timeFilter AND \"ActivitySelector\" =~ /running/ AND \"HeartRate\" >= 166 AND \"HeartRate\" <= 195 AND \"Speed\" >= 1.5 AND \"Speed\" <= 7 GROUP BY time(7d, 4d) fill(null) tz('Europe/Paris')",
           "rawQuery": true,
           "groupBy": [],
           "tags": []
         },
         {
           "refId": "B",
-          "alias": "Volume Z4+Z5 (min)",
+          "alias": "Z4+Z5 Volume (min)",
           "measurement": "ActivityGPS",
           "policy": "default",
           "resultFormat": "time_series",
           "orderByTime": "ASC",
-          "query": "SELECT count(\"HeartRate\") / 60.0 AS \"Volume Z4+Z5 (min)\" FROM \"ActivityGPS\" WHERE $timeFilter AND \"ActivitySelector\" =~ /running/ AND \"HeartRate\" >= 166 AND \"HeartRate\" <= 195 GROUP BY time(7d, 4d) fill(0) tz('Europe/Paris')",
+          "query": "SELECT count(\"HeartRate\") / 60.0 AS \"Z4+Z5 Volume (min)\" FROM \"ActivityGPS\" WHERE $timeFilter AND \"ActivitySelector\" =~ /running/ AND \"HeartRate\" >= 166 AND \"HeartRate\" <= 195 GROUP BY time(7d, 4d) fill(0) tz('Europe/Paris')",
           "rawQuery": true,
           "groupBy": [],
           "tags": []
@@ -928,23 +794,10 @@
       ]
     },
     {
-      "type": "row",
-      "id": 103,
-      "title": "3. HRV stability",
-      "gridPos": {
-        "h": 1,
-        "w": 24,
-        "x": 0,
-        "y": 40
-      },
-      "panels": [],
-      "collapsed": false
-    },
-    {
       "type": "timeseries",
       "id": 9,
-      "title": "HRV nuit (ms) + CV% (stabilite)",
-      "description": "HRV brute en bleu (gauche). CV% en rouge (droite) = ecart-type/moyenne. CV bas = systeme nerveux stable.",
+      "title": "Overnight HRV (ms) + CV% (stability)",
+      "description": "Raw overnight HRV in blue (left). CV% in red (right) = stddev/mean. Low CV = stable nervous system.",
       "gridPos": {
         "h": 9,
         "w": 24,
@@ -1077,23 +930,10 @@
       ]
     },
     {
-      "type": "row",
-      "id": 105,
-      "title": "4. Vertical climb rate",
-      "panels": [],
-      "collapsed": false,
-      "gridPos": {
-        "h": 1,
-        "w": 24,
-        "x": 0,
-        "y": 50
-      }
-    },
-    {
       "type": "timeseries",
       "id": 11,
-      "title": "Climb rate par run (m/h)",
-      "description": "elevationGain / duration * 3600. Mesure la 'verticalité' moyenne de chaque run.",
+      "title": "Climb Rate per run (m/h)",
+      "description": "elevationGain / duration × 3600. Average vertical intensity per run.",
       "gridPos": {
         "h": 9,
         "w": 24,
@@ -1169,9 +1009,9 @@
     },
     {
       "id": 106,
-      "type": "xychart",
-      "title": "HR vs Pace agrégé (Z2, fenêtre)",
-      "description": "Scatter cross-activités sur la fenêtre — points en zone Z2 uniquement (HR 130-150 bpm typique). Le déplacement de la nuage vers la droite (mêmes BPM, vitesse plus haute) = base aérobie qui s'améliore.",
+      "type": "timeseries",
+      "title": "HR vs Pace aggregate (Z2, window)",
+      "description": "Z2 points only (HR 130-150 bpm). Speed (km/h) left axis, HR right axis. Speed rising at constant HR = improving aerobic base.",
       "gridPos": {
         "x": 0,
         "y": 60,
@@ -1184,72 +1024,126 @@
       },
       "fieldConfig": {
         "defaults": {
-          "color": {
-            "mode": "continuous-GrYlRd"
-          },
           "custom": {
-            "show": "points",
-            "pointSize": {
-              "fixed": 3
-            },
-            "axisLabel": ""
+            "drawStyle": "points",
+            "pointSize": 6,
+            "showPoints": "always",
+            "spanNulls": false,
+            "fillOpacity": 0,
+            "lineWidth": 0
           }
         },
-        "overrides": []
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Speed Z2 (km/h)"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "#3B82F6",
+                  "mode": "fixed"
+                }
+              },
+              {
+                "id": "custom.axisPlacement",
+                "value": "left"
+              },
+              {
+                "id": "custom.axisLabel",
+                "value": "Speed (km/h)"
+              },
+              {
+                "id": "unit",
+                "value": "velocitykmh"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "HR Z2 (bpm)"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "#EF4444",
+                  "mode": "fixed"
+                }
+              },
+              {
+                "id": "custom.axisPlacement",
+                "value": "right"
+              },
+              {
+                "id": "custom.axisLabel",
+                "value": "HR (bpm)"
+              },
+              {
+                "id": "unit",
+                "value": "bpm"
+              },
+              {
+                "id": "min",
+                "value": 125
+              },
+              {
+                "id": "max",
+                "value": 155
+              }
+            ]
+          }
+        ]
       },
       "options": {
-        "mapping": "auto",
-        "series": [
-          {
-            "x": {
-              "matcher": {
-                "id": "byName",
-                "options": "Speed"
-              }
-            }
-          }
-        ],
-        "tooltip": {
-          "mode": "single"
-        },
         "legend": {
-          "displayMode": "list",
+          "calcs": [
+            "mean",
+            "min",
+            "max"
+          ],
+          "displayMode": "table",
           "placement": "bottom",
           "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi"
         }
       },
       "targets": [
         {
-          "refId": "A",
-          "rawQuery": true,
-          "query": "SELECT \"Speed\"*3.6 AS \"Speed\", \"HeartRate\" AS \"HR\" FROM \"ActivityGPS\" WHERE \"ActivitySelector\" =~ /running/ AND \"HeartRate\" >= 130 AND \"HeartRate\" <= 150 AND $timeFilter",
-          "resultFormat": "time_series",
-          "groupBy": [],
-          "tags": [],
           "datasource": {
             "type": "influxdb",
             "uid": "garmin_influxdb"
-          }
+          },
+          "query": "SELECT mean(\"Speed\")*3.6 AS \"Speed Z2 (km/h)\" FROM \"ActivityGPS\" WHERE \"ActivitySelector\" =~ /running/ AND \"HeartRate\" >= 130 AND \"HeartRate\" <= 150 AND $timeFilter GROUP BY time(1d) fill(null)",
+          "rawQuery": true,
+          "refId": "A",
+          "resultFormat": "time_series",
+          "alias": "Speed Z2 (km/h)"
+        },
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "garmin_influxdb"
+          },
+          "query": "SELECT mean(\"HeartRate\") AS \"HR Z2 (bpm)\" FROM \"ActivityGPS\" WHERE \"ActivitySelector\" =~ /running/ AND \"HeartRate\" >= 130 AND \"HeartRate\" <= 150 AND $timeFilter GROUP BY time(1d) fill(null)",
+          "rawQuery": true,
+          "refId": "B",
+          "resultFormat": "time_series",
+          "alias": "HR Z2 (bpm)"
         }
-      ]
-    },
-    {
-      "id": 110,
-      "type": "row",
-      "title": "Power Curve & Pace Curve (90j)",
-      "collapsed": false,
-      "gridPos": {
-        "h": 1,
-        "w": 24,
-        "x": 0,
-        "y": 70
-      }
+      ],
+      "transformations": []
     },
     {
       "id": 111,
       "type": "bargauge",
-      "title": "Running Power Curve - Best mean power par duree (90j)",
-      "description": "Puissance moyenne maximale soutenue sur chaque duree dans les 90 derniers jours. Forme = equilibre des 3 systemes energetiques. Plateau 20-60min = Critical Power. Validator : voir si tes intensites produisent des PRs sur chaque bande.",
+      "title": "Running Power Curve — best mean power by duration (90d)",
+      "description": "Best sustained mean power per duration over the last 90 days. Shape reflects energy system balance. 20-60 min plateau = Critical Power.",
       "datasource": {
         "type": "influxdb",
         "uid": "garmin_influxdb"
@@ -1451,8 +1345,8 @@
     {
       "id": 112,
       "type": "bargauge",
-      "title": "Critical Pace Curve - Best mean speed par duree (90j)",
-      "description": "Vitesse moyenne maximale soutenue sur chaque duree. Plateau 20-60min = Critical Pace (FTPace running).",
+      "title": "Critical Pace Curve — best mean speed by duration (90d)",
+      "description": "Best sustained mean speed per duration. 20-60 min plateau = Critical Pace (FTPace).",
       "datasource": {
         "type": "influxdb",
         "uid": "garmin_influxdb"
@@ -1652,124 +1546,9 @@
       ]
     },
     {
-      "type": "row",
-      "id": 107,
-      "title": "5. Efficiency Factor (NGP/HR) trend",
-      "gridPos": {
-        "h": 1,
-        "w": 24,
-        "x": 0,
-        "y": 82
-      },
-      "panels": [],
-      "collapsed": false
-    },
-    {
-      "type": "timeseries",
-      "id": 14,
-      "title": "Efficiency Factor (NGP/HR) - per day",
-      "description": "GAP/HR median par jour. Plus haut = mieux. Indicateur Daniels d'efficacite aerobie (NGP rapportee a la FC). Sur 4-8 semaines a FC equivalente, monte = adaptations aerobies reelles. Plus fiable que le pace Z2 brut (moins biaise par composition warmup vs LR).",
-      "gridPos": {
-        "h": 9,
-        "w": 24,
-        "x": 0,
-        "y": 83
-      },
-      "datasource": {
-        "type": "influxdb",
-        "uid": "garmin_influxdb"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "unit": "none",
-          "decimals": 4,
-          "custom": {
-            "lineWidth": 2,
-            "spanNulls": true,
-            "pointSize": 6,
-            "drawStyle": "line",
-            "showPoints": "always",
-            "fillOpacity": 10
-          }
-        }
-      },
-      "options": {
-        "legend": {
-          "showLegend": true,
-          "calcs": [
-            "mean",
-            "last"
-          ],
-          "displayMode": "list",
-          "placement": "bottom"
-        },
-        "tooltip": {
-          "mode": "single"
-        }
-      },
-      "targets": [
-        {
-          "refId": "A",
-          "alias": "EF",
-          "measurement": "ActivityGPS",
-          "policy": "default",
-          "resultFormat": "time_series",
-          "orderByTime": "ASC",
-          "select": [
-            [
-              {
-                "params": [
-                  "RunningEfficiency"
-                ],
-                "type": "field"
-              },
-              {
-                "params": [],
-                "type": "median"
-              }
-            ]
-          ],
-          "groupBy": [
-            {
-              "params": [
-                "1d"
-              ],
-              "type": "time"
-            },
-            {
-              "params": [
-                "null"
-              ],
-              "type": "fill"
-            }
-          ],
-          "tags": [
-            {
-              "key": "ActivitySelector",
-              "operator": "=~",
-              "value": "/running/"
-            }
-          ]
-        }
-      ],
-      "timeFrom": "60d"
-    },
-    {
-      "id": 200,
-      "type": "row",
-      "title": "6. Pace @ FC fixée - cardiac efficiency progression",
-      "collapsed": false,
-      "gridPos": {
-        "h": 1,
-        "w": 24,
-        "x": 0,
-        "y": 92
-      }
-    },
-    {
       "id": 16,
       "type": "timeseries",
-      "title": "Pace @ FC fixée - 7 bins (120 → 180 ±5 bpm) - sorties plates (D+/km < 25)",
+      "title": "Pace @ fixed HR — 7 bins (120→180 ±5 bpm) — flat runs (D+/km < 25)",
       "datasource": {
         "type": "influxdb",
         "uid": "garmin_influxdb"
@@ -1994,7 +1773,7 @@
         }
       ],
       "timeFrom": "180d",
-      "description": "Pace @ FC fixee - Cardiac efficiency progression marker.\n\nCE QUE CA MONTRE\nPour chaque sortie, on bin par FC moyenne en 7 plages (120, 130, ..., 180 ±5 bpm) et on plot la pace moyenne dans chaque bin. Sur 6 mois, l'amelioration de la base aerobie = pace plus rapide a FC constante.\n\nLECTURE\n- Y axis : pace en MM:SS / km (plus bas = plus rapide = mieux)\n- 7 series = 7 bins de FC moyenne d'activite, gradient froid (bleu = bas FC) -> chaud (rouge = haut FC)\n- Tendance descendante d'une serie = tu cours plus vite au meme effort cardio\n\nPOURQUOI C'EST PUISSANT\n- Mesure directe des adaptations aerobies chroniques : volume ejection systolique, densification capillaire, hausse densite mitochondriale, economie de course.\n- Plus interpretable qu'EF (un ratio) : '5:00/km a 150 bpm' parle plus que 'EF 0.40'.\n- Independant des outils labo : extrait des sorties naturelles.\n\nCALCUL\n- Source : ActivitySummary (1 point par activite, lifetime via $timeFilter de 180j)\n- Pace = 1000 / averageSpeed (m/s) en secondes/km\n- Bin = activites ou averageHR in [FC-5, FC+5]\n- Filtre terrain : elevationGain * 1000 < distance * 25 (= D+/km < 25 m/km, sorties plates pour eviter le biais terrain vallonne)\n- Filtre distance : > 1 km\n- Fenetre : 180 jours glissants\n\nCAVEAT\n- Une sortie 'intervalle' (ex 8x40s cotes) peut avoir averageHR ~140 mais une pace moyenne biaisee par l'alternance sprint/recup. En Z2 steady-state, bias faible.\n- Source FC : toutes sources confondues (OHR poignet + ceinture HRM-Pro). L'OHR lag peut biaiser sur intervalles courts mais moins en steady-state.\n- Filtre terrain restrictif : peu de sorties vallonnees passent < 25 m/km (verifier abondance des points).\n\nAPPLICATION\nKPI principal de la base aerobie polarisee. Les series FC Z2 cible devraient descendre regulierement. Si pas de progression sur 8+ semaines a fenetre constante, signal : ajuster la stim (volume, intensite, repos)."
+      "description": "Cardiac efficiency progression — pace at fixed HR.\n\nEach run binned by avg HR into 7 bands (120-180 ±5 bpm), plotting avg pace per bin. Descending trend = faster at same cardiac effort = aerobic adaptation.\n\nY-axis: pace MM:SS/km (lower = faster). 7 series cold-to-hot gradient (blue = low HR, red = high HR).\n\nSource: ActivitySummary, 180-day window. Terrain filter: D+/km < 25 m/km (flat runs only). Distance filter: > 1 km.\n\nCaveat: interval sessions may bias avg pace at a given HR. Most reliable for steady-state Z2 runs."
     }
   ],
   "refresh": "1h",
@@ -2018,7 +1797,7 @@
           "type": "influxdb",
           "uid": "garmin_influxdb"
         },
-        "query": "SELECT last(\"zone1Floor\") FROM \"HRZones\" WHERE \"sport\" =~ /running/",
+        "query": "SELECT last(\"zone1Floor\") FROM \"HRZones\" WHERE \"sport\" =~ /RUNNING/",
         "hide": 2,
         "refresh": 1,
         "current": {
@@ -2037,7 +1816,7 @@
           "type": "influxdb",
           "uid": "garmin_influxdb"
         },
-        "query": "SELECT last(\"zone2Floor\") FROM \"HRZones\" WHERE \"sport\" =~ /running/",
+        "query": "SELECT last(\"zone2Floor\") FROM \"HRZones\" WHERE \"sport\" =~ /RUNNING/",
         "hide": 2,
         "refresh": 1,
         "current": {
@@ -2056,7 +1835,7 @@
           "type": "influxdb",
           "uid": "garmin_influxdb"
         },
-        "query": "SELECT last(\"zone3Floor\") FROM \"HRZones\" WHERE \"sport\" =~ /running/",
+        "query": "SELECT last(\"zone3Floor\") FROM \"HRZones\" WHERE \"sport\" =~ /RUNNING/",
         "hide": 2,
         "refresh": 1,
         "current": {
@@ -2075,7 +1854,7 @@
           "type": "influxdb",
           "uid": "garmin_influxdb"
         },
-        "query": "SELECT last(\"zone4Floor\") FROM \"HRZones\" WHERE \"sport\" =~ /running/",
+        "query": "SELECT last(\"zone4Floor\") FROM \"HRZones\" WHERE \"sport\" =~ /RUNNING/",
         "hide": 2,
         "refresh": 1,
         "current": {
@@ -2094,7 +1873,7 @@
           "type": "influxdb",
           "uid": "garmin_influxdb"
         },
-        "query": "SELECT last(\"zone5Floor\") FROM \"HRZones\" WHERE \"sport\" =~ /running/",
+        "query": "SELECT last(\"zone5Floor\") FROM \"HRZones\" WHERE \"sport\" =~ /RUNNING/",
         "hide": 2,
         "refresh": 1,
         "current": {

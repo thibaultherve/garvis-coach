@@ -437,8 +437,8 @@
     {
       "type": "stat",
       "id": 16,
-      "title": "FCmax (Running)",
-      "description": "Frequence cardiaque max utilisee par Garmin pour calculer les zones running. Recalibree apres test FCmax.",
+      "title": "HRmax (Running)",
+      "description": "Max HR used by Garmin for running zone calculation. Recalibrated after max HR test.",
       "gridPos": {
         "x": 0,
         "y": 4,
@@ -489,7 +489,7 @@
       "type": "stat",
       "id": 17,
       "title": "LTHR (Running)",
-      "description": "Lactate Threshold Heart Rate utilise par Garmin. Recalibre apres test seuil 30min ou auto-detection durant les efforts.",
+      "description": "Lactate Threshold HR used by Garmin. Recalibrated after 30-min threshold test or auto-detection during efforts.",
       "gridPos": {
         "x": 5,
         "y": 4,
@@ -540,7 +540,7 @@
       "type": "stat",
       "id": 18,
       "title": "Resting HR",
-      "description": "Frequence cardiaque de repos utilisee pour calculer HRR (Heart Rate Reserve). Auto-update Garmin (moyenne sur sommeil).",
+      "description": "Resting HR used to compute HRR (Heart Rate Reserve). Auto-updated by Garmin (sleep average).",
       "gridPos": {
         "x": 10,
         "y": 4,
@@ -591,7 +591,7 @@
       "type": "stat",
       "id": 19,
       "title": "FTP Power (Running)",
-      "description": "Functional Threshold Power running. Auto-FTP calcule par la FR 955 a partir des efforts. Cible de progression : +20-40 W sur 6 mois de plan.",
+      "description": "Functional Threshold Power (running). Auto-FTP computed by the watch from efforts.",
       "gridPos": {
         "x": 15,
         "y": 4,
@@ -642,7 +642,7 @@
       "type": "stat",
       "id": 24,
       "title": "Delta vs 30d",
-      "description": "Variation depuis ~30 jours.",
+      "description": "Change from ~30 days ago.",
       "gridPos": {
         "x": 20,
         "y": 4,
@@ -850,7 +850,7 @@
           "tags": []
         }
       ],
-      "description": "VO2max running, ranks LoL-style (percentiles Cooper + elite extrapolation):\nIron <28 (bottom 3%) | Bronze 28-37 (3-20%) | Silver 37-42 (20-42%) | Gold 42-47 (42-67%) | Platinum 47-53 (67-85%) | Emerald 53-60 (85-95%) | Diamond 60-68 (95-99.2%) | Master 68-75 (99.2-99.9%) | Grandmaster 75-80 (99.9-99.98%) | Challenger >=80 (top 0.02%, world class)."
+      "description": "VO2max running, ranked by percentile tiers:\nIron <28 (bottom 3%) | Bronze 28-37 (3-20%) | Silver 37-42 (20-42%) | Gold 42-47 (42-67%) | Platinum 47-53 (67-85%) | Emerald 53-60 (85-95%) | Diamond 60-68 (95-99.2%) | Master 68-75 (99.2-99.9%) | Grandmaster 75-80 (99.9-99.98%) | Challenger >=80 (top 0.02%)."
     },
     {
       "type": "timeseries",
@@ -1609,7 +1609,7 @@
           }
         }
       ],
-      "description": "Garmin Race Prediction 5K. Tiers LoL-style bases table Daniels VDOT. Couleur = tier courant.",
+      "description": "Garmin Race Prediction 5K. Tiers based on Daniels VDOT table.",
       "pluginVersion": "12.4.2"
     },
     {
@@ -1853,7 +1853,7 @@
           }
         }
       ],
-      "description": "Garmin Race Prediction 10K. Tiers LoL-style bases table Daniels VDOT. Couleur = tier courant.",
+      "description": "Garmin Race Prediction 10K. Tiers based on Daniels VDOT table.",
       "pluginVersion": "12.4.2"
     },
     {
@@ -2097,7 +2097,7 @@
           }
         }
       ],
-      "description": "Garmin Race Prediction Half Marathon. Tiers LoL-style bases table Daniels VDOT. Couleur = tier courant.",
+      "description": "Garmin Race Prediction Half Marathon. Tiers based on Daniels VDOT table.",
       "pluginVersion": "12.4.2"
     },
     {
@@ -2341,14 +2341,14 @@
           }
         }
       ],
-      "description": "Garmin Race Prediction Marathon. Tiers LoL-style bases table Daniels VDOT. Couleur = tier courant.",
+      "description": "Garmin Race Prediction Marathon. Tiers based on Daniels VDOT table.",
       "pluginVersion": "12.4.2"
     },
     {
       "type": "timeseries",
       "id": 20,
       "title": "HR Zone Boundaries — Trajectory",
-      "description": "Evolution des floors Z1..Z5 + LTHR + FCmax sur la duree du plan. Si Garmin recalibre une zone, tu verras un step ici.",
+      "description": "Z1-Z5 floor + LTHR + HRmax evolution over time. Zone recalibrations by Garmin appear as steps.",
       "gridPos": {
         "x": 0,
         "y": 38,
@@ -2624,7 +2624,7 @@
       "type": "timeseries",
       "id": 21,
       "title": "Power Zone Boundaries — Trajectory",
-      "description": "Evolution des floors Z1..Z5 + FTP. Auto-FTP Garmin = pilote l'echelle des zones. Une bonne progression du plan = FTP qui monte progressivement.",
+      "description": "Z1-Z5 floor + FTP evolution. Garmin auto-FTP drives zone scale. Good plan progression = FTP rising over time.",
       "gridPos": {
         "x": 12,
         "y": 38,
@@ -2862,8 +2862,8 @@
     {
       "id": 35,
       "type": "timeseries",
-      "title": "Threshold — LTHR (% FCmax · bpm · pace)",
-      "description": "Trajectoire LTHR (Lactate Threshold HR). Serie principale = LTHR / FCmax(historique) en %. FCmax historique : snapshot HRZones quand dispo (>= 2026-05-01), fallback sur la plus vieille valeur connue (195) pour les dates anterieures. Bandes : <82% debutant, 82-87 recreatif, 87-92 bien entraine, 92-95 elite endurance, >95 elite mondial. Survole pour voir LTHR (bpm), pace seuil, et FCmax utilise.",
+      "title": "LTHR as % of HRmax",
+      "description": "LTHR as % of HRmax over time. Key marker of lactate threshold fitness.\n\nDASHED LINES (population benchmarks)\n• < 82%: beginner\n• 82-87%: recreational\n• 87-92%: well-trained\n• 92-95%: elite endurance\n• > 95%: world-class\n\nHover for LTHR (bpm), threshold pace, and HRmax used.",
       "datasource": {
         "type": "influxdb",
         "uid": "garmin_influxdb"
@@ -2878,10 +2878,11 @@
         "defaults": {
           "unit": "percent",
           "decimals": 1,
-          "min": 75,
-          "max": 100,
+          "min": 85,
+          "max": 97,
           "color": {
-            "mode": "thresholds"
+            "mode": "fixed",
+            "fixedColor": "#F59E0B"
           },
           "thresholds": {
             "mode": "absolute",
@@ -2912,13 +2913,13 @@
             "drawStyle": "line",
             "lineInterpolation": "smooth",
             "lineWidth": 3,
-            "fillOpacity": 0,
-            "gradientMode": "none",
+            "fillOpacity": 8,
+            "gradientMode": "scheme",
             "showPoints": "always",
             "pointSize": 5,
             "spanNulls": true,
             "thresholdsStyle": {
-              "mode": "area"
+              "mode": "dashed"
             }
           }
         },
@@ -2926,7 +2927,7 @@
           {
             "matcher": {
               "id": "byName",
-              "options": "Pace seuil"
+              "options": "Threshold Pace"
             },
             "properties": [
               {
@@ -2996,7 +2997,7 @@
           {
             "matcher": {
               "id": "byName",
-              "options": "FCmax bpm"
+              "options": "HRmax (bpm)"
             },
             "properties": [
               {
@@ -3040,7 +3041,7 @@
       },
       "options": {
         "legend": {
-          "showLegend": true,
+          "showLegend": false,
           "displayMode": "list",
           "placement": "bottom",
           "calcs": [
@@ -3055,9 +3056,9 @@
       "targets": [
         {
           "refId": "A",
-          "alias": "% FCmax",
+          "alias": "% HRmax",
           "rawQuery": true,
-          "query": "SELECT mean(\"pct_fcmax\") AS \"% FCmax\" FROM \"ThresholdComputed\" WHERE $timeFilter GROUP BY time(1d) fill(null) tz('Europe/Paris')",
+          "query": "SELECT mean(\"pct_fcmax\") AS \"% HRmax\" FROM \"ThresholdComputed\" WHERE $timeFilter GROUP BY time(1d) fill(null) tz('Europe/Paris')",
           "resultFormat": "time_series",
           "groupBy": [],
           "tags": [],
@@ -3081,9 +3082,9 @@
         },
         {
           "refId": "C",
-          "alias": "Pace seuil",
+          "alias": "Threshold Pace",
           "rawQuery": true,
-          "query": "SELECT mean(\"pace_per_km_sec\") AS \"Pace seuil\" FROM \"ThresholdComputed\" WHERE $timeFilter GROUP BY time(1d) fill(null) tz('Europe/Paris')",
+          "query": "SELECT mean(\"pace_per_km_sec\") AS \"Threshold Pace\" FROM \"ThresholdComputed\" WHERE $timeFilter GROUP BY time(1d) fill(null) tz('Europe/Paris')",
           "resultFormat": "time_series",
           "groupBy": [],
           "tags": [],
@@ -3094,9 +3095,9 @@
         },
         {
           "refId": "D",
-          "alias": "FCmax bpm",
+          "alias": "HRmax (bpm)",
           "rawQuery": true,
-          "query": "SELECT mean(\"fcmax_used\") AS \"FCmax bpm\" FROM \"ThresholdComputed\" WHERE $timeFilter GROUP BY time(1d) fill(null) tz('Europe/Paris')",
+          "query": "SELECT mean(\"fcmax_used\") AS \"HRmax (bpm)\" FROM \"ThresholdComputed\" WHERE $timeFilter GROUP BY time(1d) fill(null) tz('Europe/Paris')",
           "resultFormat": "time_series",
           "groupBy": [],
           "tags": [],
@@ -3117,10 +3118,10 @@
         "uid": "garmin_influxdb"
       },
       "gridPos": {
-        "x": 0,
-        "y": 53,
+        "h": 7,
         "w": 12,
-        "h": 7
+        "x": 0,
+        "y": 83
       },
       "timeFrom": "90d",
       "fieldConfig": {
@@ -3170,8 +3171,8 @@
     {
       "id": 101,
       "type": "timeseries",
-      "title": "Cardiac Efficiency (Power/HR) — 14d Trend",
-      "description": "Ratio mean(Power) / mean(HR) par jour (running, samples Power>100W et HR>130bpm pour exclure warmup/cooldown). Plus le ratio monte, plus tu produis de watts par bpm. Tendance ascendante sur 90j = adaptation aerobie reussie.",
+      "title": "Cardiac Efficiency (Power/HR) — 14d avg",
+      "description": "Ratio mean(Power) / mean(HR) per day (running, Power>100W and HR>130bpm to exclude warmup/cooldown). Rising ratio = more watts per bpm. Ascending trend over 90d = successful aerobic adaptation.",
       "datasource": {
         "type": "influxdb",
         "uid": "garmin_influxdb"
@@ -3186,17 +3187,44 @@
         "defaults": {
           "custom": {
             "drawStyle": "points",
-            "pointSize": 6,
-            "lineWidth": 0,
+            "pointSize": 8,
             "showPoints": "always",
-            "spanNulls": false
+            "spanNulls": false,
+            "fillOpacity": 0,
+            "lineWidth": 0,
+            "thresholdsStyle": {
+              "mode": "dashed"
+            }
           },
           "unit": "short",
           "decimals": 2,
           "color": {
             "mode": "fixed",
-            "fixedColor": "#F59E0B"
-          }
+            "fixedColor": "#8B5CF6"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "#EF4444",
+                "value": null
+              },
+              {
+                "color": "#F59E0B",
+                "value": 1.7
+              },
+              {
+                "color": "#10B981",
+                "value": 1.9
+              },
+              {
+                "color": "#3B82F6",
+                "value": 2.1
+              }
+            ]
+          },
+          "min": 1.5,
+          "max": 2.3
         },
         "overrides": [
           {
@@ -3206,31 +3234,15 @@
             },
             "properties": [
               {
+                "id": "displayName",
+                "value": "W/bpm per run"
+              },
+              {
                 "id": "color",
                 "value": {
-                  "fixedColor": "rgba(230, 170, 50, 0.45)",
+                  "fixedColor": "#8B5CF6",
                   "mode": "fixed"
                 }
-              },
-              {
-                "id": "custom.drawStyle",
-                "value": "points"
-              },
-              {
-                "id": "custom.pointSize",
-                "value": 5
-              },
-              {
-                "id": "custom.lineWidth",
-                "value": 0
-              },
-              {
-                "id": "custom.showPoints",
-                "value": "always"
-              },
-              {
-                "id": "displayName",
-                "value": "W/bpm"
               }
             ]
           },
@@ -3241,23 +3253,16 @@
             },
             "properties": [
               {
-                "id": "color",
-                "value": {
-                  "fixedColor": "#F59E0B",
-                  "mode": "fixed"
-                }
-              },
-              {
                 "id": "custom.drawStyle",
                 "value": "line"
               },
               {
                 "id": "custom.lineWidth",
-                "value": 3
+                "value": 2
               },
               {
-                "id": "custom.lineInterpolation",
-                "value": "smooth"
+                "id": "custom.pointSize",
+                "value": 1
               },
               {
                 "id": "custom.showPoints",
@@ -3265,15 +3270,24 @@
               },
               {
                 "id": "custom.fillOpacity",
-                "value": 6
+                "value": 0
               },
               {
-                "id": "custom.gradientMode",
-                "value": "opacity"
+                "id": "custom.lineInterpolation",
+                "value": "smooth"
               },
               {
-                "id": "custom.spanNulls",
-                "value": true
+                "id": "color",
+                "value": {
+                  "fixedColor": "#F59E0B",
+                  "mode": "fixed"
+                }
+              },
+              {
+                "id": "custom.thresholdsStyle",
+                "value": {
+                  "mode": "off"
+                }
               }
             ]
           }
@@ -3327,7 +3341,7 @@
       },
       "gridPos": {
         "x": 0,
-        "y": 60,
+        "y": 67,
         "w": 24,
         "h": 8
       },
@@ -3552,7 +3566,7 @@
           }
         }
       ],
-      "description": "Distribution Eddington - runs >= N km pour chaque N de 10 a max(runs_km). Filtre N>=10 pour zoomer sur la zone de crossing (l'Eddington actuel est dans cette zone).\n\nCE QUE ÇA MONTRE\nBarres bleues : nombre de runs >= N km. Ligne grise pointillee : seuil de qualification y=x (= N).\n\nEDDINGTON VISUEL\nL'Eddington E = derniere barre qui depasse encore la ligne diagonale. Pour qu'un E=N soit valide, il faut barre(N) >= N (= diagonale). Des que barre(N) tombe sous la ligne, on a depasse E.\n\nNEXT LEDGE\nA N=E+1, la barre est juste sous la diagonale. Le 'gap' visuel (diag - barre) = nombre de runs manquants pour passer a E+1.\nExemple : si barre(14) = 13 et diag(14) = 14, il manque 1 run de >= 14 km pour passer a E=14.\n\nLECTURE LONG-TERME\nAvec des LR systematiques, les barres autour de 14-18 km grossissent. L'Eddington progresse a mesure que les bars depassent la diagonale.\n\nPIPELINE\n1. Query distances lifetime\n2. Conversion km\n3. Histogram bucketSize=1 (= 1 bar par km entier)\n4. Tri descending par bucket\n5. Cumulative sum sur la colonne count (cumsum desc = count >= N)\n6. Tri ascending pour affichage\n7. Field diagonal = BucketMin (pour tracer y=x)\n8. Filter BucketMin >= 1\n\nFILTRE\nSorties running uniquement (=~ /running/), distance min 1 km, lifetime depuis 2010."
+      "description": "Eddington number: how many runs of >= N km for each N.\n\nBlue bars = count of runs >= N km. Grey dashed line = y=x threshold. The Eddington E = last bar exceeding the diagonal. At N=E+1, the gap between diagonal and bar = runs needed to level up.\n\nSource: all running activities (lifetime, distance >= 1 km). Histogram bucketSize=1, cumulative sum descending, filtered N >= 10."
     },
     {
       "datasource": {
@@ -3599,7 +3613,7 @@
       },
       "gridPos": {
         "x": 0,
-        "y": 68,
+        "y": 75,
         "w": 12,
         "h": 7
       },
@@ -3682,7 +3696,7 @@
       },
       "gridPos": {
         "x": 12,
-        "y": 68,
+        "y": 75,
         "w": 12,
         "h": 7
       },
@@ -3738,6 +3752,275 @@
       ],
       "title": "Altitude Acclimation",
       "type": "timeseries"
+    },
+    {
+      "type": "timeseries",
+      "id": 300,
+      "title": "Efficiency Factor (GAP/HR) — 7d avg",
+      "description": "TrainingPeaks canonical Efficiency Factor: mean(GradeAdjustedSpeed) / mean(HR) x 100.\n\nMETHOD\n• GradeAdjustedSpeed (Garmin GAP/NGP) normalizes for terrain grade\n• mean(GAP) / mean(HR), not mean(GAP/HR) — per TrainingPeaks spec\n• First 10 min excluded (HR stabilization per Friel)\n• Speed > 0.5 m/s (exclude stops)\n• No HR zone filter — full workout EF, compare similar session types\n\nHOW TO READ\n• Higher = faster at lower cardiac cost = better aerobic fitness\n• Rising trend over 4-8 weeks = confirmed aerobic adaptation\n• Compare across similar workouts (e.g. easy runs to easy runs)\n• Orange line = 7-day moving average\n\nRef: TrainingPeaks EF, Joe Friel (2009), Coggan/Allen power-based training.",
+      "gridPos": {
+        "h": 7,
+        "w": 12,
+        "x": 0,
+        "y": 53
+      },
+      "datasource": {
+        "type": "influxdb",
+        "uid": "garmin_influxdb"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "garmin_influxdb"
+          },
+          "alias": "AE per run",
+          "query": "SELECT mean(\"GradeAdjustedSpeed\") * 100.0 / mean(\"HeartRate\") AS \"EF\" FROM \"ActivityGPS\" WHERE $timeFilter AND \"ActivitySelector\" =~ /running/ AND \"DurationSeconds\" >= 600 AND \"Speed\" > 0.5 GROUP BY time(1d) fill(null)",
+          "rawQuery": true,
+          "refId": "A",
+          "resultFormat": "time_series"
+        },
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "garmin_influxdb"
+          },
+          "alias": "7-day avg",
+          "query": "SELECT moving_average(\"EF\", 7) AS \"EF_ma7\" FROM (SELECT mean(\"GradeAdjustedSpeed\") * 100.0 / mean(\"HeartRate\") AS \"EF\" FROM \"ActivityGPS\" WHERE $timeFilter AND \"ActivitySelector\" =~ /running/ AND \"DurationSeconds\" >= 600 AND \"Speed\" > 0.5 GROUP BY time(1d) fill(null))",
+          "rawQuery": true,
+          "refId": "B",
+          "resultFormat": "time_series"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "drawStyle": "points",
+            "pointSize": 8,
+            "showPoints": "always",
+            "spanNulls": false,
+            "fillOpacity": 0,
+            "lineWidth": 0,
+            "gradientMode": "scheme",
+            "thresholdsStyle": {
+              "mode": "dashed"
+            }
+          },
+          "decimals": 2,
+          "unit": "none",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "#EF4444",
+                "value": null
+              },
+              {
+                "color": "#F59E0B",
+                "value": 1.7
+              },
+              {
+                "color": "#10B981",
+                "value": 1.9
+              },
+              {
+                "color": "#3B82F6",
+                "value": 2.1
+              }
+            ]
+          },
+          "min": 1.5,
+          "max": 2.2,
+          "color": {
+            "mode": "fixed",
+            "fixedColor": "#8B5CF6"
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "7-day avg"
+            },
+            "properties": [
+              {
+                "id": "custom.drawStyle",
+                "value": "line"
+              },
+              {
+                "id": "custom.lineWidth",
+                "value": 2
+              },
+              {
+                "id": "custom.pointSize",
+                "value": 1
+              },
+              {
+                "id": "custom.showPoints",
+                "value": "never"
+              },
+              {
+                "id": "custom.fillOpacity",
+                "value": 0
+              },
+              {
+                "id": "custom.lineInterpolation",
+                "value": "smooth"
+              },
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "#F59E0B",
+                  "mode": "fixed"
+                }
+              },
+              {
+                "id": "custom.thresholdsStyle",
+                "value": {
+                  "mode": "off"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "options": {
+        "legend": {
+          "calcs": [
+            "mean",
+            "min",
+            "max",
+            "lastNotNull"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": false
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "none"
+        }
+      },
+      "transformations": []
+    },
+    {
+      "type": "timeseries",
+      "id": 310,
+      "title": "Activity Conditions",
+      "description": "Temperature and WBGT per activity. Cross-reference with EF: rising temp = expect lower EF.\nWBGT thresholds: <18 low risk, 18-23 moderate, 23-28 high, >28 extreme.\nOptimal running: 7-15C.",
+      "gridPos": {
+        "h": 7,
+        "w": 24,
+        "x": 0,
+        "y": 60
+      },
+      "datasource": {
+        "type": "influxdb",
+        "uid": "garmin_influxdb"
+      },
+      "targets": [
+        {
+          "alias": "Temperature",
+          "query": "SELECT \"temperature_c\" FROM \"ActivityWeather\" WHERE $timeFilter",
+          "rawQuery": true,
+          "refId": "A",
+          "resultFormat": "time_series"
+        },
+        {
+          "alias": "WBGT",
+          "query": "SELECT \"wbgt_estimated\" FROM \"ActivityWeather\" WHERE $timeFilter",
+          "rawQuery": true,
+          "refId": "B",
+          "resultFormat": "time_series"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "drawStyle": "points",
+            "pointSize": 7,
+            "showPoints": "always",
+            "fillOpacity": 0,
+            "lineWidth": 0,
+            "spanNulls": false,
+            "thresholdsStyle": {
+              "mode": "dashed"
+            }
+          },
+          "unit": "celsius",
+          "decimals": 1,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "#3B82F6",
+                "value": null
+              },
+              {
+                "color": "#10B981",
+                "value": 7
+              },
+              {
+                "color": "#F59E0B",
+                "value": 15
+              },
+              {
+                "color": "#EF4444",
+                "value": 25
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Temperature"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "#F97316",
+                  "mode": "fixed"
+                }
+              },
+              {
+                "id": "custom.pointSize",
+                "value": 8
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "WBGT"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "#EF4444",
+                  "mode": "fixed"
+                }
+              },
+              {
+                "id": "custom.pointSize",
+                "value": 5
+              }
+            ]
+          }
+        ]
+      },
+      "options": {
+        "legend": {
+          "showLegend": false
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "none"
+        }
+      }
     }
   ],
   "refresh": "1h",

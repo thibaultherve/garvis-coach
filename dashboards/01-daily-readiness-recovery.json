@@ -403,7 +403,7 @@
       "type": "stat",
       "id": 6,
       "title": "Recovery Time (h)",
-      "description": "Source : recoveryTime natif Garmin (minutes), divise par 60 pour heures.",
+      "description": "Garmin native recoveryTime (minutes) divided by 60.",
       "gridPos": {
         "h": 4,
         "w": 4,
@@ -1616,7 +1616,7 @@
           }
         }
       ],
-      "description": "Vue calendrier multi-métrique : RHR, Stress, Active, BB, Steps, SpO2, Sleep score, Sleep, HRV.",
+      "description": "Calendar multi-metric view: RHR, Stress, Active, BB, Steps, SpO2, Sleep score, Sleep, HRV.",
       "pluginVersion": "12.4.2"
     },
     {
@@ -1838,7 +1838,7 @@
           }
         }
       ],
-      "description": "Distribution FC sur fenêtre, avec seuils sleep/active/peak.",
+      "description": "HR distribution over selected range with sleep/active/peak thresholds.",
       "pluginVersion": "12.4.2"
     },
     {
@@ -2035,7 +2035,7 @@
           }
         }
       ],
-      "description": "Spread FC quotidien : spread bas = système autonome stressé.",
+      "description": "Daily HR spread (max-min). Low spread = stressed autonomic system.",
       "pluginVersion": "12.4.2"
     },
     {
@@ -2678,7 +2678,7 @@
           }
         }
       ],
-      "description": "Synthèse table de la fenêtre sélectionnée.",
+      "description": "Summary table for the selected time range.",
       "pluginVersion": "12.4.2"
     }
   ],
