@@ -1,0 +1,25 @@
+# Environment and credentials
+.env
+*.token
+
+# Personal data (never commit)
+data/
+!data/.gitkeep
+!data/README.md
+
+# Generated files
+*.fit
+__pycache__/
+*.pyc
+
+# Claude Code personal config
+.claude/settings.local.json
+.claude/commands/meteo.md
+CLAUDE.local.md
+
+# One-shot analysis scripts (if copied from dev repo)
+compare_runs*.py
+analyze_test_fcmax.py
+cross_*.html
+plan_training_*.txt
+tmp/

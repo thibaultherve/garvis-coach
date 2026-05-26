@@ -1,0 +1,3081 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": {
+          "type": "grafana",
+          "uid": "-- Grafana --"
+        },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "description": "Pilotage charge entrainement + ACWR + polarisation (prevention TFL/dos).",
+  "editable": true,
+  "graphTooltip": 0,
+  "links": [],
+  "panels": [
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "garmin_influxdb"
+      },
+      "description": "Bandes colorees du statut Garmin (Productive / Peaking / Maintaining / Recovery / Strained / Unproductive / Detraining / Overreaching). Le suffixe _N de l'enum Garmin (ex PRODUCTIVE_3) indique la duree dans le state - ici on regroupe par categorie principale.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "fillOpacity": 90,
+            "lineWidth": 0
+          },
+          "mappings": [
+            {
+              "options": {
+                "pattern": "^PRODUCTIVE.*",
+                "result": {
+                  "color": "#22C55E",
+                  "index": 0,
+                  "text": "Productive"
+                }
+              },
+              "type": "regex"
+            },
+            {
+              "options": {
+                "pattern": "^PEAKING.*",
+                "result": {
+                  "color": "#8B5CF6",
+                  "index": 1,
+                  "text": "Peaking"
+                }
+              },
+              "type": "regex"
+            },
+            {
+              "options": {
+                "pattern": "^MAINTAINING.*",
+                "result": {
+                  "color": "#FBBF24",
+                  "index": 2,
+                  "text": "Maintaining"
+                }
+              },
+              "type": "regex"
+            },
+            {
+              "options": {
+                "pattern": "^RECOVERY.*",
+                "result": {
+                  "color": "#3B82F6",
+                  "index": 3,
+                  "text": "Recovery"
+                }
+              },
+              "type": "regex"
+            },
+            {
+              "options": {
+                "pattern": "^STRAINED.*",
+                "result": {
+                  "color": "#EC4899",
+                  "index": 4,
+                  "text": "Strained"
+                }
+              },
+              "type": "regex"
+            },
+            {
+              "options": {
+                "pattern": "^UNPRODUCTIVE.*",
+                "result": {
+                  "color": "#F97316",
+                  "index": 5,
+                  "text": "Unproductive"
+                }
+              },
+              "type": "regex"
+            },
+            {
+              "options": {
+                "pattern": "^OVERREACHING.*",
+                "result": {
+                  "color": "#EF4444",
+                  "index": 6,
+                  "text": "Overreaching"
+                }
+              },
+              "type": "regex"
+            },
+            {
+              "options": {
+                "pattern": "^DETRAINING.*",
+                "result": {
+                  "color": "#6B7280",
+                  "index": 7,
+                  "text": "Detraining"
+                }
+              },
+              "type": "regex"
+            },
+            {
+              "options": {
+                "pattern": "^NO_STATUS.*",
+                "result": {
+                  "color": "#374151",
+                  "index": 8,
+                  "text": "No status"
+                }
+              },
+              "type": "regex"
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "transparent",
+                "value": null
+              }
+            ]
+          }
+        }
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 12,
+        "x": 0,
+        "y": 0
+      },
+      "id": 111,
+      "options": {
+        "alignValue": "left",
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "mergeValues": true,
+        "rowHeight": 1,
+        "showValue": "never",
+        "tooltip": {
+          "mode": "single"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "garmin_influxdb"
+          },
+          "query": "SELECT \"trainingStatusFeedbackPhrase\" AS Status FROM \"TrainingStatus\" WHERE $timeFilter",
+          "rawQuery": true,
+          "refId": "A",
+          "resultFormat": "time_series"
+        }
+      ],
+      "timeFrom": "180d",
+      "title": "Training Status Timeline — 180d",
+      "type": "state-timeline"
+    },
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "garmin_influxdb"
+      },
+      "description": "Phrase Garmin trainingBalanceFeedbackPhrase : BALANCED (ideal) / AEROBIC_LOW_FOCUS (focus base = OK pour plan polarise Seiler) / AEROBIC_LOW/HIGH_SHORTAGE / ANAEROBIC_SHORTAGE/FOCUS. Suffixes _N de Garmin elides via regex.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "fillOpacity": 90,
+            "lineWidth": 0
+          },
+          "mappings": [
+            {
+              "type": "regex",
+              "options": {
+                "pattern": "^BALANCED.*",
+                "result": {
+                  "text": "Balanced",
+                  "color": "#22C55E",
+                  "index": 0
+                }
+              }
+            },
+            {
+              "type": "regex",
+              "options": {
+                "pattern": "^AEROBIC_LOW_FOCUS.*",
+                "result": {
+                  "text": "Aerobic Low Focus",
+                  "color": "#86EFAC",
+                  "index": 1
+                }
+              }
+            },
+            {
+              "type": "regex",
+              "options": {
+                "pattern": "^AEROBIC_HIGH_FOCUS.*",
+                "result": {
+                  "text": "Aerobic High Focus",
+                  "color": "#FBBF24",
+                  "index": 2
+                }
+              }
+            },
+            {
+              "type": "regex",
+              "options": {
+                "pattern": "^ANAEROBIC_FOCUS.*",
+                "result": {
+                  "text": "Anaerobic Focus",
+                  "color": "#EC4899",
+                  "index": 3
+                }
+              }
+            },
+            {
+              "type": "regex",
+              "options": {
+                "pattern": "^AEROBIC_LOW_SHORTAGE.*",
+                "result": {
+                  "text": "Aerobic Low Shortage",
+                  "color": "#1E40AF",
+                  "index": 4
+                }
+              }
+            },
+            {
+              "type": "regex",
+              "options": {
+                "pattern": "^AEROBIC_HIGH_SHORTAGE.*",
+                "result": {
+                  "text": "Aerobic High Shortage",
+                  "color": "#A78BFA",
+                  "index": 5
+                }
+              }
+            },
+            {
+              "type": "regex",
+              "options": {
+                "pattern": "^ANAEROBIC_SHORTAGE.*",
+                "result": {
+                  "text": "Anaerobic Shortage",
+                  "color": "#EF4444",
+                  "index": 6
+                }
+              }
+            },
+            {
+              "type": "regex",
+              "options": {
+                "pattern": "^ANAEROBIC_OVERLOAD.*",
+                "result": {
+                  "text": "Anaerobic Overload",
+                  "color": "#F97316",
+                  "index": 7
+                }
+              }
+            },
+            {
+              "type": "regex",
+              "options": {
+                "pattern": "^HIGH_AEROBIC_OVERLOAD.*",
+                "result": {
+                  "text": "High Aerobic Overload",
+                  "color": "#F97316",
+                  "index": 8
+                }
+              }
+            },
+            {
+              "type": "regex",
+              "options": {
+                "pattern": "^LOW_AEROBIC_OVERLOAD.*",
+                "result": {
+                  "text": "Low Aerobic Overload",
+                  "color": "#F97316",
+                  "index": 9
+                }
+              }
+            },
+            {
+              "type": "regex",
+              "options": {
+                "pattern": "^BELOW_TARGETS.*",
+                "result": {
+                  "text": "Below Targets",
+                  "color": "#3B82F6",
+                  "index": 10
+                }
+              }
+            },
+            {
+              "type": "regex",
+              "options": {
+                "pattern": "^ABOVE_TARGETS.*",
+                "result": {
+                  "text": "Above Targets",
+                  "color": "#EF4444",
+                  "index": 11
+                }
+              }
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "transparent",
+                "value": null
+              }
+            ]
+          }
+        }
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 12,
+        "x": 12,
+        "y": 0
+      },
+      "id": 112,
+      "options": {
+        "alignValue": "left",
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "mergeValues": true,
+        "rowHeight": 1,
+        "showValue": "never",
+        "tooltip": {
+          "mode": "single"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "garmin_influxdb"
+          },
+          "query": "SELECT \"trainingBalanceFeedbackPhrase\" AS \"Load Focus\" FROM \"TrainingStatus\" WHERE $timeFilter",
+          "rawQuery": true,
+          "refId": "A",
+          "resultFormat": "time_series"
+        }
+      ],
+      "timeFrom": "180d",
+      "title": "Load Focus History — 180d",
+      "type": "state-timeline"
+    },
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "garmin_influxdb"
+      },
+      "description": "Phrase Garmin brute (ex. PRODUCTIVE_1, MAINTAINING_2, RECOVERY_2). Le code numerique trainingStatus n'est pas utilise (mapping incertain selon firmware).",
+      "fieldConfig": {
+        "defaults": {
+          "mappings": [
+            {
+              "options": {
+                "DETRAINING": {
+                  "color": "red",
+                  "text": "Detraining"
+                },
+                "MAINTAINING_1": {
+                  "color": "yellow",
+                  "text": "Maintaining"
+                },
+                "MAINTAINING_2": {
+                  "color": "yellow",
+                  "text": "Maintaining"
+                },
+                "MAINTAINING_3": {
+                  "color": "yellow",
+                  "text": "Maintaining"
+                },
+                "MAINTAINING_4": {
+                  "color": "yellow",
+                  "text": "Maintaining"
+                },
+                "MAINTAINING_5": {
+                  "color": "yellow",
+                  "text": "Maintaining"
+                },
+                "MAINTAINING_6": {
+                  "color": "yellow",
+                  "text": "Maintaining"
+                },
+                "MAINTAINING_7": {
+                  "color": "yellow",
+                  "text": "Maintaining"
+                },
+                "NO_STATUS": {
+                  "color": "rgba(150,150,150,0.5)",
+                  "text": "No status"
+                },
+                "OVERREACHING_1": {
+                  "color": "red",
+                  "text": "Overreaching"
+                },
+                "PEAKING_1": {
+                  "color": "blue",
+                  "text": "Peaking"
+                },
+                "PRODUCTIVE_1": {
+                  "color": "green",
+                  "text": "Productive"
+                },
+                "PRODUCTIVE_2": {
+                  "color": "green",
+                  "text": "Productive"
+                },
+                "PRODUCTIVE_3": {
+                  "color": "green",
+                  "text": "Productive"
+                },
+                "PRODUCTIVE_4": {
+                  "color": "green",
+                  "text": "Productive"
+                },
+                "PRODUCTIVE_5": {
+                  "color": "green",
+                  "text": "Productive"
+                },
+                "PRODUCTIVE_6": {
+                  "color": "green",
+                  "text": "Productive"
+                },
+                "PRODUCTIVE_7": {
+                  "color": "green",
+                  "text": "Productive"
+                },
+                "RECOVERY_1": {
+                  "color": "purple",
+                  "text": "Recovery"
+                },
+                "RECOVERY_2": {
+                  "color": "purple",
+                  "text": "Recovery"
+                },
+                "STRAINED": {
+                  "color": "red",
+                  "text": "Strained"
+                },
+                "UNPRODUCTIVE_1": {
+                  "color": "orange",
+                  "text": "Unproductive"
+                }
+              },
+              "type": "value"
+            }
+          ]
+        }
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 12,
+        "x": 0,
+        "y": 4
+      },
+      "id": 5,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "status",
+          "values": false
+        },
+        "textMode": "value"
+      },
+      "targets": [
+        {
+          "alias": "status",
+          "groupBy": [],
+          "measurement": "TrainingStatus",
+          "orderByTime": "ASC",
+          "policy": "default",
+          "refId": "A",
+          "resultFormat": "table",
+          "select": [
+            [
+              {
+                "params": [
+                  "trainingStatusFeedbackPhrase"
+                ],
+                "type": "field"
+              },
+              {
+                "params": [],
+                "type": "last"
+              },
+              {
+                "params": [
+                  "status"
+                ],
+                "type": "alias"
+              }
+            ]
+          ],
+          "tags": []
+        }
+      ],
+      "title": "Training Status",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "garmin_influxdb"
+      },
+      "description": "Source de verite Garmin officielle (trainingBalanceFeedbackPhrase). Requires extended fetcher patch.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [
+            {
+              "type": "value",
+              "options": {
+                "BALANCED": {
+                  "text": "Balanced",
+                  "color": "#22C55E",
+                  "index": 0
+                },
+                "AEROBIC_LOW_FOCUS": {
+                  "text": "Aerobic Low Focus",
+                  "color": "#86EFAC",
+                  "index": 1
+                },
+                "AEROBIC_HIGH_FOCUS": {
+                  "text": "Aerobic High Focus",
+                  "color": "#FBBF24",
+                  "index": 2
+                },
+                "ANAEROBIC_FOCUS": {
+                  "text": "Anaerobic Focus",
+                  "color": "#EC4899",
+                  "index": 3
+                },
+                "AEROBIC_LOW_SHORTAGE": {
+                  "text": "Aerobic Low Shortage",
+                  "color": "#1E40AF",
+                  "index": 4
+                },
+                "AEROBIC_HIGH_SHORTAGE": {
+                  "text": "Aerobic High Shortage",
+                  "color": "#A78BFA",
+                  "index": 5
+                },
+                "ANAEROBIC_SHORTAGE": {
+                  "text": "Anaerobic Shortage",
+                  "color": "#EF4444",
+                  "index": 6
+                },
+                "ANAEROBIC_OVERLOAD": {
+                  "text": "Anaerobic Overload",
+                  "color": "#F97316",
+                  "index": 7
+                },
+                "HIGH_AEROBIC_OVERLOAD": {
+                  "text": "High Aerobic Overload",
+                  "color": "#F97316",
+                  "index": 8
+                },
+                "LOW_AEROBIC_OVERLOAD": {
+                  "text": "Low Aerobic Overload",
+                  "color": "#F97316",
+                  "index": 9
+                },
+                "BELOW_TARGETS": {
+                  "text": "Below Targets",
+                  "color": "#3B82F6",
+                  "index": 10
+                },
+                "ABOVE_TARGETS": {
+                  "text": "Above Targets",
+                  "color": "#EF4444",
+                  "index": 11
+                },
+                "LOW_AEROBIC_SHORTAGE": {
+                  "text": "Aerobic Low Shortage",
+                  "color": "#1E40AF",
+                  "index": 20
+                },
+                "HIGH_AEROBIC_SHORTAGE": {
+                  "text": "Aerobic High Shortage",
+                  "color": "#A78BFA",
+                  "index": 21
+                }
+              }
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "text",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 12,
+        "x": 12,
+        "y": 4
+      },
+      "id": 11,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "shortage",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "value",
+        "wideLayout": true
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "garmin_influxdb"
+          },
+          "query": "SELECT last(\"trainingBalanceFeedbackPhrase\") AS \"shortage\" FROM \"TrainingStatus\" WHERE $timeFilter",
+          "rawQuery": true,
+          "refId": "A",
+          "resultFormat": "table"
+        }
+      ],
+      "title": "Load Focus",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "garmin_influxdb"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "fillOpacity": 10,
+            "lineWidth": 2,
+            "spanNulls": true,
+            "thresholdsStyle": {
+              "mode": "area"
+            }
+          },
+          "decimals": 2,
+          "max": 2,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "red",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 0.6
+              },
+              {
+                "color": "green",
+                "value": 0.8
+              },
+              {
+                "color": "yellow",
+                "value": 1.3
+              },
+              {
+                "color": "red",
+                "value": 1.5
+              }
+            ]
+          },
+          "unit": "none"
+        }
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 8
+      },
+      "id": 6,
+      "options": {
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single"
+        }
+      },
+      "targets": [
+        {
+          "alias": "ACWR",
+          "groupBy": [
+            {
+              "params": [
+                "1d"
+              ],
+              "type": "time"
+            },
+            {
+              "params": [
+                "null"
+              ],
+              "type": "fill"
+            }
+          ],
+          "measurement": "TrainingStatus",
+          "orderByTime": "ASC",
+          "policy": "default",
+          "refId": "A",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "dailyAcuteChronicWorkloadRatio"
+                ],
+                "type": "field"
+              },
+              {
+                "params": [],
+                "type": "last"
+              }
+            ]
+          ],
+          "tags": []
+        }
+      ],
+      "timeFrom": "90d",
+      "title": "Acute Training Load (ACWR)",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "garmin_influxdb"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "fillOpacity": 5,
+            "lineWidth": 2,
+            "spanNulls": true
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Acute (7j)"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "orange",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Chronic (28j)"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "blue",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Min target"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "rgba(100,100,100,0.4)",
+                  "mode": "fixed"
+                }
+              },
+              {
+                "id": "custom.lineStyle",
+                "value": {
+                  "fill": "dash"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Max target"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "rgba(100,100,100,0.4)",
+                  "mode": "fixed"
+                }
+              },
+              {
+                "id": "custom.lineStyle",
+                "value": {
+                  "fill": "dash"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 8
+      },
+      "id": 7,
+      "options": {
+        "legend": {
+          "calcs": [
+            "mean",
+            "last"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi"
+        }
+      },
+      "targets": [
+        {
+          "alias": "Acute (7j)",
+          "groupBy": [
+            {
+              "params": [
+                "1d"
+              ],
+              "type": "time"
+            },
+            {
+              "params": [
+                "null"
+              ],
+              "type": "fill"
+            }
+          ],
+          "measurement": "TrainingStatus",
+          "orderByTime": "ASC",
+          "policy": "default",
+          "refId": "A",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "dailyTrainingLoadAcute"
+                ],
+                "type": "field"
+              },
+              {
+                "params": [],
+                "type": "last"
+              }
+            ]
+          ],
+          "tags": []
+        },
+        {
+          "alias": "Chronic (28j)",
+          "groupBy": [
+            {
+              "params": [
+                "1d"
+              ],
+              "type": "time"
+            },
+            {
+              "params": [
+                "null"
+              ],
+              "type": "fill"
+            }
+          ],
+          "measurement": "TrainingStatus",
+          "orderByTime": "ASC",
+          "policy": "default",
+          "refId": "B",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "dailyTrainingLoadChronic"
+                ],
+                "type": "field"
+              },
+              {
+                "params": [],
+                "type": "last"
+              }
+            ]
+          ],
+          "tags": []
+        },
+        {
+          "alias": "Min target",
+          "groupBy": [
+            {
+              "params": [
+                "1d"
+              ],
+              "type": "time"
+            },
+            {
+              "params": [
+                "null"
+              ],
+              "type": "fill"
+            }
+          ],
+          "measurement": "TrainingStatus",
+          "orderByTime": "ASC",
+          "policy": "default",
+          "refId": "C",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "minTrainingLoadChronic"
+                ],
+                "type": "field"
+              },
+              {
+                "params": [],
+                "type": "last"
+              }
+            ]
+          ],
+          "tags": []
+        },
+        {
+          "alias": "Max target",
+          "groupBy": [
+            {
+              "params": [
+                "1d"
+              ],
+              "type": "time"
+            },
+            {
+              "params": [
+                "null"
+              ],
+              "type": "fill"
+            }
+          ],
+          "measurement": "TrainingStatus",
+          "orderByTime": "ASC",
+          "policy": "default",
+          "refId": "D",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "maxTrainingLoadChronic"
+                ],
+                "type": "field"
+              },
+              {
+                "params": [],
+                "type": "last"
+              }
+            ]
+          ],
+          "tags": []
+        }
+      ],
+      "timeFrom": "90d",
+      "title": "Acute vs Chronic Load + Garmin Targets",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "garmin_influxdb"
+      },
+      "description": "Bandes : bleu = shortage (sous target_min), vert = optimal range, rouge = overload (au-dessus target_max). Thresholds calibres sur target_min/max actuels Garmin (a recalibrer si Garmin ajuste).",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "min": 0,
+          "unit": "none",
+          "decimals": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "text",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Anaerobic"
+            },
+            "properties": [
+              {
+                "id": "max",
+                "value": 600
+              },
+              {
+                "id": "thresholds",
+                "value": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "#A48AC8",
+                      "value": null
+                    },
+                    {
+                      "color": "#7B57C9",
+                      "value": 133
+                    },
+                    {
+                      "color": "#A48AC8",
+                      "value": 400
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "High Aerobic"
+            },
+            "properties": [
+              {
+                "id": "max",
+                "value": 1500
+              },
+              {
+                "id": "thresholds",
+                "value": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "#E8A555",
+                      "value": null
+                    },
+                    {
+                      "color": "#F0862A",
+                      "value": 424
+                    },
+                    {
+                      "color": "#E8A555",
+                      "value": 825
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Low Aerobic"
+            },
+            "properties": [
+              {
+                "id": "max",
+                "value": 1200
+              },
+              {
+                "id": "thresholds",
+                "value": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "#5CC8D8",
+                      "value": null
+                    },
+                    {
+                      "color": "#00BCD4",
+                      "value": 309
+                    },
+                    {
+                      "color": "#5CC8D8",
+                      "value": 710
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 16
+      },
+      "id": 12,
+      "options": {
+        "displayMode": "gradient",
+        "orientation": "horizontal",
+        "showUnfilled": true,
+        "sizing": "auto",
+        "minVizHeight": 30,
+        "maxVizHeight": 75,
+        "minVizWidth": 200,
+        "namePlacement": "top",
+        "valueMode": "color",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "text": {}
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "garmin_influxdb"
+          },
+          "query": "SELECT last(\"monthlyLoadAnaerobic\") AS \"Anaerobic\", last(\"monthlyLoadAerobicHigh\") AS \"High Aerobic\", last(\"monthlyLoadAerobicLow\") AS \"Low Aerobic\" FROM \"TrainingStatus\" WHERE $timeFilter",
+          "rawQuery": true,
+          "refId": "A",
+          "resultFormat": "table"
+        }
+      ],
+      "title": "Load Focus 28d — vs Optimal Range",
+      "type": "bargauge"
+    },
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "garmin_influxdb"
+      },
+      "description": "Repartition % du temps en zones HR par semaine (lundi-dimanche, fuseau Paris). Couleurs Garmin : Z1+Z2 bleu (cible >= 80%), Z3 vert (cible 10%), Z4+Z5 rouge (cible <= 10%). 12 semaines glissantes incluant la semaine en cours.",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "axisPlacement": "hidden",
+            "fillOpacity": 90,
+            "lineWidth": 0
+          },
+          "unit": "s"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byRegexp",
+              "options": ".*Z1\\+Z2.*"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "#5C7A99",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byRegexp",
+              "options": ".*Z3 \\(cible.*"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "#D4A054",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byRegexp",
+              "options": ".*Z4\\+Z5.*"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "#C27080",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byType",
+              "options": "time"
+            },
+            "properties": [
+              {
+                "id": "custom.axisPlacement",
+                "value": "bottom"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byRegexp",
+              "options": ".*%$"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "percentunit"
+              },
+              {
+                "id": "decimals",
+                "value": 1
+              },
+              {
+                "id": "custom.hideFrom",
+                "value": {
+                  "legend": true,
+                  "tooltip": false,
+                  "viz": true
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 16
+      },
+      "id": 10,
+      "options": {
+        "barRadius": 0.1,
+        "barWidth": 0.7,
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "orientation": "vertical",
+        "showValue": "always",
+        "stacking": "percent",
+        "text": {
+          "valueSize": 16
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "none"
+        },
+        "xTickLabelRotation": 0,
+        "xTickLabelSpacing": 100
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "garmin_influxdb"
+          },
+          "query": "SELECT sum(\"hrTimeInZone_1\") + sum(\"hrTimeInZone_2\") AS \"Z1+Z2 (cible 80%)\", sum(\"hrTimeInZone_3\") AS \"Z3 (cible 10%)\", sum(\"hrTimeInZone_4\") + sum(\"hrTimeInZone_5\") AS \"Z4+Z5 (cible 10%)\" FROM \"ActivitySummary\" WHERE $timeFilter AND \"ActivitySelector\" =~ /running/ GROUP BY time(7d, 4d) fill(null)",
+          "rawQuery": true,
+          "refId": "A",
+          "resultFormat": "time_series"
+        }
+      ],
+      "timeFrom": "84d",
+      "title": "Polarization 80/10/10 — Weekly (12 wk)",
+      "transformations": [
+        {
+          "id": "calculateField",
+          "options": {
+            "alias": "_total",
+            "mode": "reduceRow",
+            "reduce": {
+              "reducer": "sum"
+            },
+            "replaceFields": false
+          }
+        },
+        {
+          "id": "calculateField",
+          "options": {
+            "alias": "Z1+Z2 %",
+            "binary": {
+              "left": "Z1+Z2 (cible 80%)",
+              "operator": "/",
+              "right": "_total"
+            },
+            "mode": "binary",
+            "replaceFields": false
+          }
+        },
+        {
+          "id": "calculateField",
+          "options": {
+            "alias": "Z3 %",
+            "binary": {
+              "left": "Z3 (cible 10%)",
+              "operator": "/",
+              "right": "_total"
+            },
+            "mode": "binary",
+            "replaceFields": false
+          }
+        },
+        {
+          "id": "calculateField",
+          "options": {
+            "alias": "Z4+Z5 %",
+            "binary": {
+              "left": "Z4+Z5 (cible 10%)",
+              "operator": "/",
+              "right": "_total"
+            },
+            "mode": "binary",
+            "replaceFields": false
+          }
+        },
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "_total": true
+            },
+            "renameByName": {
+              "ActivitySummary.Z1+Z2 (cible 80%)": "Z1+Z2 (cible 80%)",
+              "ActivitySummary.Z3 (cible 10%)": "Z3 (cible 10%)",
+              "ActivitySummary.Z4+Z5 (cible 10%)": "Z4+Z5 (cible 10%)"
+            }
+          }
+        }
+      ],
+      "type": "barchart"
+    },
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "garmin_influxdb"
+      },
+      "description": "Synthèse daily : TE aero/ana + acute/chronic load + endurance score.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 29,
+            "gradientMode": "opacity",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineStyle": {
+              "fill": "solid"
+            },
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "showValues": false,
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "orange",
+                "value": 0
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Training load"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "blue",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Aerobic"
+            },
+            "properties": [
+              {
+                "id": "custom.drawStyle",
+                "value": "bars"
+              },
+              {
+                "id": "decimals",
+                "value": 1
+              },
+              {
+                "id": "custom.axisPlacement",
+                "value": "right"
+              },
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "orange",
+                  "mode": "fixed"
+                }
+              },
+              {
+                "id": "custom.gradientMode",
+                "value": "none"
+              },
+              {
+                "id": "custom.fillOpacity",
+                "value": 100
+              },
+              {
+                "id": "custom.stacking",
+                "value": {
+                  "group": "A",
+                  "mode": "normal"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Anaerobic"
+            },
+            "properties": [
+              {
+                "id": "custom.drawStyle",
+                "value": "bars"
+              },
+              {
+                "id": "decimals",
+                "value": 1
+              },
+              {
+                "id": "custom.axisPlacement",
+                "value": "right"
+              },
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "purple",
+                  "mode": "fixed"
+                }
+              },
+              {
+                "id": "custom.gradientMode",
+                "value": "none"
+              },
+              {
+                "id": "custom.fillOpacity",
+                "value": 99
+              },
+              {
+                "id": "custom.stacking",
+                "value": {
+                  "group": "A",
+                  "mode": "normal"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Endurance score"
+            },
+            "properties": [
+              {
+                "id": "custom.fillOpacity",
+                "value": 0
+              },
+              {
+                "id": "custom.axisPlacement",
+                "value": "right"
+              },
+              {
+                "id": "min"
+              },
+              {
+                "id": "max"
+              },
+              {
+                "id": "unit"
+              },
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "green",
+                  "mode": "fixed"
+                }
+              },
+              {
+                "id": "custom.axisColorMode",
+                "value": "series"
+              },
+              {
+                "id": "custom.gradientMode",
+                "value": "opacity"
+              },
+              {
+                "id": "custom.fillOpacity",
+                "value": 47
+              },
+              {
+                "id": "custom.lineStyle",
+                "value": {
+                  "dash": [
+                    0,
+                    10
+                  ],
+                  "fill": "dot"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Training load"
+            },
+            "properties": [
+              {
+                "id": "custom.axisColorMode",
+                "value": "series"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Chronic load"
+            },
+            "properties": [
+              {
+                "id": "custom.fillOpacity",
+                "value": 0
+              },
+              {
+                "id": "custom.lineStyle",
+                "value": {
+                  "dash": [
+                    10,
+                    20
+                  ],
+                  "fill": "dash"
+                }
+              },
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "dark-orange",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 24,
+        "x": 0,
+        "y": 24
+      },
+      "id": 13,
+      "options": {
+        "legend": {
+          "calcs": [
+            "min",
+            "max",
+            "mean",
+            "lastNotNull"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "12.4.2",
+      "targets": [
+        {
+          "alias": "Aerobic",
+          "datasource": {
+            "type": "influxdb",
+            "uid": "garmin_influxdb"
+          },
+          "groupBy": [
+            {
+              "params": [
+                "1d"
+              ],
+              "type": "time"
+            },
+            {
+              "params": [
+                "null"
+              ],
+              "type": "fill"
+            }
+          ],
+          "measurement": "ActivitySession",
+          "orderByTime": "ASC",
+          "policy": "default",
+          "refId": "A",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "Aerobic_Training"
+                ],
+                "type": "field"
+              },
+              {
+                "params": [],
+                "type": "max"
+              }
+            ]
+          ],
+          "tags": []
+        },
+        {
+          "alias": "Anaerobic",
+          "datasource": {
+            "type": "influxdb",
+            "uid": "garmin_influxdb"
+          },
+          "groupBy": [
+            {
+              "params": [
+                "1d"
+              ],
+              "type": "time"
+            },
+            {
+              "params": [
+                "null"
+              ],
+              "type": "fill"
+            }
+          ],
+          "measurement": "ActivitySession",
+          "orderByTime": "ASC",
+          "policy": "default",
+          "refId": "B",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "Anaerobic_Training"
+                ],
+                "type": "field"
+              },
+              {
+                "params": [],
+                "type": "max"
+              }
+            ]
+          ],
+          "tags": []
+        },
+        {
+          "alias": "Training load",
+          "datasource": {
+            "type": "influxdb",
+            "uid": "garmin_influxdb"
+          },
+          "groupBy": [
+            {
+              "params": [
+                "1d"
+              ],
+              "type": "time"
+            },
+            {
+              "params": [
+                "null"
+              ],
+              "type": "fill"
+            }
+          ],
+          "measurement": "TrainingStatus",
+          "orderByTime": "ASC",
+          "policy": "default",
+          "refId": "C",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "dailyTrainingLoadAcute"
+                ],
+                "type": "field"
+              },
+              {
+                "params": [],
+                "type": "max"
+              }
+            ]
+          ],
+          "tags": []
+        },
+        {
+          "alias": "Chronic load",
+          "datasource": {
+            "type": "influxdb",
+            "uid": "garmin_influxdb"
+          },
+          "groupBy": [
+            {
+              "params": [
+                "1d"
+              ],
+              "type": "time"
+            },
+            {
+              "params": [
+                "null"
+              ],
+              "type": "fill"
+            }
+          ],
+          "measurement": "TrainingStatus",
+          "orderByTime": "ASC",
+          "policy": "default",
+          "refId": "D",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "dailyTrainingLoadChronic"
+                ],
+                "type": "field"
+              },
+              {
+                "params": [],
+                "type": "max"
+              }
+            ]
+          ],
+          "tags": []
+        },
+        {
+          "alias": "Endurance score",
+          "datasource": {
+            "type": "influxdb",
+            "uid": "garmin_influxdb"
+          },
+          "groupBy": [
+            {
+              "params": [
+                "1d"
+              ],
+              "type": "time"
+            },
+            {
+              "params": [
+                "null"
+              ],
+              "type": "fill"
+            }
+          ],
+          "measurement": "EnduranceScore",
+          "orderByTime": "ASC",
+          "policy": "default",
+          "refId": "E",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "EnduranceScore"
+                ],
+                "type": "field"
+              },
+              {
+                "params": [],
+                "type": "max"
+              }
+            ]
+          ],
+          "tags": []
+        }
+      ],
+      "title": "Training Intensity (Aerobic + Anaerobic + Load + Endurance)",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "garmin_influxdb"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "axisPlacement": "auto",
+            "drawStyle": "bars",
+            "fillOpacity": 80,
+            "gradientMode": "none",
+            "lineWidth": 1
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byFrameRefID",
+              "options": "A"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "lengthm"
+              },
+              {
+                "id": "displayName",
+                "value": "Distance"
+              },
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "green",
+                  "mode": "fixed"
+                }
+              },
+              {
+                "id": "custom.axisPlacement",
+                "value": "left"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byFrameRefID",
+              "options": "B"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "s"
+              },
+              {
+                "id": "displayName",
+                "value": "Temps"
+              },
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "blue",
+                  "mode": "fixed"
+                }
+              },
+              {
+                "id": "custom.axisPlacement",
+                "value": "right"
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 24,
+        "x": 0,
+        "y": 32
+      },
+      "id": 12,
+      "options": {
+        "barWidth": 0.85,
+        "groupWidth": 0.8,
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "orientation": "vertical",
+        "stacking": "none",
+        "tooltip": {
+          "mode": "multi",
+          "sort": "none"
+        },
+        "xTickLabelRotation": 0,
+        "xTickLabelSpacing": 0
+      },
+      "targets": [
+        {
+          "alias": "Distance",
+          "policy": "default",
+          "query": "SELECT sum(\"distance\") FROM \"ActivitySummary\" WHERE $timeFilter AND \"ActivitySelector\" =~ /running/ GROUP BY time(7d, 4d) fill(0)",
+          "rawQuery": true,
+          "refId": "A",
+          "resultFormat": "time_series"
+        },
+        {
+          "alias": "Temps",
+          "policy": "default",
+          "query": "SELECT sum(\"elapsedDuration\") FROM \"ActivitySummary\" WHERE $timeFilter AND \"ActivitySelector\" =~ /running/ GROUP BY time(7d, 4d) fill(0)",
+          "rawQuery": true,
+          "refId": "B",
+          "resultFormat": "time_series"
+        }
+      ],
+      "timeFrom": "182d",
+      "title": "Weekly Volume — 6 Months (Mon-Sun)",
+      "type": "barchart"
+    },
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "garmin_influxdb"
+      },
+      "description": "Foster Monotony & Strain - Carl Foster (Univ. Wisconsin-La Crosse, 1998 ; Foster JC et al., J Strength Cond Res 2001). Indicateurs de variabilite et surcharge cumulee, valides comme marqueurs d'overtraining et d'illness chez les athletes endurance.\n\nCE QUE CA MESURE\n- Monotony = moyenne(charge_quotidienne_7j) / ecart-type(charge_quotidienne_7j). Capte l'uniformite de la semaine. Une semaine 100/100/100/100/100/100/100 (tres monotone) est physiologiquement pire qu'une semaine 200/50/150/0/200/100/100 (variee, meme charge totale). L'organisme a besoin d'alternance stress/repos pour declencher la supercompensation.\n- Strain = charge_hebdo_totale x Monotony. Composite qui pondere charge ET uniformite.\n\nCALCUL\nSource : activityTrainingLoad Garmin sommee par jour, filtre running, jours OFF = 0. Fenetre glissante 7 jours.\nVariance via identite Var(X) = E[X^2] - E[X]^2 (InfluxQL n'a pas moving_stddev natif).\nStrain = (mean_7d * 7) * Monotony = sum_7j * Monotony.\n\nLECTURE MONOTONY\n< 1.5 : varie et sain (vert)\n1.5 - 2.0 : zone de vigilance (jaune)\n> 2.0 : risque accru illness/staleness (rouge, ref. Foster 1998)\n\nLECTURE STRAIN\nPas de seuil absolu - c'est la derive qui compte. Spike >50% au-dessus du baseline moyen 4 sem = red flag.\n\nPIEGES\n- Une Monotony elevee pendant un taper voulu n'est pas pathologique (contexte > seuil).\n- Filtre running uniquement (coherent avec dashboard 02). Muscu/velo non comptes.\n- Jours OFF comptes comme 0 (voulu : le repos EST la variation).\n- Different d'ACWR (orthogonal) : ACWR mesure la progression, Monotony mesure la variabilite.\n\nATTENTION BASE BUILDING\nBase aerobie = risque reel de Monotony elevee (seances Z2 repetitives de duree similaire). Foster 1998 a documente les illness rates les plus hauts chez ce profil. Si Monotony derive >1.8 sans varier les durees, alterner LR / EZ court / off.",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "axisPlacement": "auto",
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "lineWidth": 2,
+            "spanNulls": true
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byFrameRefID",
+              "options": "A"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Monotony"
+              },
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "#3B82F6",
+                  "mode": "fixed"
+                }
+              },
+              {
+                "id": "custom.axisPlacement",
+                "value": "left"
+              },
+              {
+                "id": "custom.axisLabel",
+                "value": "Monotony (mean/SD)"
+              },
+              {
+                "id": "min",
+                "value": 0
+              },
+              {
+                "id": "max",
+                "value": 4
+              },
+              {
+                "id": "decimals",
+                "value": 2
+              },
+              {
+                "id": "thresholds",
+                "value": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "green",
+                      "value": null
+                    },
+                    {
+                      "color": "yellow",
+                      "value": 1.5
+                    },
+                    {
+                      "color": "red",
+                      "value": 2
+                    }
+                  ]
+                }
+              },
+              {
+                "id": "custom.thresholdsStyle",
+                "value": {
+                  "mode": "area"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byFrameRefID",
+              "options": "B"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Strain"
+              },
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "#F59E0B",
+                  "mode": "fixed"
+                }
+              },
+              {
+                "id": "custom.axisPlacement",
+                "value": "right"
+              },
+              {
+                "id": "custom.axisLabel",
+                "value": "Strain (load x monotony)"
+              },
+              {
+                "id": "custom.fillOpacity",
+                "value": 3
+              },
+              {
+                "id": "custom.lineStyle",
+                "value": {
+                  "dash": [
+                    6,
+                    4
+                  ],
+                  "fill": "dash"
+                }
+              },
+              {
+                "id": "decimals",
+                "value": 0
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 24,
+        "x": 0,
+        "y": 52
+      },
+      "id": 8,
+      "options": {
+        "legend": {
+          "calcs": [
+            "last",
+            "mean",
+            "max"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "garmin_influxdb"
+          },
+          "query": "SELECT moving_average(daily_tl, 7) / sqrt(moving_average(daily_tl_sq, 7) - moving_average(daily_tl, 7) * moving_average(daily_tl, 7)) AS \"Monotony\" FROM (SELECT sum(\"activityTrainingLoad\") AS daily_tl, sum(\"activityTrainingLoad\") * sum(\"activityTrainingLoad\") AS daily_tl_sq FROM \"ActivitySummary\" WHERE $timeFilter AND \"ActivitySelector\" =~ /running/ GROUP BY time(1d) fill(0))",
+          "rawQuery": true,
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "garmin_influxdb"
+          },
+          "query": "SELECT (moving_average(daily_tl, 7) * 7) * (moving_average(daily_tl, 7) / sqrt(moving_average(daily_tl_sq, 7) - moving_average(daily_tl, 7) * moving_average(daily_tl, 7))) AS \"Strain\" FROM (SELECT sum(\"activityTrainingLoad\") AS daily_tl, sum(\"activityTrainingLoad\") * sum(\"activityTrainingLoad\") AS daily_tl_sq FROM \"ActivitySummary\" WHERE $timeFilter AND \"ActivitySelector\" =~ /running/ GROUP BY time(1d) fill(0))",
+          "rawQuery": true,
+          "refId": "B"
+        }
+      ],
+      "title": "Foster Monotony & Strain (7d Rolling)",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "garmin_influxdb"
+      },
+      "description": "Rolling mean approximation of TrainingPeaks EWMA. CTL = forme aerobie 6 sem. ATL = fatigue 7j. TSB = CTL - ATL : negatif = surcharge, positif = pic de forme. Sweet spot competition : TSB +5 a +15.",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "axisPlacement": "auto",
+            "drawStyle": "line",
+            "fillOpacity": 15,
+            "lineWidth": 2,
+            "spanNulls": true
+          },
+          "decimals": 1,
+          "unit": "short"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "CTL (fitness 42j)"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "#3B82F6",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "ATL (fatigue 7j)"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "#EC4899",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "TSB (form)"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "#F59E0B",
+                  "mode": "fixed"
+                }
+              },
+              {
+                "id": "custom.fillOpacity",
+                "value": 5
+              },
+              {
+                "id": "custom.lineStyle",
+                "value": {
+                  "dash": [
+                    6,
+                    4
+                  ],
+                  "fill": "dash"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 24,
+        "x": 0,
+        "y": 60
+      },
+      "id": 101,
+      "options": {
+        "legend": {
+          "calcs": [
+            "last",
+            "min",
+            "max"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "garmin_influxdb"
+          },
+          "query": "SELECT moving_average(daily_tl, 42) AS \"CTL (fitness 42j)\", moving_average(daily_tl, 7) AS \"ATL (fatigue 7j)\" FROM (SELECT sum(\"activityTrainingLoad\") AS daily_tl FROM \"ActivitySummary\" WHERE $timeFilter AND \"ActivitySelector\" =~ /running/ GROUP BY time(1d) fill(0))",
+          "rawQuery": true,
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "garmin_influxdb"
+          },
+          "query": "SELECT moving_average(daily_tl, 42) - moving_average(daily_tl, 7) AS \"TSB (form)\" FROM (SELECT sum(\"activityTrainingLoad\") AS daily_tl FROM \"ActivitySummary\" WHERE $timeFilter AND \"ActivitySelector\" =~ /running/ GROUP BY time(1d) fill(0))",
+          "rawQuery": true,
+          "refId": "B"
+        }
+      ],
+      "title": "PMC — Fitness (CTL 42d) / Fatigue (ATL 7d) / Form (TSB)",
+      "transformations": [
+        {
+          "id": "renameByRegex",
+          "options": {
+            "regex": "^ActivitySummary\\.(.*)$",
+            "renamePattern": "$1"
+          }
+        }
+      ],
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "garmin_influxdb"
+      },
+      "description": "Replique du graphe HRV Status Garmin Connect. Bande grise = baseline personnel. Marqueurs colores par status : vert = Balanced, orange = Unbalanced, rouge = Low.",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "fillOpacity": 0,
+            "lineWidth": 0,
+            "showPoints": "never",
+            "spanNulls": true
+          },
+          "min": 30,
+          "unit": "none"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "HRV 7-day avg"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "rgba(150,150,150,0.5)",
+                  "mode": "fixed"
+                }
+              },
+              {
+                "id": "custom.lineWidth",
+                "value": 1
+              },
+              {
+                "id": "custom.showPoints",
+                "value": "never"
+              },
+              {
+                "id": "custom.hideFrom",
+                "value": {
+                  "legend": true,
+                  "tooltip": true,
+                  "viz": false
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Balanced"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "#73BF69",
+                  "mode": "fixed"
+                }
+              },
+              {
+                "id": "custom.lineWidth",
+                "value": 0
+              },
+              {
+                "id": "custom.showPoints",
+                "value": "always"
+              },
+              {
+                "id": "custom.pointSize",
+                "value": 8
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Unbalanced"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "#FF9830",
+                  "mode": "fixed"
+                }
+              },
+              {
+                "id": "custom.lineWidth",
+                "value": 0
+              },
+              {
+                "id": "custom.showPoints",
+                "value": "always"
+              },
+              {
+                "id": "custom.pointSize",
+                "value": 8
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Low"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "#F2495C",
+                  "mode": "fixed"
+                }
+              },
+              {
+                "id": "custom.lineWidth",
+                "value": 0
+              },
+              {
+                "id": "custom.showPoints",
+                "value": "always"
+              },
+              {
+                "id": "custom.pointSize",
+                "value": 8
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Baseline Upper"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "rgba(150,150,150,0.6)",
+                  "mode": "fixed"
+                }
+              },
+              {
+                "id": "custom.lineWidth",
+                "value": 0
+              },
+              {
+                "id": "custom.fillBelowTo",
+                "value": "Baseline Lower"
+              },
+              {
+                "id": "custom.fillOpacity",
+                "value": 30
+              },
+              {
+                "id": "custom.hideFrom",
+                "value": {
+                  "legend": true,
+                  "tooltip": true,
+                  "viz": false
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Baseline Lower"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "rgba(150,150,150,0.6)",
+                  "mode": "fixed"
+                }
+              },
+              {
+                "id": "custom.lineWidth",
+                "value": 0
+              },
+              {
+                "id": "custom.hideFrom",
+                "value": {
+                  "legend": true,
+                  "tooltip": true,
+                  "viz": false
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 24,
+        "x": 0,
+        "y": 68
+      },
+      "id": 121,
+      "options": {
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "alias": "HRV 7-day avg",
+          "groupBy": [
+            {
+              "params": [
+                "1d"
+              ],
+              "type": "time"
+            },
+            {
+              "params": [
+                "previous"
+              ],
+              "type": "fill"
+            }
+          ],
+          "measurement": "HRVStatus",
+          "orderByTime": "ASC",
+          "policy": "default",
+          "refId": "A",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "weeklyAvg"
+                ],
+                "type": "field"
+              },
+              {
+                "params": [],
+                "type": "mean"
+              }
+            ]
+          ],
+          "tags": []
+        },
+        {
+          "alias": "Balanced",
+          "groupBy": [
+            {
+              "params": [
+                "1d"
+              ],
+              "type": "time"
+            },
+            {
+              "params": [
+                "null"
+              ],
+              "type": "fill"
+            }
+          ],
+          "measurement": "HRVStatus",
+          "orderByTime": "ASC",
+          "policy": "default",
+          "query": "SELECT mean(\"weeklyAvg\") AS \"Balanced\" FROM \"HRVStatus\" WHERE \"status\" = 'BALANCED' AND $timeFilter GROUP BY time(1d) fill(null)",
+          "rawQuery": true,
+          "refId": "B",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "weeklyAvg"
+                ],
+                "type": "field"
+              },
+              {
+                "params": [],
+                "type": "mean"
+              }
+            ]
+          ],
+          "tags": []
+        },
+        {
+          "alias": "Unbalanced",
+          "groupBy": [
+            {
+              "params": [
+                "1d"
+              ],
+              "type": "time"
+            },
+            {
+              "params": [
+                "null"
+              ],
+              "type": "fill"
+            }
+          ],
+          "measurement": "HRVStatus",
+          "orderByTime": "ASC",
+          "policy": "default",
+          "query": "SELECT mean(\"weeklyAvg\") AS \"Unbalanced\" FROM \"HRVStatus\" WHERE \"status\" = 'UNBALANCED' AND $timeFilter GROUP BY time(1d) fill(null)",
+          "rawQuery": true,
+          "refId": "C",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "weeklyAvg"
+                ],
+                "type": "field"
+              },
+              {
+                "params": [],
+                "type": "mean"
+              }
+            ]
+          ],
+          "tags": []
+        },
+        {
+          "alias": "Low",
+          "groupBy": [
+            {
+              "params": [
+                "1d"
+              ],
+              "type": "time"
+            },
+            {
+              "params": [
+                "null"
+              ],
+              "type": "fill"
+            }
+          ],
+          "measurement": "HRVStatus",
+          "orderByTime": "ASC",
+          "policy": "default",
+          "query": "SELECT mean(\"weeklyAvg\") AS \"Low\" FROM \"HRVStatus\" WHERE \"status\" = 'LOW' AND $timeFilter GROUP BY time(1d) fill(null)",
+          "rawQuery": true,
+          "refId": "D",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "weeklyAvg"
+                ],
+                "type": "field"
+              },
+              {
+                "params": [],
+                "type": "mean"
+              }
+            ]
+          ],
+          "tags": []
+        },
+        {
+          "alias": "Baseline Upper",
+          "groupBy": [
+            {
+              "params": [
+                "1d"
+              ],
+              "type": "time"
+            },
+            {
+              "params": [
+                "previous"
+              ],
+              "type": "fill"
+            }
+          ],
+          "measurement": "HRVStatus",
+          "orderByTime": "ASC",
+          "policy": "default",
+          "refId": "E",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "baselineBalancedUpper"
+                ],
+                "type": "field"
+              },
+              {
+                "params": [],
+                "type": "mean"
+              }
+            ]
+          ],
+          "tags": []
+        },
+        {
+          "alias": "Baseline Lower",
+          "groupBy": [
+            {
+              "params": [
+                "1d"
+              ],
+              "type": "time"
+            },
+            {
+              "params": [
+                "previous"
+              ],
+              "type": "fill"
+            }
+          ],
+          "measurement": "HRVStatus",
+          "orderByTime": "ASC",
+          "policy": "default",
+          "refId": "F",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "baselineLowUpper"
+                ],
+                "type": "field"
+              },
+              {
+                "params": [],
+                "type": "mean"
+              }
+            ]
+          ],
+          "tags": []
+        }
+      ],
+      "title": "HRV Status (7-day avg + baseline)",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "garmin_influxdb"
+      },
+      "description": "Current heat acclimation trend from Garmin.",
+      "fieldConfig": {
+        "defaults": {
+          "mappings": [
+            {
+              "options": {
+                "ACCLIMATED": {
+                  "color": "green",
+                  "text": "Acclimated"
+                },
+                "ACCLIMATIZING": {
+                  "color": "orange",
+                  "text": "Acclimatizing"
+                }
+              },
+              "type": "value"
+            },
+            {
+              "options": {
+                "match": "null",
+                "result": {
+                  "color": "rgba(150,150,150,0.5)",
+                  "text": "N/A"
+                }
+              },
+              "type": "special"
+            }
+          ]
+        }
+      },
+      "gridPos": {
+        "x": 4,
+        "y": 76,
+        "w": 4,
+        "h": 5
+      },
+      "id": 16,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "/trend/",
+          "values": false
+        },
+        "textMode": "value"
+      },
+      "targets": [
+        {
+          "alias": "trend",
+          "groupBy": [],
+          "measurement": "HeatAltitudeAcclimation",
+          "orderByTime": "ASC",
+          "policy": "default",
+          "refId": "A",
+          "resultFormat": "table",
+          "select": [
+            [
+              {
+                "params": [
+                  "heatTrend"
+                ],
+                "type": "field"
+              },
+              {
+                "params": [],
+                "type": "last"
+              },
+              {
+                "params": [
+                  "trend"
+                ],
+                "type": "alias"
+              }
+            ]
+          ],
+          "tags": []
+        }
+      ],
+      "title": "Heat Trend",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "garmin_influxdb"
+      },
+      "description": "Pourcentage d'acclimatation chaleur Garmin. Monte avec l'entrainement par temps chaud. >75% = bien acclimate. Pattern saisonnier attendu.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "continuous-GrYlRd"
+          },
+          "custom": {
+            "fillOpacity": 15,
+            "gradientMode": "scheme",
+            "lineWidth": 2,
+            "spanNulls": true
+          },
+          "max": 100,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "red",
+                "value": null
+              },
+              {
+                "color": "orange",
+                "value": 25
+              },
+              {
+                "color": "yellow",
+                "value": 50
+              },
+              {
+                "color": "green",
+                "value": 75
+              }
+            ]
+          },
+          "unit": "percent"
+        }
+      },
+      "gridPos": {
+        "x": 8,
+        "y": 76,
+        "w": 16,
+        "h": 5
+      },
+      "id": 131,
+      "options": {
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi"
+        }
+      },
+      "targets": [
+        {
+          "alias": "Heat Acclimation %",
+          "groupBy": [
+            {
+              "params": [
+                "1d"
+              ],
+              "type": "time"
+            },
+            {
+              "params": [
+                "previous"
+              ],
+              "type": "fill"
+            }
+          ],
+          "measurement": "HeatAltitudeAcclimation",
+          "orderByTime": "ASC",
+          "policy": "default",
+          "refId": "A",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "heatAcclimationPercentage"
+                ],
+                "type": "field"
+              },
+              {
+                "params": [],
+                "type": "mean"
+              }
+            ]
+          ],
+          "tags": []
+        }
+      ],
+      "title": "Heat Acclimation (historique)",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "garmin_influxdb"
+      },
+      "description": "Garmin heat acclimation %. >75 = well adapted.",
+      "fieldConfig": {
+        "defaults": {
+          "max": 100,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "red",
+                "value": null
+              },
+              {
+                "color": "orange",
+                "value": 25
+              },
+              {
+                "color": "yellow",
+                "value": 50
+              },
+              {
+                "color": "green",
+                "value": 75
+              }
+            ]
+          },
+          "unit": "percent"
+        }
+      },
+      "gridPos": {
+        "h": 5,
+        "w": 4,
+        "x": 0,
+        "y": 76
+      },
+      "id": 150,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        }
+      },
+      "targets": [
+        {
+          "groupBy": [],
+          "measurement": "HeatAltitudeAcclimation",
+          "orderByTime": "ASC",
+          "policy": "default",
+          "refId": "A",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "heatAcclimationPercentage"
+                ],
+                "type": "field"
+              },
+              {
+                "params": [],
+                "type": "last"
+              }
+            ]
+          ],
+          "tags": []
+        }
+      ],
+      "title": "Heat Acclimation",
+      "type": "stat"
+    }
+  ],
+  "refresh": "10m",
+  "schemaVersion": 39,
+  "tags": [
+    "training-load",
+    "acwr",
+    "polarisation",
+    "training-effect",
+    "volume",
+    "load-focus"
+  ],
+  "templating": {
+    "list": []
+  },
+  "time": {
+    "from": "now-90d",
+    "to": "now"
+  },
+  "timezone": "browser",
+  "title": "02 Training Load & ACWR",
+  "uid": "garvis-b-load",
+  "weekStart": "monday"
+}

@@ -1,0 +1,89 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": {"type": "grafana", "uid": "-- Grafana --"},
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "description": "Vue calendaire des sorties running (1 an glissant). Chaque jour avec une activite est colorise selon le Training Load cumule.",
+  "editable": true,
+  "graphTooltip": 0,
+  "panels": [
+    {
+      "id": 1,
+      "type": "marcusolsson-calendar-panel",
+      "title": "Calendrier training load - 12 derniers mois (running)",
+      "description": "Couleur = activityTrainingLoad du jour (vert <60, jaune 60-120, orange 120-200, rouge >200).",
+      "datasource": {"type": "influxdb", "uid": "garmin_influxdb"},
+      "gridPos": {"h": 24, "w": 24, "x": 0, "y": 0},
+      "pluginVersion": "4.2.3",
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "decimals": 0,
+          "color": {"mode": "thresholds"},
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {"color": "#86EFAC", "value": null},
+              {"color": "#22C55E", "value": 60},
+              {"color": "#F59E0B", "value": 120},
+              {"color": "#EF4444", "value": 200},
+              {"color": "#7C2D12", "value": 300}
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {"id": "byName", "options": "tl"},
+            "properties": [{"id": "displayName", "value": "Training Load"}]
+          },
+          {
+            "matcher": {"id": "byName", "options": "label"},
+            "properties": [{"id": "displayName", "value": "Run"}]
+          }
+        ]
+      },
+      "options": {
+        "autoEvents": false,
+        "calendar": {"view": "year"},
+        "colors": "frame",
+        "dateFormat": "inherit",
+        "quickLinks": false,
+        "showMonthUnderWeeks": true,
+        "showSummary": true,
+        "scrollToBottom": false,
+        "textSize": 12,
+        "timeRangeType": "default",
+        "views": ["month", "year"],
+        "colorField": "tl"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "rawQuery": true,
+          "datasource": {"type": "influxdb", "uid": "garmin_influxdb"},
+          "resultFormat": "table",
+          "query": "SELECT sum(\"activityTrainingLoad\") AS tl, sum(\"distance\")/1000 AS km FROM \"ActivitySummary\" WHERE $timeFilter AND \"ActivitySelector\" =~ /running/ GROUP BY time(1d) fill(none) tz('Europe/Paris')"
+        }
+      ]
+    }
+  ],
+  "refresh": "30m",
+  "schemaVersion": 39,
+  "tags": ["calendar", "volume", "training-load", "yearly-view"],
+  "templating": {"list": []},
+  "time": {"from": "now-365d", "to": "now"},
+  "timezone": "browser",
+  "title": "10 Calendar - Training Load 1 an",
+  "uid": "garvis-n-calendar",
+  "version": 2,
+  "weekStart": "monday"
+}

@@ -1,0 +1,5191 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": {
+          "type": "grafana",
+          "uid": "-- Grafana --"
+        },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "description": "Drill-down par activite course a pied. Cliquer un lien dans le tableau du haut pour zoomer sur une activite (set time range + variable). Le panel markdown en bas liste les prescriptions de toutes les seances.",
+  "editable": true,
+  "graphTooltip": 1,
+  "id": null,
+  "links": [],
+  "panels": [
+    {
+      "type": "stat",
+      "id": 1,
+      "title": "Distance",
+      "description": "",
+      "gridPos": {
+        "h": 4,
+        "w": 4,
+        "x": 0,
+        "y": 0
+      },
+      "datasource": {
+        "type": "influxdb",
+        "uid": "garmin_influxdb"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "lengthkm",
+          "decimals": 2,
+          "color": {
+            "mode": "thresholds"
+          }
+        }
+      },
+      "options": {
+        "graphMode": "none",
+        "colorMode": "value",
+        "textMode": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "orientation": "auto",
+        "justifyMode": "center"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "rawQuery": true,
+          "query": "SELECT last(\"distance\")/1000 FROM \"ActivitySummary\" WHERE \"ActivitySelector\" = '$activity'",
+          "resultFormat": "time_series",
+          "groupBy": [],
+          "tags": []
+        }
+      ]
+    },
+    {
+      "type": "stat",
+      "id": 2,
+      "title": "Duration",
+      "description": "",
+      "gridPos": {
+        "h": 4,
+        "w": 4,
+        "x": 4,
+        "y": 0
+      },
+      "datasource": {
+        "type": "influxdb",
+        "uid": "garmin_influxdb"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "dthms",
+          "decimals": 0,
+          "color": {
+            "mode": "thresholds"
+          }
+        }
+      },
+      "options": {
+        "graphMode": "none",
+        "colorMode": "value",
+        "textMode": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "orientation": "auto",
+        "justifyMode": "center"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "rawQuery": true,
+          "query": "SELECT last(\"elapsedDuration\") FROM \"ActivitySummary\" WHERE \"ActivitySelector\" = '$activity'",
+          "resultFormat": "time_series",
+          "groupBy": [],
+          "tags": []
+        }
+      ]
+    },
+    {
+      "type": "stat",
+      "id": 3,
+      "title": "Avg HR",
+      "description": "",
+      "gridPos": {
+        "h": 4,
+        "w": 4,
+        "x": 8,
+        "y": 0
+      },
+      "datasource": {
+        "type": "influxdb",
+        "uid": "garmin_influxdb"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "bpm",
+          "decimals": 0,
+          "color": {
+            "mode": "thresholds"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "blue"
+              },
+              {
+                "color": "green",
+                "value": 130
+              },
+              {
+                "color": "yellow",
+                "value": 160
+              },
+              {
+                "color": "red",
+                "value": 175
+              }
+            ]
+          }
+        }
+      },
+      "options": {
+        "graphMode": "none",
+        "colorMode": "value",
+        "textMode": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "orientation": "auto",
+        "justifyMode": "center"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "rawQuery": true,
+          "query": "SELECT last(\"averageHR\") FROM \"ActivitySummary\" WHERE \"ActivitySelector\" = '$activity'",
+          "resultFormat": "time_series",
+          "groupBy": [],
+          "tags": []
+        }
+      ]
+    },
+    {
+      "type": "stat",
+      "id": 4,
+      "title": "Max HR",
+      "description": "",
+      "gridPos": {
+        "h": 4,
+        "w": 4,
+        "x": 12,
+        "y": 0
+      },
+      "datasource": {
+        "type": "influxdb",
+        "uid": "garmin_influxdb"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "bpm",
+          "decimals": 0,
+          "color": {
+            "mode": "thresholds"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              },
+              {
+                "color": "yellow",
+                "value": 175
+              },
+              {
+                "color": "red",
+                "value": 190
+              }
+            ]
+          }
+        }
+      },
+      "options": {
+        "graphMode": "none",
+        "colorMode": "value",
+        "textMode": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "orientation": "auto",
+        "justifyMode": "center"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "rawQuery": true,
+          "query": "SELECT last(\"maxHR\") FROM \"ActivitySummary\" WHERE \"ActivitySelector\" = '$activity'",
+          "resultFormat": "time_series",
+          "groupBy": [],
+          "tags": []
+        }
+      ]
+    },
+    {
+      "type": "stat",
+      "id": 5,
+      "title": "Avg Pace (per km)",
+      "description": "",
+      "gridPos": {
+        "h": 4,
+        "w": 4,
+        "x": 16,
+        "y": 0
+      },
+      "datasource": {
+        "type": "influxdb",
+        "uid": "garmin_influxdb"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "dthms",
+          "decimals": 0,
+          "color": {
+            "mode": "thresholds"
+          }
+        }
+      },
+      "options": {
+        "graphMode": "none",
+        "colorMode": "value",
+        "textMode": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "orientation": "auto",
+        "justifyMode": "center"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "rawQuery": true,
+          "query": "SELECT 1000.0/last(\"averageSpeed\") FROM \"ActivitySummary\" WHERE \"ActivitySelector\" = '$activity'",
+          "resultFormat": "time_series",
+          "groupBy": [],
+          "tags": []
+        }
+      ]
+    },
+    {
+      "type": "stat",
+      "id": 6,
+      "title": "Calories",
+      "description": "",
+      "gridPos": {
+        "h": 4,
+        "w": 4,
+        "x": 20,
+        "y": 0
+      },
+      "datasource": {
+        "type": "influxdb",
+        "uid": "garmin_influxdb"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "kcal",
+          "decimals": 0,
+          "color": {
+            "mode": "thresholds"
+          }
+        }
+      },
+      "options": {
+        "graphMode": "none",
+        "colorMode": "value",
+        "textMode": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "orientation": "auto",
+        "justifyMode": "center"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "rawQuery": true,
+          "query": "SELECT last(\"calories\") FROM \"ActivitySummary\" WHERE \"ActivitySelector\" = '$activity'",
+          "resultFormat": "time_series",
+          "groupBy": [],
+          "tags": []
+        }
+      ]
+    },
+    {
+      "type": "stat",
+      "id": 7,
+      "title": "Elev gain (D+)",
+      "description": "",
+      "gridPos": {
+        "h": 4,
+        "w": 4,
+        "x": 0,
+        "y": 4
+      },
+      "datasource": {
+        "type": "influxdb",
+        "uid": "garmin_influxdb"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "lengthm",
+          "decimals": 0,
+          "color": {
+            "mode": "thresholds"
+          }
+        }
+      },
+      "options": {
+        "graphMode": "none",
+        "colorMode": "value",
+        "textMode": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "orientation": "auto",
+        "justifyMode": "center"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "rawQuery": true,
+          "query": "SELECT last(\"elevationGain\") FROM \"ActivitySummary\" WHERE \"ActivitySelector\" = '$activity'",
+          "resultFormat": "time_series",
+          "groupBy": [],
+          "tags": []
+        }
+      ]
+    },
+    {
+      "type": "stat",
+      "id": 8,
+      "title": "Elev loss (D-)",
+      "description": "",
+      "gridPos": {
+        "h": 4,
+        "w": 4,
+        "x": 4,
+        "y": 4
+      },
+      "datasource": {
+        "type": "influxdb",
+        "uid": "garmin_influxdb"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "lengthm",
+          "decimals": 0,
+          "color": {
+            "mode": "thresholds"
+          }
+        }
+      },
+      "options": {
+        "graphMode": "none",
+        "colorMode": "value",
+        "textMode": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "orientation": "auto",
+        "justifyMode": "center"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "rawQuery": true,
+          "query": "SELECT last(\"elevationLoss\") FROM \"ActivitySummary\" WHERE \"ActivitySelector\" = '$activity'",
+          "resultFormat": "time_series",
+          "groupBy": [],
+          "tags": []
+        }
+      ]
+    },
+    {
+      "type": "stat",
+      "id": 9,
+      "title": "Aerobic TE",
+      "description": "",
+      "gridPos": {
+        "h": 4,
+        "w": 4,
+        "x": 8,
+        "y": 4
+      },
+      "datasource": {
+        "type": "influxdb",
+        "uid": "garmin_influxdb"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "none",
+          "decimals": 1,
+          "color": {
+            "mode": "thresholds"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "blue"
+              },
+              {
+                "color": "green",
+                "value": 2
+              },
+              {
+                "color": "yellow",
+                "value": 4
+              },
+              {
+                "color": "red",
+                "value": 5
+              }
+            ]
+          }
+        }
+      },
+      "options": {
+        "graphMode": "none",
+        "colorMode": "value",
+        "textMode": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "orientation": "auto",
+        "justifyMode": "center"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "rawQuery": true,
+          "query": "SELECT last(\"aerobicTrainingEffect\") FROM \"ActivitySummary\" WHERE \"ActivitySelector\" = '$activity'",
+          "resultFormat": "time_series",
+          "groupBy": [],
+          "tags": []
+        }
+      ]
+    },
+    {
+      "type": "stat",
+      "id": 10,
+      "title": "Anaerobic TE",
+      "description": "",
+      "gridPos": {
+        "h": 4,
+        "w": 4,
+        "x": 12,
+        "y": 4
+      },
+      "datasource": {
+        "type": "influxdb",
+        "uid": "garmin_influxdb"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "none",
+          "decimals": 1,
+          "color": {
+            "mode": "thresholds"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "blue"
+              },
+              {
+                "color": "green",
+                "value": 1
+              },
+              {
+                "color": "yellow",
+                "value": 3
+              },
+              {
+                "color": "red",
+                "value": 4.5
+              }
+            ]
+          }
+        }
+      },
+      "options": {
+        "graphMode": "none",
+        "colorMode": "value",
+        "textMode": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "orientation": "auto",
+        "justifyMode": "center"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "rawQuery": true,
+          "query": "SELECT last(\"anaerobicTrainingEffect\") FROM \"ActivitySummary\" WHERE \"ActivitySelector\" = '$activity'",
+          "resultFormat": "time_series",
+          "groupBy": [],
+          "tags": []
+        }
+      ]
+    },
+    {
+      "type": "stat",
+      "id": 11,
+      "title": "Exercise Load",
+      "description": "",
+      "gridPos": {
+        "h": 4,
+        "w": 4,
+        "x": 16,
+        "y": 4
+      },
+      "datasource": {
+        "type": "influxdb",
+        "uid": "garmin_influxdb"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "none",
+          "decimals": 0,
+          "color": {
+            "mode": "thresholds"
+          }
+        }
+      },
+      "options": {
+        "graphMode": "none",
+        "colorMode": "value",
+        "textMode": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "orientation": "auto",
+        "justifyMode": "center"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "rawQuery": true,
+          "query": "SELECT last(\"activityTrainingLoad\") FROM \"ActivitySummary\" WHERE \"ActivitySelector\" = '$activity'",
+          "resultFormat": "time_series",
+          "groupBy": [],
+          "tags": []
+        }
+      ]
+    },
+    {
+      "type": "stat",
+      "id": 12,
+      "title": "VO2max (post-run)",
+      "description": "",
+      "gridPos": {
+        "h": 4,
+        "w": 4,
+        "x": 20,
+        "y": 4
+      },
+      "datasource": {
+        "type": "influxdb",
+        "uid": "garmin_influxdb"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "none",
+          "decimals": 1,
+          "color": {
+            "mode": "thresholds"
+          }
+        }
+      },
+      "options": {
+        "graphMode": "none",
+        "colorMode": "value",
+        "textMode": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "orientation": "auto",
+        "justifyMode": "center"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "rawQuery": true,
+          "query": "SELECT last(\"vO2MaxValue\") FROM \"ActivitySummary\" WHERE \"ActivitySelector\" = '$activity'",
+          "resultFormat": "time_series",
+          "groupBy": [],
+          "tags": []
+        }
+      ]
+    },
+    {
+      "type": "geomap",
+      "id": 13,
+      "title": "GPS Track by Velocity",
+      "description": "Trace colore par vitesse (km/h). Vert lent -> rouge rapide. Basemap routes.",
+      "gridPos": {
+        "h": 11,
+        "w": 12,
+        "x": 0,
+        "y": 8
+      },
+      "datasource": {
+        "type": "influxdb",
+        "uid": "garmin_influxdb"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "decimals": 1,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "value": 0,
+                "color": "green"
+              }
+            ]
+          },
+          "color": {
+            "mode": "continuous-RdYlGr",
+            "fixedColor": "yellow"
+          },
+          "custom": {
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            }
+          },
+          "fieldMinMax": false
+        },
+        "overrides": []
+      },
+      "options": {
+        "basemap": {
+          "config": {
+            "server": "streets",
+            "showLabels": true,
+            "theme": "auto"
+          },
+          "name": "Layer 0",
+          "opacity": 1,
+          "tooltip": true,
+          "type": "esri-xyz"
+        },
+        "controls": {
+          "mouseWheelZoom": false,
+          "showAttribution": false,
+          "showDebug": false,
+          "showMeasure": false,
+          "showScale": true,
+          "showZoom": true
+        },
+        "layers": [
+          {
+            "config": {
+              "showLegend": true,
+              "style": {
+                "color": {
+                  "field": "speed (Km/h)",
+                  "fixed": "dark-green"
+                },
+                "opacity": 0.4,
+                "rotation": {
+                  "fixed": 0,
+                  "max": 360,
+                  "min": -360,
+                  "mode": "mod"
+                },
+                "size": {
+                  "fixed": 3,
+                  "max": 15,
+                  "min": 2
+                },
+                "symbol": {
+                  "fixed": "img/icons/marker/circle.svg",
+                  "mode": "fixed"
+                },
+                "symbolAlign": {
+                  "horizontal": "center",
+                  "vertical": "center"
+                },
+                "textConfig": {
+                  "fontSize": 12,
+                  "offsetX": 0,
+                  "offsetY": 0,
+                  "textAlign": "center",
+                  "textBaseline": "middle"
+                }
+              }
+            },
+            "filterData": {
+              "id": "byRefId",
+              "options": "joinByField-I-J-A-B"
+            },
+            "location": {
+              "mode": "auto"
+            },
+            "name": "Speed (Km/h)",
+            "opacity": 0.8,
+            "tooltip": false,
+            "type": "markers"
+          }
+        ],
+        "tooltip": {
+          "mode": "details"
+        },
+        "view": {
+          "allLayers": true,
+          "id": "fit",
+          "lastOnly": false,
+          "lat": 48.4,
+          "lon": 0.7,
+          "padding": 3,
+          "shared": true,
+          "zoom": 13
+        }
+      },
+      "targets": [
+        {
+          "refId": "I",
+          "rawQuery": true,
+          "alias": "lat",
+          "query": "SELECT \"Latitude\" FROM \"ActivityGPS\" WHERE \"ActivitySelector\" = '$activity'",
+          "resultFormat": "time_series",
+          "groupBy": [],
+          "tags": []
+        },
+        {
+          "refId": "J",
+          "rawQuery": true,
+          "alias": "lon",
+          "query": "SELECT \"Longitude\" FROM \"ActivityGPS\" WHERE \"ActivitySelector\" = '$activity'",
+          "resultFormat": "time_series",
+          "groupBy": [],
+          "tags": []
+        },
+        {
+          "refId": "A",
+          "rawQuery": true,
+          "alias": "HR",
+          "query": "SELECT \"HeartRate\" FROM \"ActivityGPS\" WHERE \"ActivitySelector\" = '$activity'",
+          "resultFormat": "time_series",
+          "groupBy": [],
+          "tags": []
+        },
+        {
+          "refId": "B",
+          "rawQuery": true,
+          "alias": "speed (Km/h)",
+          "query": "SELECT \"Speed\" * 3.6 FROM \"ActivityGPS\" WHERE \"ActivitySelector\" = '$activity'",
+          "resultFormat": "time_series",
+          "groupBy": [],
+          "tags": []
+        }
+      ],
+      "transformations": [
+        {
+          "id": "joinByField",
+          "options": {
+            "byField": "Time",
+            "mode": "outer"
+          }
+        }
+      ]
+    },
+    {
+      "type": "geomap",
+      "id": 14,
+      "title": "GPS Track by Heart Rate",
+      "description": "Trace colore par FC (bpm). Vert bas -> rouge haut. Basemap satellite.",
+      "gridPos": {
+        "h": 11,
+        "w": 12,
+        "x": 12,
+        "y": 8
+      },
+      "datasource": {
+        "type": "influxdb",
+        "uid": "garmin_influxdb"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "decimals": 1,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "value": 0,
+                "color": "green"
+              }
+            ]
+          },
+          "color": {
+            "mode": "continuous-GrYlRd",
+            "fixedColor": "yellow"
+          },
+          "custom": {
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            }
+          },
+          "fieldMinMax": false
+        },
+        "overrides": []
+      },
+      "options": {
+        "basemap": {
+          "config": {
+            "server": "world-imagery",
+            "showLabels": true,
+            "theme": "auto"
+          },
+          "name": "Layer 0",
+          "opacity": 1,
+          "tooltip": true,
+          "type": "esri-xyz"
+        },
+        "controls": {
+          "mouseWheelZoom": false,
+          "showAttribution": false,
+          "showDebug": false,
+          "showMeasure": false,
+          "showScale": true,
+          "showZoom": true
+        },
+        "layers": [
+          {
+            "config": {
+              "showLegend": true,
+              "style": {
+                "color": {
+                  "field": "HR",
+                  "fixed": "dark-green"
+                },
+                "opacity": 0.4,
+                "rotation": {
+                  "fixed": 0,
+                  "max": 360,
+                  "min": -360,
+                  "mode": "mod"
+                },
+                "size": {
+                  "fixed": 3,
+                  "max": 15,
+                  "min": 2
+                },
+                "symbol": {
+                  "fixed": "img/icons/marker/circle.svg",
+                  "mode": "fixed"
+                },
+                "symbolAlign": {
+                  "horizontal": "center",
+                  "vertical": "center"
+                },
+                "textConfig": {
+                  "fontSize": 12,
+                  "offsetX": 0,
+                  "offsetY": 0,
+                  "textAlign": "center",
+                  "textBaseline": "middle"
+                }
+              }
+            },
+            "filterData": {
+              "id": "byRefId",
+              "options": "joinByField-I-J-A-B"
+            },
+            "location": {
+              "mode": "auto"
+            },
+            "name": "Heart Rate",
+            "opacity": 0.8,
+            "tooltip": false,
+            "type": "markers"
+          }
+        ],
+        "tooltip": {
+          "mode": "details"
+        },
+        "view": {
+          "allLayers": true,
+          "id": "fit",
+          "lastOnly": false,
+          "lat": 48.4,
+          "lon": 0.7,
+          "padding": 3,
+          "shared": true,
+          "zoom": 13
+        }
+      },
+      "targets": [
+        {
+          "refId": "I",
+          "rawQuery": true,
+          "alias": "lat",
+          "query": "SELECT \"Latitude\" FROM \"ActivityGPS\" WHERE \"ActivitySelector\" = '$activity'",
+          "resultFormat": "time_series",
+          "groupBy": [],
+          "tags": []
+        },
+        {
+          "refId": "J",
+          "rawQuery": true,
+          "alias": "lon",
+          "query": "SELECT \"Longitude\" FROM \"ActivityGPS\" WHERE \"ActivitySelector\" = '$activity'",
+          "resultFormat": "time_series",
+          "groupBy": [],
+          "tags": []
+        },
+        {
+          "refId": "A",
+          "rawQuery": true,
+          "alias": "HR",
+          "query": "SELECT \"HeartRate\" FROM \"ActivityGPS\" WHERE \"ActivitySelector\" = '$activity'",
+          "resultFormat": "time_series",
+          "groupBy": [],
+          "tags": []
+        },
+        {
+          "refId": "B",
+          "rawQuery": true,
+          "alias": "speed (Km/h)",
+          "query": "SELECT \"Speed\" * 3.6 FROM \"ActivityGPS\" WHERE \"ActivitySelector\" = '$activity'",
+          "resultFormat": "time_series",
+          "groupBy": [],
+          "tags": []
+        }
+      ],
+      "transformations": [
+        {
+          "id": "joinByField",
+          "options": {
+            "byField": "Time",
+            "mode": "outer"
+          }
+        }
+      ]
+    },
+    {
+      "type": "bargauge",
+      "id": 15,
+      "title": "Time in HR Zones (%) - reference plan",
+      "description": "% du temps en activite par zone FC (Garmin avec zones du moment de l'enregistrement). Cible Z2-strict footings : >75% Z2.",
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 19
+      },
+      "datasource": {
+        "type": "influxdb",
+        "uid": "garmin_influxdb"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percent",
+          "color": {
+            "mode": "fixed"
+          },
+          "min": 0,
+          "max": 100
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byFrameRefID",
+              "options": "A"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Z1"
+              },
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "#3274d9",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byFrameRefID",
+              "options": "B"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Z2"
+              },
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "#56a64b",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byFrameRefID",
+              "options": "C"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Z3"
+              },
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "#f2cc0c",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byFrameRefID",
+              "options": "D"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Z4"
+              },
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "#ff7833",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byFrameRefID",
+              "options": "E"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Z5"
+              },
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "#e02f44",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "options": {
+        "orientation": "horizontal",
+        "displayMode": "gradient",
+        "showUnfilled": true,
+        "valueMode": "color",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        }
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "rawQuery": true,
+          "query": "SELECT 100.0 * last(\"hrTimeInZone_1\") / (last(\"hrTimeInZone_1\")+last(\"hrTimeInZone_2\")+last(\"hrTimeInZone_3\")+last(\"hrTimeInZone_4\")+last(\"hrTimeInZone_5\")) FROM \"ActivitySummary\" WHERE \"ActivitySelector\" = '$activity'",
+          "resultFormat": "time_series",
+          "groupBy": [],
+          "tags": []
+        },
+        {
+          "refId": "B",
+          "rawQuery": true,
+          "query": "SELECT 100.0 * last(\"hrTimeInZone_2\") / (last(\"hrTimeInZone_1\")+last(\"hrTimeInZone_2\")+last(\"hrTimeInZone_3\")+last(\"hrTimeInZone_4\")+last(\"hrTimeInZone_5\")) FROM \"ActivitySummary\" WHERE \"ActivitySelector\" = '$activity'",
+          "resultFormat": "time_series",
+          "groupBy": [],
+          "tags": []
+        },
+        {
+          "refId": "C",
+          "rawQuery": true,
+          "query": "SELECT 100.0 * last(\"hrTimeInZone_3\") / (last(\"hrTimeInZone_1\")+last(\"hrTimeInZone_2\")+last(\"hrTimeInZone_3\")+last(\"hrTimeInZone_4\")+last(\"hrTimeInZone_5\")) FROM \"ActivitySummary\" WHERE \"ActivitySelector\" = '$activity'",
+          "resultFormat": "time_series",
+          "groupBy": [],
+          "tags": []
+        },
+        {
+          "refId": "D",
+          "rawQuery": true,
+          "query": "SELECT 100.0 * last(\"hrTimeInZone_4\") / (last(\"hrTimeInZone_1\")+last(\"hrTimeInZone_2\")+last(\"hrTimeInZone_3\")+last(\"hrTimeInZone_4\")+last(\"hrTimeInZone_5\")) FROM \"ActivitySummary\" WHERE \"ActivitySelector\" = '$activity'",
+          "resultFormat": "time_series",
+          "groupBy": [],
+          "tags": []
+        },
+        {
+          "refId": "E",
+          "rawQuery": true,
+          "query": "SELECT 100.0 * last(\"hrTimeInZone_5\") / (last(\"hrTimeInZone_1\")+last(\"hrTimeInZone_2\")+last(\"hrTimeInZone_3\")+last(\"hrTimeInZone_4\")+last(\"hrTimeInZone_5\")) FROM \"ActivitySummary\" WHERE \"ActivitySelector\" = '$activity'",
+          "resultFormat": "time_series",
+          "groupBy": [],
+          "tags": []
+        }
+      ]
+    },
+    {
+      "type": "bargauge",
+      "id": 16,
+      "title": "Time in Power Zones (%) - calcule from per-second",
+      "description": "% du temps par zone power calcule on-the-fly depuis ActivityGPS (1 sample = 1s). Zones Garmin auto-FTP.",
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 19
+      },
+      "datasource": {
+        "type": "influxdb",
+        "uid": "garmin_influxdb"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percent",
+          "color": {
+            "mode": "fixed"
+          },
+          "min": 0,
+          "max": 100
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byFrameRefID",
+              "options": "A"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Z1"
+              },
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "#cccccc",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byFrameRefID",
+              "options": "B"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Z2"
+              },
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "#3274d9",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byFrameRefID",
+              "options": "C"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Z3"
+              },
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "#56a64b",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byFrameRefID",
+              "options": "D"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Z4"
+              },
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "#ff7833",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byFrameRefID",
+              "options": "E"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Z5"
+              },
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "#e02f44",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "options": {
+        "orientation": "horizontal",
+        "displayMode": "gradient",
+        "showUnfilled": true,
+        "valueMode": "color",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        }
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "rawQuery": true,
+          "query": "SELECT 100.0 * count(\"Power\") / $activity_end FROM \"ActivityGPS\" WHERE \"ActivitySelector\" = '$activity' AND \"Power\" >= $z1_pwr AND \"Power\" < $z2_pwr",
+          "resultFormat": "time_series",
+          "groupBy": [],
+          "tags": []
+        },
+        {
+          "refId": "B",
+          "rawQuery": true,
+          "query": "SELECT 100.0 * count(\"Power\") / $activity_end FROM \"ActivityGPS\" WHERE \"ActivitySelector\" = '$activity' AND \"Power\" >= $z2_pwr AND \"Power\" < $z3_pwr",
+          "resultFormat": "time_series",
+          "groupBy": [],
+          "tags": []
+        },
+        {
+          "refId": "C",
+          "rawQuery": true,
+          "query": "SELECT 100.0 * count(\"Power\") / $activity_end FROM \"ActivityGPS\" WHERE \"ActivitySelector\" = '$activity' AND \"Power\" >= $z3_pwr AND \"Power\" < $z4_pwr",
+          "resultFormat": "time_series",
+          "groupBy": [],
+          "tags": []
+        },
+        {
+          "refId": "D",
+          "rawQuery": true,
+          "query": "SELECT 100.0 * count(\"Power\") / $activity_end FROM \"ActivityGPS\" WHERE \"ActivitySelector\" = '$activity' AND \"Power\" >= $z4_pwr AND \"Power\" < $z5_pwr",
+          "resultFormat": "time_series",
+          "groupBy": [],
+          "tags": []
+        },
+        {
+          "refId": "E",
+          "rawQuery": true,
+          "query": "SELECT 100.0 * count(\"Power\") / $activity_end FROM \"ActivityGPS\" WHERE \"ActivitySelector\" = '$activity' AND \"Power\" >= $z5_pwr",
+          "resultFormat": "time_series",
+          "groupBy": [],
+          "tags": []
+        }
+      ]
+    },
+    {
+      "type": "trend",
+      "id": 17,
+      "title": "Heart Rate (bpm) avec bandes zones FC + overlay target prescrit",
+      "description": "Bandes Z1-Z5 (auto-populated from InfluxDB HRZones). Bande purple = target HR prescrit. Staircase pointillee orange = HR moy / step. Axe Y auto-fit sur l'union HR + Target.",
+      "gridPos": {
+        "h": 10,
+        "w": 24,
+        "x": 0,
+        "y": 41
+      },
+      "datasource": {
+        "type": "influxdb",
+        "uid": "garmin_influxdb"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "bpm",
+          "decimals": 0,
+          "custom": {
+            "lineWidth": 2,
+            "fillOpacity": 10,
+            "spanNulls": true,
+            "drawStyle": "line",
+            "showPoints": "never",
+            "lineInterpolation": "smooth",
+            "thresholdsStyle": {
+              "mode": "area"
+            }
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "rgba(0,0,0,0)"
+              },
+              {
+                "color": "rgba(225, 225, 225, 0.09)",
+                "value": 120
+              },
+              {
+                "color": "rgba(59, 130, 246, 0.11)",
+                "value": 140
+              },
+              {
+                "color": "rgba(101, 188, 39, 0.11)",
+                "value": 155
+              },
+              {
+                "color": "rgba(249, 115, 22, 0.12)",
+                "value": 170
+              },
+              {
+                "color": "rgba(220, 38, 38, 0.15)",
+                "value": 185
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Duration"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "dthms"
+              },
+              {
+                "id": "custom.hideFrom",
+                "value": {
+                  "legend": true,
+                  "viz": false,
+                  "tooltip": false
+                }
+              },
+              {
+                "id": "fieldMinMax",
+                "value": true
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Smoothed HR"
+            },
+            "properties": [
+              {
+                "id": "custom.axisPlacement",
+                "value": "left"
+              },
+              {
+                "id": "fieldMinMax",
+                "value": true
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byRegexp",
+              "options": ".*Target Low$"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "rgba(168, 85, 247, 0.2)"
+                }
+              },
+              {
+                "id": "custom.drawStyle",
+                "value": "bars"
+              },
+              {
+                "id": "custom.barAlignment",
+                "value": 0
+              },
+              {
+                "id": "custom.spanNulls",
+                "value": false
+              },
+              {
+                "id": "custom.fillOpacity",
+                "value": 0
+              },
+              {
+                "id": "custom.lineWidth",
+                "value": 0
+              },
+              {
+                "id": "displayName",
+                "value": "Target min (prescrit)"
+              },
+              {
+                "id": "unit",
+                "value": "bpm"
+              },
+              {
+                "id": "custom.axisPlacement",
+                "value": "left"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byRegexp",
+              "options": ".*Target High$"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "rgba(168, 85, 247, 0.2)"
+                }
+              },
+              {
+                "id": "custom.drawStyle",
+                "value": "bars"
+              },
+              {
+                "id": "custom.barAlignment",
+                "value": 0
+              },
+              {
+                "id": "custom.spanNulls",
+                "value": false
+              },
+              {
+                "id": "custom.fillBelowTo",
+                "value": "Target min (prescrit)"
+              },
+              {
+                "id": "custom.fillOpacity",
+                "value": 10
+              },
+              {
+                "id": "displayName",
+                "value": "Target max (prescrit)"
+              },
+              {
+                "id": "unit",
+                "value": "bpm"
+              },
+              {
+                "id": "custom.axisPlacement",
+                "value": "left"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byRegexp",
+              "options": ".*Target middle$"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "rgba(168, 85, 247, 1.0)"
+                }
+              },
+              {
+                "id": "custom.lineWidth",
+                "value": 2
+              },
+              {
+                "id": "custom.lineInterpolation",
+                "value": "stepAfter"
+              },
+              {
+                "id": "custom.lineStyle",
+                "value": {
+                  "fill": "dash",
+                  "dash": [
+                    6,
+                    4
+                  ]
+                }
+              },
+              {
+                "id": "custom.spanNulls",
+                "value": false
+              },
+              {
+                "id": "custom.fillOpacity",
+                "value": 0
+              },
+              {
+                "id": "displayName",
+                "value": "Target middle (prescrit)"
+              },
+              {
+                "id": "unit",
+                "value": "bpm"
+              },
+              {
+                "id": "decimals",
+                "value": 0
+              },
+              {
+                "id": "custom.axisPlacement",
+                "value": "left"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byRegexp",
+              "options": ".*Avg per step$"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "rgba(255, 140, 60, 0.95)"
+                }
+              },
+              {
+                "id": "custom.lineWidth",
+                "value": 2
+              },
+              {
+                "id": "custom.lineInterpolation",
+                "value": "stepAfter"
+              },
+              {
+                "id": "custom.lineStyle",
+                "value": {
+                  "fill": "dash",
+                  "dash": [
+                    10,
+                    6
+                  ]
+                }
+              },
+              {
+                "id": "custom.spanNulls",
+                "value": false
+              },
+              {
+                "id": "custom.fillOpacity",
+                "value": 0
+              },
+              {
+                "id": "displayName",
+                "value": "Moy / step"
+              },
+              {
+                "id": "unit",
+                "value": "bpm"
+              },
+              {
+                "id": "decimals",
+                "value": 0
+              },
+              {
+                "id": "custom.axisPlacement",
+                "value": "left"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Smoothed HR"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "rgba(255, 140, 60, 0.95)"
+                }
+              },
+              {
+                "id": "custom.fillOpacity",
+                "value": 0
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Z1"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "rgba(120, 120, 120, 0.9)"
+                }
+              },
+              {
+                "id": "custom.hideFrom",
+                "value": {
+                  "legend": false,
+                  "viz": true,
+                  "tooltip": false
+                }
+              },
+              {
+                "id": "unit",
+                "value": "bpm"
+              },
+              {
+                "id": "decimals",
+                "value": 0
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Z2"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "rgba(59, 130, 246, 0.9)"
+                }
+              },
+              {
+                "id": "custom.hideFrom",
+                "value": {
+                  "legend": false,
+                  "viz": true,
+                  "tooltip": false
+                }
+              },
+              {
+                "id": "unit",
+                "value": "bpm"
+              },
+              {
+                "id": "decimals",
+                "value": 0
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Z3"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "rgba(101, 188, 39, 0.9)"
+                }
+              },
+              {
+                "id": "custom.hideFrom",
+                "value": {
+                  "legend": false,
+                  "viz": true,
+                  "tooltip": false
+                }
+              },
+              {
+                "id": "unit",
+                "value": "bpm"
+              },
+              {
+                "id": "decimals",
+                "value": 0
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Z4"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "rgba(249, 115, 22, 0.9)"
+                }
+              },
+              {
+                "id": "custom.hideFrom",
+                "value": {
+                  "legend": false,
+                  "viz": true,
+                  "tooltip": false
+                }
+              },
+              {
+                "id": "unit",
+                "value": "bpm"
+              },
+              {
+                "id": "decimals",
+                "value": 0
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Z5"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "rgba(220, 38, 38, 0.9)"
+                }
+              },
+              {
+                "id": "custom.hideFrom",
+                "value": {
+                  "legend": false,
+                  "viz": true,
+                  "tooltip": false
+                }
+              },
+              {
+                "id": "unit",
+                "value": "bpm"
+              },
+              {
+                "id": "decimals",
+                "value": 0
+              }
+            ]
+          }
+        ]
+      },
+      "options": {
+        "legend": {
+          "showLegend": true,
+          "calcs": [
+            "mean",
+            "max",
+            "min"
+          ],
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "none"
+        },
+        "xField": "Duration"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "rawQuery": true,
+          "query": "SELECT \"HeartRate\" AS \"HR\" FROM \"ActivityGPS\" WHERE \"ActivitySelector\" = '$activity' AND \"HeartRate\" > 60 AND \"DurationSeconds\" <= $activity_end",
+          "resultFormat": "time_series",
+          "alias": "HR",
+          "groupBy": [],
+          "tags": []
+        },
+        {
+          "refId": "B",
+          "rawQuery": true,
+          "query": "SELECT \"DurationSeconds\" AS \"Duration\" FROM \"ActivityGPS\" WHERE \"ActivitySelector\" = '$activity'",
+          "resultFormat": "time_series",
+          "alias": "Duration",
+          "groupBy": [],
+          "tags": []
+        },
+        {
+          "refId": "E",
+          "rawQuery": true,
+          "query": "SELECT \"StepAvgHR\" AS \"Avg per step\", \"RowMarker\" AS \"_rm_avg\" FROM \"WorkoutTarget\" WHERE \"ActivitySelector\" = '$activity' ORDER BY time ASC",
+          "resultFormat": "time_series",
+          "groupBy": [],
+          "tags": []
+        },
+        {
+          "refId": "C",
+          "rawQuery": true,
+          "query": "SELECT \"TargetLowBPM\" AS \"Target Low\", \"RowMarker\" AS \"_rm_low\" FROM \"WorkoutTarget\" WHERE \"ActivitySelector\" = '$activity' ORDER BY time ASC",
+          "resultFormat": "time_series",
+          "groupBy": [],
+          "tags": []
+        },
+        {
+          "refId": "D",
+          "rawQuery": true,
+          "query": "SELECT \"TargetHighBPM\" AS \"Target High\", \"RowMarker\" AS \"_rm_high\" FROM \"WorkoutTarget\" WHERE \"ActivitySelector\" = '$activity' ORDER BY time ASC",
+          "resultFormat": "time_series",
+          "groupBy": [],
+          "tags": []
+        },
+        {
+          "refId": "F",
+          "rawQuery": true,
+          "query": "SELECT (\"TargetLowBPM\" + \"TargetHighBPM\") / 2 AS \"Target middle\", \"RowMarker\" AS \"_rm_mid\" FROM \"WorkoutTarget\" WHERE \"ActivitySelector\" = '$activity' ORDER BY time ASC",
+          "resultFormat": "time_series",
+          "groupBy": [],
+          "tags": []
+        }
+      ],
+      "transformations": [
+        {
+          "id": "joinByField",
+          "options": {
+            "byField": "Time",
+            "mode": "outer"
+          }
+        },
+        {
+          "id": "renameByRegex",
+          "options": {
+            "regex": "^.*\\.(.+)$",
+            "renamePattern": "$1"
+          }
+        },
+        {
+          "id": "calculateField",
+          "options": {
+            "alias": "Smoothed HR",
+            "mode": "windowFunctions",
+            "reduce": {
+              "reducer": "sum"
+            },
+            "window": {
+              "field": "HR",
+              "reducer": "mean",
+              "windowAlignment": "centered",
+              "windowSize": 0.01,
+              "windowSizeMode": "percentage"
+            }
+          }
+        },
+        {
+          "id": "calculateField",
+          "options": {
+            "mode": "binary",
+            "binary": {
+              "left": "Duration",
+              "operator": "*",
+              "right": "0"
+            },
+            "alias": "__zero_z1",
+            "replaceFields": false
+          }
+        },
+        {
+          "id": "calculateField",
+          "options": {
+            "mode": "binary",
+            "binary": {
+              "left": "__zero_z1",
+              "operator": "+",
+              "right": "120"
+            },
+            "alias": "Z1",
+            "replaceFields": false
+          }
+        },
+        {
+          "id": "calculateField",
+          "options": {
+            "mode": "binary",
+            "binary": {
+              "left": "Duration",
+              "operator": "*",
+              "right": "0"
+            },
+            "alias": "__zero_z2",
+            "replaceFields": false
+          }
+        },
+        {
+          "id": "calculateField",
+          "options": {
+            "mode": "binary",
+            "binary": {
+              "left": "__zero_z2",
+              "operator": "+",
+              "right": "140"
+            },
+            "alias": "Z2",
+            "replaceFields": false
+          }
+        },
+        {
+          "id": "calculateField",
+          "options": {
+            "mode": "binary",
+            "binary": {
+              "left": "Duration",
+              "operator": "*",
+              "right": "0"
+            },
+            "alias": "__zero_z3",
+            "replaceFields": false
+          }
+        },
+        {
+          "id": "calculateField",
+          "options": {
+            "mode": "binary",
+            "binary": {
+              "left": "__zero_z3",
+              "operator": "+",
+              "right": "155"
+            },
+            "alias": "Z3",
+            "replaceFields": false
+          }
+        },
+        {
+          "id": "calculateField",
+          "options": {
+            "mode": "binary",
+            "binary": {
+              "left": "Duration",
+              "operator": "*",
+              "right": "0"
+            },
+            "alias": "__zero_z4",
+            "replaceFields": false
+          }
+        },
+        {
+          "id": "calculateField",
+          "options": {
+            "mode": "binary",
+            "binary": {
+              "left": "__zero_z4",
+              "operator": "+",
+              "right": "170"
+            },
+            "alias": "Z4",
+            "replaceFields": false
+          }
+        },
+        {
+          "id": "calculateField",
+          "options": {
+            "mode": "binary",
+            "binary": {
+              "left": "Duration",
+              "operator": "*",
+              "right": "0"
+            },
+            "alias": "__zero_z5",
+            "replaceFields": false
+          }
+        },
+        {
+          "id": "calculateField",
+          "options": {
+            "mode": "binary",
+            "binary": {
+              "left": "__zero_z5",
+              "operator": "+",
+              "right": "185"
+            },
+            "alias": "Z5",
+            "replaceFields": false
+          }
+        },
+        {
+          "id": "filterFieldsByName",
+          "options": {
+            "include": {
+              "names": [
+                "Time",
+                "Duration",
+                "Smoothed HR",
+                "Avg per step",
+                "Target Low",
+                "Target High",
+                "Target middle",
+                "Z1",
+                "Z2",
+                "Z3",
+                "Z4",
+                "Z5"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "type": "table",
+      "id": 18,
+      "title": "Workout steps prescrits + executes",
+      "description": "Une row par step de la prescription. TargetType=open = aucune cible HR (ex: tests, sprints). DurationS = duree prescrite en s. ActualDurationS = duree reellement executee.",
+      "gridPos": {
+        "h": 14,
+        "w": 24,
+        "x": 0,
+        "y": 27
+      },
+      "datasource": {
+        "type": "influxdb",
+        "uid": "garmin_influxdb"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "align": "auto"
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "TargetType"
+            },
+            "properties": [
+              {
+                "id": "mappings",
+                "value": [
+                  {
+                    "type": "value",
+                    "options": {
+                      "open": {
+                        "text": "OPEN",
+                        "color": "text",
+                        "index": 0
+                      },
+                      "heart_rate": {
+                        "text": "HR zone",
+                        "color": "blue",
+                        "index": 1
+                      }
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "TargetLowBPM"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "bpm"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "TargetHighBPM"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "bpm"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "DurationValueS"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "dthms"
+              },
+              {
+                "id": "displayName",
+                "value": "Duree prescrite"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "StepActualDurationS"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "dthms"
+              },
+              {
+                "id": "displayName",
+                "value": "Duree reelle"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "StepStartOffsetS"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "dthms"
+              },
+              {
+                "id": "displayName",
+                "value": "Debut step"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Notes"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 600
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "StepIndex"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "#"
+              },
+              {
+                "id": "custom.width",
+                "value": 40
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "IntensityType"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Intensity"
+              },
+              {
+                "id": "custom.width",
+                "value": 90
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "TargetType"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Target"
+              },
+              {
+                "id": "custom.width",
+                "value": 80
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "TargetLowBPM"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Min"
+              },
+              {
+                "id": "custom.width",
+                "value": 70
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "TargetHighBPM"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Max"
+              },
+              {
+                "id": "custom.width",
+                "value": 70
+              }
+            ]
+          }
+        ]
+      },
+      "options": {
+        "showHeader": true,
+        "footer": {
+          "show": false
+        },
+        "cellHeight": "sm"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "rawQuery": true,
+          "query": "SELECT \"StepIndex\", \"IntensityType\", \"TargetType\", \"TargetLowBPM\", \"TargetHighBPM\", \"StepStartOffsetS\", \"DurationValueS\", \"StepActualDurationS\", \"Notes\" FROM \"WorkoutStep\" WHERE \"ActivitySelector\" = '$activity' ORDER BY time ASC",
+          "resultFormat": "table",
+          "groupBy": [],
+          "tags": []
+        }
+      ]
+    },
+    {
+      "type": "trend",
+      "id": 19,
+      "title": "Pace (min/km) - bas = rapide + moy / step",
+      "description": "Pace per-second (mm:ss/km). Convention Garmin : plus bas sur l'axe = plus rapide. Staircase orange = pace moy / step (1000/StepAvgSpeed, fetcher filtre Speed>0.5 m/s pour exclure pauses).",
+      "gridPos": {
+        "h": 8,
+        "w": 24,
+        "x": 0,
+        "y": 51
+      },
+      "datasource": {
+        "type": "influxdb",
+        "uid": "garmin_influxdb"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "dthms",
+          "decimals": 0,
+          "custom": {
+            "lineWidth": 2,
+            "fillOpacity": 10,
+            "spanNulls": true,
+            "drawStyle": "line",
+            "showPoints": "never",
+            "lineInterpolation": "smooth"
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Duration"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "dthms"
+              },
+              {
+                "id": "custom.hideFrom",
+                "value": {
+                  "legend": true,
+                  "viz": false,
+                  "tooltip": false
+                }
+              },
+              {
+                "id": "fieldMinMax",
+                "value": true
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Smoothed Pace"
+            },
+            "properties": [
+              {
+                "id": "custom.axisPlacement",
+                "value": "left"
+              },
+              {
+                "id": "fieldMinMax",
+                "value": true
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byRegexp",
+              "options": ".*Avg per step$"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "rgba(255, 140, 60, 0.95)"
+                }
+              },
+              {
+                "id": "custom.lineWidth",
+                "value": 2
+              },
+              {
+                "id": "custom.lineInterpolation",
+                "value": "stepAfter"
+              },
+              {
+                "id": "custom.lineStyle",
+                "value": {
+                  "fill": "dash",
+                  "dash": [
+                    10,
+                    6
+                  ]
+                }
+              },
+              {
+                "id": "custom.spanNulls",
+                "value": false
+              },
+              {
+                "id": "custom.fillOpacity",
+                "value": 0
+              },
+              {
+                "id": "displayName",
+                "value": "Moy / step"
+              },
+              {
+                "id": "unit",
+                "value": "dthms"
+              },
+              {
+                "id": "decimals",
+                "value": 0
+              },
+              {
+                "id": "custom.axisPlacement",
+                "value": "left"
+              }
+            ]
+          }
+        ]
+      },
+      "options": {
+        "legend": {
+          "showLegend": true,
+          "calcs": [
+            "mean",
+            "max",
+            "min"
+          ],
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "none"
+        },
+        "xField": "Duration"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "rawQuery": true,
+          "query": "SELECT 1000.0/\"Speed\" AS \"Pace\" FROM \"ActivityGPS\" WHERE \"ActivitySelector\" = '$activity' AND \"Speed\" > 0.5 AND \"DurationSeconds\" <= $activity_end",
+          "resultFormat": "time_series",
+          "alias": "Pace",
+          "groupBy": [],
+          "tags": []
+        },
+        {
+          "refId": "B",
+          "rawQuery": true,
+          "query": "SELECT \"DurationSeconds\" AS \"Duration\" FROM \"ActivityGPS\" WHERE \"ActivitySelector\" = '$activity'",
+          "resultFormat": "time_series",
+          "alias": "Duration",
+          "groupBy": [],
+          "tags": []
+        },
+        {
+          "refId": "E",
+          "rawQuery": true,
+          "query": "SELECT 1000.0 / \"StepAvgSpeed\" AS \"Avg per step\", \"RowMarker\" AS \"_rm_avg\" FROM \"WorkoutTarget\" WHERE \"ActivitySelector\" = '$activity' ORDER BY time ASC",
+          "resultFormat": "time_series",
+          "groupBy": [],
+          "tags": []
+        }
+      ],
+      "transformations": [
+        {
+          "id": "joinByField",
+          "options": {
+            "byField": "Time",
+            "mode": "outer"
+          }
+        },
+        {
+          "id": "renameByRegex",
+          "options": {
+            "regex": "^.*\\.(.+)$",
+            "renamePattern": "$1"
+          }
+        },
+        {
+          "id": "calculateField",
+          "options": {
+            "alias": "Smoothed Pace",
+            "mode": "windowFunctions",
+            "reduce": {
+              "reducer": "sum"
+            },
+            "window": {
+              "field": "Pace",
+              "reducer": "mean",
+              "windowAlignment": "centered",
+              "windowSize": 0.01,
+              "windowSizeMode": "percentage"
+            }
+          }
+        },
+        {
+          "id": "filterFieldsByName",
+          "options": {
+            "include": {
+              "names": [
+                "Time",
+                "Duration",
+                "Smoothed Pace",
+                "Avg per step"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "type": "trend",
+      "id": 20,
+      "title": "Power (W) avec bandes zones power + overlay target prescrit",
+      "description": "Bandes Z1-Z5 (auto-populated from InfluxDB PowerZones). Bande purple = target power prescrit (vide si la seance ne cible que la FC). Staircase orange = power moy / step.",
+      "gridPos": {
+        "h": 8,
+        "w": 24,
+        "x": 0,
+        "y": 59
+      },
+      "datasource": {
+        "type": "influxdb",
+        "uid": "garmin_influxdb"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "watt",
+          "decimals": 0,
+          "custom": {
+            "lineWidth": 2,
+            "fillOpacity": 10,
+            "spanNulls": true,
+            "drawStyle": "line",
+            "showPoints": "never",
+            "lineInterpolation": "smooth",
+            "thresholdsStyle": {
+              "mode": "area"
+            }
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "rgba(0,0,0,0)"
+              },
+              {
+                "color": "rgba(120, 120, 120, 0.07)",
+                "value": 200
+              },
+              {
+                "color": "rgba(59, 130, 246, 0.09)",
+                "value": 260
+              },
+              {
+                "color": "rgba(101, 188, 39, 0.10)",
+                "value": 310
+              },
+              {
+                "color": "rgba(249, 115, 22, 0.11)",
+                "value": 350
+              },
+              {
+                "color": "rgba(220, 38, 38, 0.15)",
+                "value": 400
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Duration"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "dthms"
+              },
+              {
+                "id": "custom.hideFrom",
+                "value": {
+                  "legend": true,
+                  "viz": false,
+                  "tooltip": false
+                }
+              },
+              {
+                "id": "fieldMinMax",
+                "value": true
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Smoothed Power"
+            },
+            "properties": [
+              {
+                "id": "custom.axisPlacement",
+                "value": "left"
+              },
+              {
+                "id": "fieldMinMax",
+                "value": true
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byRegexp",
+              "options": ".*Target Low$"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "rgba(168, 85, 247, 0.2)"
+                }
+              },
+              {
+                "id": "custom.drawStyle",
+                "value": "bars"
+              },
+              {
+                "id": "custom.barAlignment",
+                "value": 0
+              },
+              {
+                "id": "custom.spanNulls",
+                "value": false
+              },
+              {
+                "id": "custom.fillOpacity",
+                "value": 0
+              },
+              {
+                "id": "custom.lineWidth",
+                "value": 0
+              },
+              {
+                "id": "displayName",
+                "value": "Target min (prescrit)"
+              },
+              {
+                "id": "unit",
+                "value": "watt"
+              },
+              {
+                "id": "custom.axisPlacement",
+                "value": "left"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byRegexp",
+              "options": ".*Target High$"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "rgba(168, 85, 247, 0.2)"
+                }
+              },
+              {
+                "id": "custom.drawStyle",
+                "value": "bars"
+              },
+              {
+                "id": "custom.barAlignment",
+                "value": 0
+              },
+              {
+                "id": "custom.spanNulls",
+                "value": false
+              },
+              {
+                "id": "custom.fillBelowTo",
+                "value": "Target min (prescrit)"
+              },
+              {
+                "id": "custom.fillOpacity",
+                "value": 10
+              },
+              {
+                "id": "displayName",
+                "value": "Target max (prescrit)"
+              },
+              {
+                "id": "unit",
+                "value": "watt"
+              },
+              {
+                "id": "custom.axisPlacement",
+                "value": "left"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byRegexp",
+              "options": ".*Target middle$"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "rgba(168, 85, 247, 1.0)"
+                }
+              },
+              {
+                "id": "custom.lineWidth",
+                "value": 2
+              },
+              {
+                "id": "custom.lineInterpolation",
+                "value": "stepAfter"
+              },
+              {
+                "id": "custom.lineStyle",
+                "value": {
+                  "fill": "dash",
+                  "dash": [
+                    6,
+                    4
+                  ]
+                }
+              },
+              {
+                "id": "custom.spanNulls",
+                "value": false
+              },
+              {
+                "id": "custom.fillOpacity",
+                "value": 0
+              },
+              {
+                "id": "displayName",
+                "value": "Target middle (prescrit)"
+              },
+              {
+                "id": "unit",
+                "value": "watt"
+              },
+              {
+                "id": "decimals",
+                "value": 0
+              },
+              {
+                "id": "custom.axisPlacement",
+                "value": "left"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byRegexp",
+              "options": ".*Avg per step$"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "rgba(255, 140, 60, 0.95)"
+                }
+              },
+              {
+                "id": "custom.lineWidth",
+                "value": 2
+              },
+              {
+                "id": "custom.lineInterpolation",
+                "value": "stepAfter"
+              },
+              {
+                "id": "custom.lineStyle",
+                "value": {
+                  "fill": "dash",
+                  "dash": [
+                    10,
+                    6
+                  ]
+                }
+              },
+              {
+                "id": "custom.spanNulls",
+                "value": false
+              },
+              {
+                "id": "custom.fillOpacity",
+                "value": 0
+              },
+              {
+                "id": "displayName",
+                "value": "Moy / step"
+              },
+              {
+                "id": "unit",
+                "value": "watt"
+              },
+              {
+                "id": "decimals",
+                "value": 0
+              },
+              {
+                "id": "custom.axisPlacement",
+                "value": "left"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Smoothed Power"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "rgba(255, 140, 60, 0.95)"
+                }
+              },
+              {
+                "id": "custom.fillOpacity",
+                "value": 0
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Z1"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "rgba(120, 120, 120, 0.9)"
+                }
+              },
+              {
+                "id": "custom.hideFrom",
+                "value": {
+                  "legend": false,
+                  "viz": true,
+                  "tooltip": false
+                }
+              },
+              {
+                "id": "unit",
+                "value": "watt"
+              },
+              {
+                "id": "decimals",
+                "value": 0
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Z2"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "rgba(59, 130, 246, 0.9)"
+                }
+              },
+              {
+                "id": "custom.hideFrom",
+                "value": {
+                  "legend": false,
+                  "viz": true,
+                  "tooltip": false
+                }
+              },
+              {
+                "id": "unit",
+                "value": "watt"
+              },
+              {
+                "id": "decimals",
+                "value": 0
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Z3"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "rgba(101, 188, 39, 0.9)"
+                }
+              },
+              {
+                "id": "custom.hideFrom",
+                "value": {
+                  "legend": false,
+                  "viz": true,
+                  "tooltip": false
+                }
+              },
+              {
+                "id": "unit",
+                "value": "watt"
+              },
+              {
+                "id": "decimals",
+                "value": 0
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Z4"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "rgba(249, 115, 22, 0.9)"
+                }
+              },
+              {
+                "id": "custom.hideFrom",
+                "value": {
+                  "legend": false,
+                  "viz": true,
+                  "tooltip": false
+                }
+              },
+              {
+                "id": "unit",
+                "value": "watt"
+              },
+              {
+                "id": "decimals",
+                "value": 0
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Z5"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "rgba(220, 38, 38, 0.9)"
+                }
+              },
+              {
+                "id": "custom.hideFrom",
+                "value": {
+                  "legend": false,
+                  "viz": true,
+                  "tooltip": false
+                }
+              },
+              {
+                "id": "unit",
+                "value": "watt"
+              },
+              {
+                "id": "decimals",
+                "value": 0
+              }
+            ]
+          }
+        ]
+      },
+      "options": {
+        "legend": {
+          "showLegend": true,
+          "calcs": [
+            "mean",
+            "max",
+            "min"
+          ],
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "none"
+        },
+        "xField": "Duration"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "rawQuery": true,
+          "query": "SELECT \"Power\" AS \"Power\" FROM \"ActivityGPS\" WHERE \"ActivitySelector\" = '$activity' AND \"Power\" > 0 AND \"DurationSeconds\" <= $activity_end",
+          "resultFormat": "time_series",
+          "alias": "Power",
+          "groupBy": [],
+          "tags": []
+        },
+        {
+          "refId": "B",
+          "rawQuery": true,
+          "query": "SELECT \"DurationSeconds\" AS \"Duration\" FROM \"ActivityGPS\" WHERE \"ActivitySelector\" = '$activity'",
+          "resultFormat": "time_series",
+          "alias": "Duration",
+          "groupBy": [],
+          "tags": []
+        },
+        {
+          "refId": "E",
+          "rawQuery": true,
+          "query": "SELECT \"StepAvgPower\" AS \"Avg per step\", \"RowMarker\" AS \"_rm_avg\" FROM \"WorkoutTarget\" WHERE \"ActivitySelector\" = '$activity' ORDER BY time ASC",
+          "resultFormat": "time_series",
+          "groupBy": [],
+          "tags": []
+        },
+        {
+          "refId": "C",
+          "rawQuery": true,
+          "query": "SELECT \"TargetLowW\" AS \"Target Low\", \"RowMarker\" AS \"_rm_low\" FROM \"WorkoutTarget\" WHERE \"ActivitySelector\" = '$activity' AND \"TargetLowW\" >= 0 ORDER BY time ASC",
+          "resultFormat": "time_series",
+          "groupBy": [],
+          "tags": []
+        },
+        {
+          "refId": "D",
+          "rawQuery": true,
+          "query": "SELECT \"TargetHighW\" AS \"Target High\", \"RowMarker\" AS \"_rm_high\" FROM \"WorkoutTarget\" WHERE \"ActivitySelector\" = '$activity' AND \"TargetLowW\" >= 0 ORDER BY time ASC",
+          "resultFormat": "time_series",
+          "groupBy": [],
+          "tags": []
+        },
+        {
+          "refId": "F",
+          "rawQuery": true,
+          "query": "SELECT (\"TargetLowW\" + \"TargetHighW\") / 2 AS \"Target middle\", \"RowMarker\" AS \"_rm_mid\" FROM \"WorkoutTarget\" WHERE \"ActivitySelector\" = '$activity' AND \"TargetLowW\" >= 0 ORDER BY time ASC",
+          "resultFormat": "time_series",
+          "groupBy": [],
+          "tags": []
+        }
+      ],
+      "transformations": [
+        {
+          "id": "joinByField",
+          "options": {
+            "byField": "Time",
+            "mode": "outer"
+          }
+        },
+        {
+          "id": "renameByRegex",
+          "options": {
+            "regex": "^.*\\.(.+)$",
+            "renamePattern": "$1"
+          }
+        },
+        {
+          "id": "calculateField",
+          "options": {
+            "alias": "Smoothed Power",
+            "mode": "windowFunctions",
+            "reduce": {
+              "reducer": "sum"
+            },
+            "window": {
+              "field": "Power",
+              "reducer": "mean",
+              "windowAlignment": "centered",
+              "windowSize": 0.01,
+              "windowSizeMode": "percentage"
+            }
+          }
+        },
+        {
+          "id": "calculateField",
+          "options": {
+            "mode": "binary",
+            "binary": {
+              "left": "Duration",
+              "operator": "*",
+              "right": "0"
+            },
+            "alias": "__zero_z1",
+            "replaceFields": false
+          }
+        },
+        {
+          "id": "calculateField",
+          "options": {
+            "mode": "binary",
+            "binary": {
+              "left": "__zero_z1",
+              "operator": "+",
+              "right": "200"
+            },
+            "alias": "Z1",
+            "replaceFields": false
+          }
+        },
+        {
+          "id": "calculateField",
+          "options": {
+            "mode": "binary",
+            "binary": {
+              "left": "Duration",
+              "operator": "*",
+              "right": "0"
+            },
+            "alias": "__zero_z2",
+            "replaceFields": false
+          }
+        },
+        {
+          "id": "calculateField",
+          "options": {
+            "mode": "binary",
+            "binary": {
+              "left": "__zero_z2",
+              "operator": "+",
+              "right": "260"
+            },
+            "alias": "Z2",
+            "replaceFields": false
+          }
+        },
+        {
+          "id": "calculateField",
+          "options": {
+            "mode": "binary",
+            "binary": {
+              "left": "Duration",
+              "operator": "*",
+              "right": "0"
+            },
+            "alias": "__zero_z3",
+            "replaceFields": false
+          }
+        },
+        {
+          "id": "calculateField",
+          "options": {
+            "mode": "binary",
+            "binary": {
+              "left": "__zero_z3",
+              "operator": "+",
+              "right": "310"
+            },
+            "alias": "Z3",
+            "replaceFields": false
+          }
+        },
+        {
+          "id": "calculateField",
+          "options": {
+            "mode": "binary",
+            "binary": {
+              "left": "Duration",
+              "operator": "*",
+              "right": "0"
+            },
+            "alias": "__zero_z4",
+            "replaceFields": false
+          }
+        },
+        {
+          "id": "calculateField",
+          "options": {
+            "mode": "binary",
+            "binary": {
+              "left": "__zero_z4",
+              "operator": "+",
+              "right": "350"
+            },
+            "alias": "Z4",
+            "replaceFields": false
+          }
+        },
+        {
+          "id": "calculateField",
+          "options": {
+            "mode": "binary",
+            "binary": {
+              "left": "Duration",
+              "operator": "*",
+              "right": "0"
+            },
+            "alias": "__zero_z5",
+            "replaceFields": false
+          }
+        },
+        {
+          "id": "calculateField",
+          "options": {
+            "mode": "binary",
+            "binary": {
+              "left": "__zero_z5",
+              "operator": "+",
+              "right": "400"
+            },
+            "alias": "Z5",
+            "replaceFields": false
+          }
+        },
+        {
+          "id": "filterFieldsByName",
+          "options": {
+            "include": {
+              "names": [
+                "Time",
+                "Duration",
+                "Smoothed Power",
+                "Avg per step",
+                "Target Low",
+                "Target High",
+                "Target middle",
+                "Z1",
+                "Z2",
+                "Z3",
+                "Z4",
+                "Z5"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "type": "trend",
+      "id": 21,
+      "title": "Cadence (spm) avec overlay target prescrit (si present)",
+      "description": "Cadence saine depend de l'allure (170 spm a 7:00/km c'est OK). Bande purple = target cadence (si prescrit). Staircase orange = cadence moy / step (toujours visible).",
+      "gridPos": {
+        "h": 8,
+        "w": 24,
+        "x": 0,
+        "y": 67
+      },
+      "datasource": {
+        "type": "influxdb",
+        "uid": "garmin_influxdb"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "rpm",
+          "decimals": 0,
+          "custom": {
+            "lineWidth": 2,
+            "fillOpacity": 10,
+            "spanNulls": true,
+            "drawStyle": "line",
+            "showPoints": "never",
+            "lineInterpolation": "smooth",
+            "thresholdsStyle": {
+              "mode": "area"
+            }
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "yellow"
+              },
+              {
+                "color": "green",
+                "value": 170
+              },
+              {
+                "color": "yellow",
+                "value": 190
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Duration"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "dthms"
+              },
+              {
+                "id": "custom.hideFrom",
+                "value": {
+                  "legend": true,
+                  "viz": false,
+                  "tooltip": false
+                }
+              },
+              {
+                "id": "fieldMinMax",
+                "value": true
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Smoothed Cadence"
+            },
+            "properties": [
+              {
+                "id": "custom.axisPlacement",
+                "value": "left"
+              },
+              {
+                "id": "fieldMinMax",
+                "value": true
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byRegexp",
+              "options": ".*Target Low$"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "rgba(168, 85, 247, 0.2)"
+                }
+              },
+              {
+                "id": "custom.drawStyle",
+                "value": "bars"
+              },
+              {
+                "id": "custom.barAlignment",
+                "value": 0
+              },
+              {
+                "id": "custom.spanNulls",
+                "value": false
+              },
+              {
+                "id": "custom.fillOpacity",
+                "value": 0
+              },
+              {
+                "id": "custom.lineWidth",
+                "value": 0
+              },
+              {
+                "id": "displayName",
+                "value": "Target min (prescrit)"
+              },
+              {
+                "id": "unit",
+                "value": "rpm"
+              },
+              {
+                "id": "custom.axisPlacement",
+                "value": "left"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byRegexp",
+              "options": ".*Target High$"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "rgba(168, 85, 247, 0.2)"
+                }
+              },
+              {
+                "id": "custom.drawStyle",
+                "value": "bars"
+              },
+              {
+                "id": "custom.barAlignment",
+                "value": 0
+              },
+              {
+                "id": "custom.spanNulls",
+                "value": false
+              },
+              {
+                "id": "custom.fillBelowTo",
+                "value": "Target min (prescrit)"
+              },
+              {
+                "id": "custom.fillOpacity",
+                "value": 10
+              },
+              {
+                "id": "displayName",
+                "value": "Target max (prescrit)"
+              },
+              {
+                "id": "unit",
+                "value": "rpm"
+              },
+              {
+                "id": "custom.axisPlacement",
+                "value": "left"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byRegexp",
+              "options": ".*Target middle$"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "rgba(168, 85, 247, 1.0)"
+                }
+              },
+              {
+                "id": "custom.lineWidth",
+                "value": 2
+              },
+              {
+                "id": "custom.lineInterpolation",
+                "value": "stepAfter"
+              },
+              {
+                "id": "custom.lineStyle",
+                "value": {
+                  "fill": "dash",
+                  "dash": [
+                    6,
+                    4
+                  ]
+                }
+              },
+              {
+                "id": "custom.spanNulls",
+                "value": false
+              },
+              {
+                "id": "custom.fillOpacity",
+                "value": 0
+              },
+              {
+                "id": "displayName",
+                "value": "Target middle (prescrit)"
+              },
+              {
+                "id": "unit",
+                "value": "rpm"
+              },
+              {
+                "id": "decimals",
+                "value": 0
+              },
+              {
+                "id": "custom.axisPlacement",
+                "value": "left"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byRegexp",
+              "options": ".*Avg per step$"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "rgba(255, 140, 60, 0.95)"
+                }
+              },
+              {
+                "id": "custom.lineWidth",
+                "value": 2
+              },
+              {
+                "id": "custom.lineInterpolation",
+                "value": "stepAfter"
+              },
+              {
+                "id": "custom.lineStyle",
+                "value": {
+                  "fill": "dash",
+                  "dash": [
+                    10,
+                    6
+                  ]
+                }
+              },
+              {
+                "id": "custom.spanNulls",
+                "value": false
+              },
+              {
+                "id": "custom.fillOpacity",
+                "value": 0
+              },
+              {
+                "id": "displayName",
+                "value": "Moy / step"
+              },
+              {
+                "id": "unit",
+                "value": "rpm"
+              },
+              {
+                "id": "decimals",
+                "value": 0
+              },
+              {
+                "id": "custom.axisPlacement",
+                "value": "left"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Smoothed Cadence"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "rgba(255, 140, 60, 0.95)"
+                }
+              },
+              {
+                "id": "custom.fillOpacity",
+                "value": 0
+              }
+            ]
+          }
+        ]
+      },
+      "options": {
+        "legend": {
+          "showLegend": true,
+          "calcs": [
+            "mean",
+            "max",
+            "min"
+          ],
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "none"
+        },
+        "xField": "Duration"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "rawQuery": true,
+          "query": "SELECT \"Cadence\" * 2 AS \"Cadence\" FROM \"ActivityGPS\" WHERE \"ActivitySelector\" = '$activity' AND \"Cadence\" > 30 AND \"DurationSeconds\" <= $activity_end",
+          "resultFormat": "time_series",
+          "alias": "Cadence",
+          "groupBy": [],
+          "tags": []
+        },
+        {
+          "refId": "B",
+          "rawQuery": true,
+          "query": "SELECT \"DurationSeconds\" AS \"Duration\" FROM \"ActivityGPS\" WHERE \"ActivitySelector\" = '$activity'",
+          "resultFormat": "time_series",
+          "alias": "Duration",
+          "groupBy": [],
+          "tags": []
+        },
+        {
+          "refId": "E",
+          "rawQuery": true,
+          "query": "SELECT \"StepAvgCadence\" * 2 AS \"Avg per step\", \"RowMarker\" AS \"_rm_avg\" FROM \"WorkoutTarget\" WHERE \"ActivitySelector\" = '$activity' ORDER BY time ASC",
+          "resultFormat": "time_series",
+          "groupBy": [],
+          "tags": []
+        },
+        {
+          "refId": "C",
+          "rawQuery": true,
+          "query": "SELECT \"TargetLowRPM\" * 2 AS \"Target Low\", \"RowMarker\" AS \"_rm_low\" FROM \"WorkoutTarget\" WHERE \"ActivitySelector\" = '$activity' AND \"TargetLowRPM\" >= 0 ORDER BY time ASC",
+          "resultFormat": "time_series",
+          "groupBy": [],
+          "tags": []
+        },
+        {
+          "refId": "D",
+          "rawQuery": true,
+          "query": "SELECT \"TargetHighRPM\" * 2 AS \"Target High\", \"RowMarker\" AS \"_rm_high\" FROM \"WorkoutTarget\" WHERE \"ActivitySelector\" = '$activity' AND \"TargetLowRPM\" >= 0 ORDER BY time ASC",
+          "resultFormat": "time_series",
+          "groupBy": [],
+          "tags": []
+        },
+        {
+          "refId": "F",
+          "rawQuery": true,
+          "query": "SELECT (\"TargetLowRPM\" * 2 + \"TargetHighRPM\" * 2) / 2 AS \"Target middle\", \"RowMarker\" AS \"_rm_mid\" FROM \"WorkoutTarget\" WHERE \"ActivitySelector\" = '$activity' AND \"TargetLowRPM\" >= 0 ORDER BY time ASC",
+          "resultFormat": "time_series",
+          "groupBy": [],
+          "tags": []
+        }
+      ],
+      "transformations": [
+        {
+          "id": "joinByField",
+          "options": {
+            "byField": "Time",
+            "mode": "outer"
+          }
+        },
+        {
+          "id": "renameByRegex",
+          "options": {
+            "regex": "^.*\\.(.+)$",
+            "renamePattern": "$1"
+          }
+        },
+        {
+          "id": "calculateField",
+          "options": {
+            "alias": "Smoothed Cadence",
+            "mode": "windowFunctions",
+            "reduce": {
+              "reducer": "sum"
+            },
+            "window": {
+              "field": "Cadence",
+              "reducer": "mean",
+              "windowAlignment": "centered",
+              "windowSize": 0.01,
+              "windowSizeMode": "percentage"
+            }
+          }
+        },
+        {
+          "id": "filterFieldsByName",
+          "options": {
+            "include": {
+              "names": [
+                "Time",
+                "Duration",
+                "Smoothed Cadence",
+                "Avg per step",
+                "Target Low",
+                "Target High",
+                "Target middle"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "type": "trend",
+      "id": 22,
+      "title": "Stride length (m) + moy / step",
+      "description": "Longueur foulee par seconde (en metres). Staircase orange = stride moy / step (StepAvgStride/1000).",
+      "gridPos": {
+        "h": 8,
+        "w": 24,
+        "x": 0,
+        "y": 75
+      },
+      "datasource": {
+        "type": "influxdb",
+        "uid": "garmin_influxdb"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "lengthm",
+          "decimals": 2,
+          "custom": {
+            "lineWidth": 2,
+            "fillOpacity": 10,
+            "spanNulls": true,
+            "drawStyle": "line",
+            "showPoints": "never",
+            "lineInterpolation": "smooth"
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Duration"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "dthms"
+              },
+              {
+                "id": "custom.hideFrom",
+                "value": {
+                  "legend": true,
+                  "viz": false,
+                  "tooltip": false
+                }
+              },
+              {
+                "id": "fieldMinMax",
+                "value": true
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Smoothed Stride"
+            },
+            "properties": [
+              {
+                "id": "custom.axisPlacement",
+                "value": "left"
+              },
+              {
+                "id": "fieldMinMax",
+                "value": true
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byRegexp",
+              "options": ".*Avg per step$"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "rgba(255, 140, 60, 0.95)"
+                }
+              },
+              {
+                "id": "custom.lineWidth",
+                "value": 2
+              },
+              {
+                "id": "custom.lineInterpolation",
+                "value": "stepAfter"
+              },
+              {
+                "id": "custom.lineStyle",
+                "value": {
+                  "fill": "dash",
+                  "dash": [
+                    10,
+                    6
+                  ]
+                }
+              },
+              {
+                "id": "custom.spanNulls",
+                "value": false
+              },
+              {
+                "id": "custom.fillOpacity",
+                "value": 0
+              },
+              {
+                "id": "displayName",
+                "value": "Moy / step"
+              },
+              {
+                "id": "unit",
+                "value": "lengthm"
+              },
+              {
+                "id": "decimals",
+                "value": 2
+              },
+              {
+                "id": "custom.axisPlacement",
+                "value": "left"
+              }
+            ]
+          }
+        ]
+      },
+      "options": {
+        "legend": {
+          "showLegend": true,
+          "calcs": [
+            "mean",
+            "max",
+            "min"
+          ],
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "none"
+        },
+        "xField": "Duration"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "rawQuery": true,
+          "query": "SELECT \"Step_Length\"/1000 AS \"Stride\" FROM \"ActivityGPS\" WHERE \"ActivitySelector\" = '$activity' AND \"Step_Length\" > 0 AND \"DurationSeconds\" <= $activity_end",
+          "resultFormat": "time_series",
+          "alias": "Stride",
+          "groupBy": [],
+          "tags": []
+        },
+        {
+          "refId": "B",
+          "rawQuery": true,
+          "query": "SELECT \"DurationSeconds\" AS \"Duration\" FROM \"ActivityGPS\" WHERE \"ActivitySelector\" = '$activity'",
+          "resultFormat": "time_series",
+          "alias": "Duration",
+          "groupBy": [],
+          "tags": []
+        },
+        {
+          "refId": "E",
+          "rawQuery": true,
+          "query": "SELECT \"StepAvgStride\" / 1000 AS \"Avg per step\", \"RowMarker\" AS \"_rm_avg\" FROM \"WorkoutTarget\" WHERE \"ActivitySelector\" = '$activity' ORDER BY time ASC",
+          "resultFormat": "time_series",
+          "groupBy": [],
+          "tags": []
+        }
+      ],
+      "transformations": [
+        {
+          "id": "joinByField",
+          "options": {
+            "byField": "Time",
+            "mode": "outer"
+          }
+        },
+        {
+          "id": "renameByRegex",
+          "options": {
+            "regex": "^.*\\.(.+)$",
+            "renamePattern": "$1"
+          }
+        },
+        {
+          "id": "calculateField",
+          "options": {
+            "alias": "Smoothed Stride",
+            "mode": "windowFunctions",
+            "reduce": {
+              "reducer": "sum"
+            },
+            "window": {
+              "field": "Stride",
+              "reducer": "mean",
+              "windowAlignment": "centered",
+              "windowSize": 0.01,
+              "windowSizeMode": "percentage"
+            }
+          }
+        },
+        {
+          "id": "filterFieldsByName",
+          "options": {
+            "include": {
+              "names": [
+                "Time",
+                "Duration",
+                "Smoothed Stride",
+                "Avg per step"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "type": "trend",
+      "id": 23,
+      "title": "Vertical Ratio (%) - cible <7% + moy / step",
+      "description": "Vertical Ratio (oscillation verticale / stride length, en %). <7% = bonne efficacite. Staircase orange = VR moy / step.",
+      "gridPos": {
+        "h": 8,
+        "w": 24,
+        "x": 0,
+        "y": 83
+      },
+      "datasource": {
+        "type": "influxdb",
+        "uid": "garmin_influxdb"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percent",
+          "decimals": 1,
+          "custom": {
+            "lineWidth": 2,
+            "fillOpacity": 10,
+            "spanNulls": true,
+            "drawStyle": "line",
+            "showPoints": "never",
+            "lineInterpolation": "smooth",
+            "thresholdsStyle": {
+              "mode": "area"
+            }
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              },
+              {
+                "color": "yellow",
+                "value": 7
+              },
+              {
+                "color": "red",
+                "value": 9
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Duration"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "dthms"
+              },
+              {
+                "id": "custom.hideFrom",
+                "value": {
+                  "legend": true,
+                  "viz": false,
+                  "tooltip": false
+                }
+              },
+              {
+                "id": "fieldMinMax",
+                "value": true
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Smoothed VR"
+            },
+            "properties": [
+              {
+                "id": "custom.axisPlacement",
+                "value": "left"
+              },
+              {
+                "id": "fieldMinMax",
+                "value": true
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byRegexp",
+              "options": ".*Avg per step$"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "rgba(255, 140, 60, 0.95)"
+                }
+              },
+              {
+                "id": "custom.lineWidth",
+                "value": 2
+              },
+              {
+                "id": "custom.lineInterpolation",
+                "value": "stepAfter"
+              },
+              {
+                "id": "custom.lineStyle",
+                "value": {
+                  "fill": "dash",
+                  "dash": [
+                    10,
+                    6
+                  ]
+                }
+              },
+              {
+                "id": "custom.spanNulls",
+                "value": false
+              },
+              {
+                "id": "custom.fillOpacity",
+                "value": 0
+              },
+              {
+                "id": "displayName",
+                "value": "Moy / step"
+              },
+              {
+                "id": "unit",
+                "value": "percent"
+              },
+              {
+                "id": "decimals",
+                "value": 2
+              },
+              {
+                "id": "custom.axisPlacement",
+                "value": "left"
+              }
+            ]
+          }
+        ]
+      },
+      "options": {
+        "legend": {
+          "showLegend": true,
+          "calcs": [
+            "mean",
+            "max",
+            "min"
+          ],
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "none"
+        },
+        "xField": "Duration"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "rawQuery": true,
+          "query": "SELECT \"Vertical_Ratio\" AS \"VR\" FROM \"ActivityGPS\" WHERE \"ActivitySelector\" = '$activity' AND \"Vertical_Ratio\" > 0 AND \"DurationSeconds\" <= $activity_end",
+          "resultFormat": "time_series",
+          "alias": "VR",
+          "groupBy": [],
+          "tags": []
+        },
+        {
+          "refId": "B",
+          "rawQuery": true,
+          "query": "SELECT \"DurationSeconds\" AS \"Duration\" FROM \"ActivityGPS\" WHERE \"ActivitySelector\" = '$activity'",
+          "resultFormat": "time_series",
+          "alias": "Duration",
+          "groupBy": [],
+          "tags": []
+        },
+        {
+          "refId": "E",
+          "rawQuery": true,
+          "query": "SELECT \"StepAvgVR\" AS \"Avg per step\", \"RowMarker\" AS \"_rm_avg\" FROM \"WorkoutTarget\" WHERE \"ActivitySelector\" = '$activity' ORDER BY time ASC",
+          "resultFormat": "time_series",
+          "groupBy": [],
+          "tags": []
+        }
+      ],
+      "transformations": [
+        {
+          "id": "joinByField",
+          "options": {
+            "byField": "Time",
+            "mode": "outer"
+          }
+        },
+        {
+          "id": "renameByRegex",
+          "options": {
+            "regex": "^.*\\.(.+)$",
+            "renamePattern": "$1"
+          }
+        },
+        {
+          "id": "calculateField",
+          "options": {
+            "alias": "Smoothed VR",
+            "mode": "windowFunctions",
+            "reduce": {
+              "reducer": "sum"
+            },
+            "window": {
+              "field": "VR",
+              "reducer": "mean",
+              "windowAlignment": "centered",
+              "windowSize": 0.01,
+              "windowSizeMode": "percentage"
+            }
+          }
+        },
+        {
+          "id": "filterFieldsByName",
+          "options": {
+            "include": {
+              "names": [
+                "Time",
+                "Duration",
+                "Smoothed VR",
+                "Avg per step"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "type": "trend",
+      "id": 24,
+      "title": "Vertical Oscillation (cm)",
+      "description": "",
+      "gridPos": {
+        "h": 8,
+        "w": 24,
+        "x": 0,
+        "y": 91
+      },
+      "datasource": {
+        "type": "influxdb",
+        "uid": "garmin_influxdb"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "lengthcm",
+          "decimals": 1,
+          "custom": {
+            "lineWidth": 2,
+            "fillOpacity": 10,
+            "spanNulls": true,
+            "drawStyle": "line",
+            "showPoints": "never",
+            "lineInterpolation": "smooth"
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Duration"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "dthms"
+              },
+              {
+                "id": "custom.hideFrom",
+                "value": {
+                  "legend": true,
+                  "viz": false,
+                  "tooltip": false
+                }
+              },
+              {
+                "id": "fieldMinMax",
+                "value": true
+              }
+            ]
+          }
+        ]
+      },
+      "options": {
+        "legend": {
+          "showLegend": true,
+          "calcs": [
+            "mean",
+            "max",
+            "min"
+          ],
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "none"
+        },
+        "xField": "Duration"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "rawQuery": true,
+          "query": "SELECT \"Vertical_Oscillation\"/10 AS \"VO\" FROM \"ActivityGPS\" WHERE \"ActivitySelector\" = '$activity' AND \"Vertical_Oscillation\" > 0 AND \"DurationSeconds\" <= $activity_end",
+          "resultFormat": "time_series",
+          "alias": "VO",
+          "groupBy": [],
+          "tags": []
+        },
+        {
+          "refId": "B",
+          "rawQuery": true,
+          "query": "SELECT \"DurationSeconds\" AS \"Duration\" FROM \"ActivityGPS\" WHERE \"ActivitySelector\" = '$activity'",
+          "resultFormat": "time_series",
+          "alias": "Duration",
+          "groupBy": [],
+          "tags": []
+        }
+      ],
+      "transformations": [
+        {
+          "id": "joinByField",
+          "options": {
+            "byField": "Time",
+            "mode": "outer"
+          }
+        },
+        {
+          "id": "renameByRegex",
+          "options": {
+            "regex": "^.*\\.(.+)$",
+            "renamePattern": "$1"
+          }
+        },
+        {
+          "id": "calculateField",
+          "options": {
+            "alias": "Smoothed VO",
+            "mode": "windowFunctions",
+            "reduce": {
+              "reducer": "sum"
+            },
+            "window": {
+              "field": "VO",
+              "reducer": "mean",
+              "windowAlignment": "centered",
+              "windowSize": 0.01,
+              "windowSizeMode": "percentage"
+            }
+          }
+        },
+        {
+          "id": "filterFieldsByName",
+          "options": {
+            "include": {
+              "names": [
+                "Time",
+                "Duration",
+                "Smoothed VO"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "type": "trend",
+      "id": 25,
+      "title": "Ground Contact Time (ms) - cible <250",
+      "description": "",
+      "gridPos": {
+        "h": 8,
+        "w": 24,
+        "x": 0,
+        "y": 99
+      },
+      "datasource": {
+        "type": "influxdb",
+        "uid": "garmin_influxdb"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "ms",
+          "decimals": 0,
+          "custom": {
+            "lineWidth": 2,
+            "fillOpacity": 10,
+            "spanNulls": true,
+            "drawStyle": "line",
+            "showPoints": "never",
+            "lineInterpolation": "smooth",
+            "thresholdsStyle": {
+              "mode": "area"
+            }
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              },
+              {
+                "color": "yellow",
+                "value": 260
+              },
+              {
+                "color": "red",
+                "value": 290
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Duration"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "dthms"
+              },
+              {
+                "id": "custom.hideFrom",
+                "value": {
+                  "legend": true,
+                  "viz": false,
+                  "tooltip": false
+                }
+              },
+              {
+                "id": "fieldMinMax",
+                "value": true
+              }
+            ]
+          }
+        ]
+      },
+      "options": {
+        "legend": {
+          "showLegend": true,
+          "calcs": [
+            "mean",
+            "max",
+            "min"
+          ],
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "none"
+        },
+        "xField": "Duration"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "rawQuery": true,
+          "query": "SELECT \"Stance_Time\" AS \"GCT\" FROM \"ActivityGPS\" WHERE \"ActivitySelector\" = '$activity' AND \"Stance_Time\" > 0 AND \"DurationSeconds\" <= $activity_end",
+          "resultFormat": "time_series",
+          "alias": "GCT",
+          "groupBy": [],
+          "tags": []
+        },
+        {
+          "refId": "B",
+          "rawQuery": true,
+          "query": "SELECT \"DurationSeconds\" AS \"Duration\" FROM \"ActivityGPS\" WHERE \"ActivitySelector\" = '$activity'",
+          "resultFormat": "time_series",
+          "alias": "Duration",
+          "groupBy": [],
+          "tags": []
+        }
+      ],
+      "transformations": [
+        {
+          "id": "joinByField",
+          "options": {
+            "byField": "Time",
+            "mode": "outer"
+          }
+        },
+        {
+          "id": "renameByRegex",
+          "options": {
+            "regex": "^.*\\.(.+)$",
+            "renamePattern": "$1"
+          }
+        },
+        {
+          "id": "calculateField",
+          "options": {
+            "alias": "Smoothed GCT",
+            "mode": "windowFunctions",
+            "reduce": {
+              "reducer": "sum"
+            },
+            "window": {
+              "field": "GCT",
+              "reducer": "mean",
+              "windowAlignment": "centered",
+              "windowSize": 0.01,
+              "windowSizeMode": "percentage"
+            }
+          }
+        },
+        {
+          "id": "filterFieldsByName",
+          "options": {
+            "include": {
+              "names": [
+                "Time",
+                "Duration",
+                "Smoothed GCT"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "type": "trend",
+      "id": 26,
+      "title": "Avg HR par lap (drift = decouplage aerobie) + altitude",
+      "description": "FC moyenne + max par lap (1 km). Altitude en fond leger pour distinguer drift cardiaque vs effort topographique. Axe X = duree de course.",
+      "gridPos": {
+        "h": 8,
+        "w": 24,
+        "x": 0,
+        "y": 107
+      },
+      "datasource": {
+        "type": "influxdb",
+        "uid": "garmin_influxdb"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "bpm",
+          "decimals": 0,
+          "custom": {
+            "lineWidth": 2,
+            "spanNulls": true,
+            "drawStyle": "line",
+            "showPoints": "always",
+            "pointSize": 8,
+            "fillOpacity": 10,
+            "lineInterpolation": "linear"
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Duration"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "dthms"
+              },
+              {
+                "id": "custom.hideFrom",
+                "value": {
+                  "legend": true,
+                  "viz": true,
+                  "tooltip": false
+                }
+              },
+              {
+                "id": "fieldMinMax",
+                "value": true
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Avg HR"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "rgba(101, 188, 39, 0.95)"
+                }
+              },
+              {
+                "id": "custom.axisPlacement",
+                "value": "left"
+              },
+              {
+                "id": "custom.lineInterpolation",
+                "value": "stepAfter"
+              },
+              {
+                "id": "custom.spanNulls",
+                "value": true
+              },
+              {
+                "id": "fieldMinMax",
+                "value": true
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Max HR"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "rgba(249, 200, 50, 0.95)"
+                }
+              },
+              {
+                "id": "custom.axisPlacement",
+                "value": "left"
+              },
+              {
+                "id": "custom.lineInterpolation",
+                "value": "stepAfter"
+              },
+              {
+                "id": "custom.spanNulls",
+                "value": true
+              },
+              {
+                "id": "fieldMinMax",
+                "value": true
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Altitude"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "rgba(160, 160, 160, 0.35)"
+                }
+              },
+              {
+                "id": "custom.lineWidth",
+                "value": 0
+              },
+              {
+                "id": "custom.fillOpacity",
+                "value": 25
+              },
+              {
+                "id": "custom.showPoints",
+                "value": "never"
+              },
+              {
+                "id": "custom.lineInterpolation",
+                "value": "smooth"
+              },
+              {
+                "id": "custom.axisPlacement",
+                "value": "right"
+              },
+              {
+                "id": "unit",
+                "value": "lengthm"
+              },
+              {
+                "id": "fieldMinMax",
+                "value": true
+              }
+            ]
+          }
+        ]
+      },
+      "options": {
+        "legend": {
+          "showLegend": true,
+          "calcs": [
+            "mean",
+            "max",
+            "min"
+          ],
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "none"
+        },
+        "xField": "Duration"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "rawQuery": true,
+          "query": "SELECT \"Avg_HR\" AS \"Avg HR\", \"Max_HR\" AS \"Max HR\" FROM \"ActivityLap\" WHERE \"ActivitySelector\" = '$activity' ORDER BY time ASC",
+          "resultFormat": "time_series",
+          "groupBy": [],
+          "tags": []
+        },
+        {
+          "refId": "B",
+          "rawQuery": true,
+          "query": "SELECT \"DurationSeconds\" AS \"Duration\" FROM \"ActivityGPS\" WHERE \"ActivitySelector\" = '$activity'",
+          "resultFormat": "time_series",
+          "groupBy": [],
+          "tags": []
+        },
+        {
+          "refId": "C",
+          "rawQuery": true,
+          "query": "SELECT \"Altitude\" AS \"Altitude\" FROM \"ActivityGPS\" WHERE \"ActivitySelector\" = '$activity' AND \"Altitude\" > 0 AND \"DurationSeconds\" <= $activity_end",
+          "resultFormat": "time_series",
+          "groupBy": [],
+          "tags": []
+        }
+      ],
+      "transformations": [
+        {
+          "id": "joinByField",
+          "options": {
+            "byField": "Time",
+            "mode": "outer"
+          }
+        },
+        {
+          "id": "renameByRegex",
+          "options": {
+            "regex": "^.*\\.(.+)$",
+            "renamePattern": "$1"
+          }
+        },
+        {
+          "id": "filterFieldsByName",
+          "options": {
+            "include": {
+              "names": [
+                "Time",
+                "Duration",
+                "Avg HR",
+                "Max HR",
+                "Altitude"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "type": "table",
+      "id": 27,
+      "title": "Splits par lap (km)",
+      "description": "Garmin auto-laps par km. La 1ere col 'Index' donne l'ordre. Pace = mm:ss/km, Power en W, HR en bpm.",
+      "gridPos": {
+        "h": 10,
+        "w": 24,
+        "x": 0,
+        "y": 115
+      },
+      "datasource": {
+        "type": "influxdb",
+        "uid": "garmin_influxdb"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "align": "auto"
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Pace"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "dthms"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Avg HR"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "bpm"
+              },
+              {
+                "id": "color",
+                "value": {
+                  "mode": "thresholds"
+                }
+              },
+              {
+                "id": "thresholds",
+                "value": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "blue"
+                    },
+                    {
+                      "color": "green",
+                      "value": 130
+                    },
+                    {
+                      "color": "yellow",
+                      "value": 160
+                    },
+                    {
+                      "color": "red",
+                      "value": 175
+                    }
+                  ]
+                }
+              },
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "type": "color-background",
+                  "mode": "gradient"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Max HR"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "bpm"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Avg Power"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "watt"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Distance (m)"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "lengthm"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Time"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "dthms"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "D+ (m)"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "lengthm"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "D- (m)"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "lengthm"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Cadence"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "rpm"
+              }
+            ]
+          }
+        ]
+      },
+      "options": {
+        "showHeader": true,
+        "footer": {
+          "show": false
+        },
+        "cellHeight": "sm"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "rawQuery": true,
+          "query": "SELECT \"Index\", \"Distance\" AS \"Distance (m)\", \"Elapsed_Time\" AS \"Time\", 1000.0/(\"Distance\"/\"Elapsed_Time\") AS \"Pace\", \"Avg_HR\" AS \"Avg HR\", \"Max_HR\" AS \"Max HR\", \"Avg_Power\" AS \"Avg Power\", \"Avg_Cadence\"*2 AS \"Cadence\", \"Ascent\" AS \"D+ (m)\", \"Descent\" AS \"D- (m)\" FROM \"ActivityLap\" WHERE \"ActivitySelector\" = '$activity' ORDER BY time ASC",
+          "resultFormat": "table",
+          "groupBy": [],
+          "tags": []
+        }
+      ]
+    }
+  ],
+  "refresh": "",
+  "schemaVersion": 39,
+  "tags": [
+    "activity-detail",
+    "hr",
+    "pace",
+    "power",
+    "cadence",
+    "splits",
+    "gps",
+    "laps",
+    "workout-steps"
+  ],
+  "templating": {
+    "list": [
+      {
+        "name": "activity",
+        "label": "Course a analyser",
+        "type": "query",
+        "datasource": {
+          "type": "influxdb",
+          "uid": "garmin_influxdb"
+        },
+        "query": "SHOW TAG VALUES FROM \"ActivitySummary\" WITH KEY = \"ActivitySelector\" WHERE \"ActivitySelector\" =~ /running/",
+        "regex": "/^(?<value>(?<text>\\d{8}T\\d{4})\\d{2}UTC-running)$/",
+        "sort": 2,
+        "refresh": 1,
+        "current": {
+          "selected": false,
+          "text": "20260513T092228UTC-running",
+          "value": "20260513T092228UTC-running"
+        },
+        "multi": false,
+        "includeAll": false
+      },
+      {
+        "name": "activity_end",
+        "label": "Activity end (s)",
+        "type": "query",
+        "datasource": {
+          "type": "influxdb",
+          "uid": "garmin_influxdb"
+        },
+        "query": "SELECT last(\"elapsedDuration\") FROM \"ActivitySummary\" WHERE \"ActivitySelector\" = '$activity'",
+        "hide": 2,
+        "refresh": 2,
+        "current": {
+          "selected": true,
+          "text": "999999",
+          "value": "999999"
+        },
+        "multi": false,
+        "includeAll": false
+      },
+      {
+        "name": "z1_hr",
+        "label": "HR Zone 1 Floor",
+        "type": "query",
+        "datasource": {
+          "type": "influxdb",
+          "uid": "garmin_influxdb"
+        },
+        "query": "SELECT last(\"zone1Floor\") FROM \"HRZones\" WHERE \"sport\" =~ /running/",
+        "hide": 2,
+        "refresh": 1,
+        "current": {
+          "selected": true,
+          "text": "120",
+          "value": "120"
+        },
+        "multi": false,
+        "includeAll": false
+      },
+      {
+        "name": "z2_hr",
+        "label": "HR Zone 2 Floor",
+        "type": "query",
+        "datasource": {
+          "type": "influxdb",
+          "uid": "garmin_influxdb"
+        },
+        "query": "SELECT last(\"zone2Floor\") FROM \"HRZones\" WHERE \"sport\" =~ /running/",
+        "hide": 2,
+        "refresh": 1,
+        "current": {
+          "selected": true,
+          "text": "140",
+          "value": "140"
+        },
+        "multi": false,
+        "includeAll": false
+      },
+      {
+        "name": "z3_hr",
+        "label": "HR Zone 3 Floor",
+        "type": "query",
+        "datasource": {
+          "type": "influxdb",
+          "uid": "garmin_influxdb"
+        },
+        "query": "SELECT last(\"zone3Floor\") FROM \"HRZones\" WHERE \"sport\" =~ /running/",
+        "hide": 2,
+        "refresh": 1,
+        "current": {
+          "selected": true,
+          "text": "155",
+          "value": "155"
+        },
+        "multi": false,
+        "includeAll": false
+      },
+      {
+        "name": "z4_hr",
+        "label": "HR Zone 4 Floor",
+        "type": "query",
+        "datasource": {
+          "type": "influxdb",
+          "uid": "garmin_influxdb"
+        },
+        "query": "SELECT last(\"zone4Floor\") FROM \"HRZones\" WHERE \"sport\" =~ /running/",
+        "hide": 2,
+        "refresh": 1,
+        "current": {
+          "selected": true,
+          "text": "170",
+          "value": "170"
+        },
+        "multi": false,
+        "includeAll": false
+      },
+      {
+        "name": "z5_hr",
+        "label": "HR Zone 5 Floor",
+        "type": "query",
+        "datasource": {
+          "type": "influxdb",
+          "uid": "garmin_influxdb"
+        },
+        "query": "SELECT last(\"zone5Floor\") FROM \"HRZones\" WHERE \"sport\" =~ /running/",
+        "hide": 2,
+        "refresh": 1,
+        "current": {
+          "selected": true,
+          "text": "185",
+          "value": "185"
+        },
+        "multi": false,
+        "includeAll": false
+      },
+      {
+        "name": "z1_pwr",
+        "label": "Power Zone 1 Floor",
+        "type": "query",
+        "datasource": {
+          "type": "influxdb",
+          "uid": "garmin_influxdb"
+        },
+        "query": "SELECT last(\"zone1Floor\") FROM \"PowerZones\" WHERE \"sport\" =~ /running/",
+        "hide": 2,
+        "refresh": 1,
+        "current": {
+          "selected": true,
+          "text": "200",
+          "value": "200"
+        },
+        "multi": false,
+        "includeAll": false
+      },
+      {
+        "name": "z2_pwr",
+        "label": "Power Zone 2 Floor",
+        "type": "query",
+        "datasource": {
+          "type": "influxdb",
+          "uid": "garmin_influxdb"
+        },
+        "query": "SELECT last(\"zone2Floor\") FROM \"PowerZones\" WHERE \"sport\" =~ /running/",
+        "hide": 2,
+        "refresh": 1,
+        "current": {
+          "selected": true,
+          "text": "260",
+          "value": "260"
+        },
+        "multi": false,
+        "includeAll": false
+      },
+      {
+        "name": "z3_pwr",
+        "label": "Power Zone 3 Floor",
+        "type": "query",
+        "datasource": {
+          "type": "influxdb",
+          "uid": "garmin_influxdb"
+        },
+        "query": "SELECT last(\"zone3Floor\") FROM \"PowerZones\" WHERE \"sport\" =~ /running/",
+        "hide": 2,
+        "refresh": 1,
+        "current": {
+          "selected": true,
+          "text": "310",
+          "value": "310"
+        },
+        "multi": false,
+        "includeAll": false
+      },
+      {
+        "name": "z4_pwr",
+        "label": "Power Zone 4 Floor",
+        "type": "query",
+        "datasource": {
+          "type": "influxdb",
+          "uid": "garmin_influxdb"
+        },
+        "query": "SELECT last(\"zone4Floor\") FROM \"PowerZones\" WHERE \"sport\" =~ /running/",
+        "hide": 2,
+        "refresh": 1,
+        "current": {
+          "selected": true,
+          "text": "350",
+          "value": "350"
+        },
+        "multi": false,
+        "includeAll": false
+      },
+      {
+        "name": "z5_pwr",
+        "label": "Power Zone 5 Floor",
+        "type": "query",
+        "datasource": {
+          "type": "influxdb",
+          "uid": "garmin_influxdb"
+        },
+        "query": "SELECT last(\"zone5Floor\") FROM \"PowerZones\" WHERE \"sport\" =~ /running/",
+        "hide": 2,
+        "refresh": 1,
+        "current": {
+          "selected": true,
+          "text": "400",
+          "value": "400"
+        },
+        "multi": false,
+        "includeAll": false
+      }
+    ]
+  },
+  "time": {
+    "from": "now-2h",
+    "to": "now"
+  },
+  "timezone": "browser",
+  "title": "03 Activity Drill-Down",
+  "uid": "garvis-j-activity",
+  "version": 1,
+  "weekStart": ""
+}

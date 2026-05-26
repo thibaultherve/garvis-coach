@@ -1,0 +1,3774 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": {
+          "type": "grafana",
+          "uid": "-- Grafana --"
+        },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "description": "Trajectoires long-terme : cardio capacity (VO2max, race predictions, fitness age, scores), zones recalibration (FCmax/LTHR/FTP boundaries), body composition (poids). Use case : review mensuel / fin de cycle pour valider l effet du plan.",
+  "editable": true,
+  "graphTooltip": 0,
+  "id": null,
+  "links": [],
+  "panels": [
+    {
+      "type": "stat",
+      "id": 2,
+      "title": "VO2max Running",
+      "gridPos": {
+        "x": 0,
+        "y": 0,
+        "w": 5,
+        "h": 4
+      },
+      "datasource": {
+        "type": "influxdb",
+        "uid": "garmin_influxdb"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "decimals": 1,
+          "unit": "none",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "value": null,
+                "color": "#4A4458",
+                "label": "Iron"
+              },
+              {
+                "value": 28,
+                "color": "#8B5A2B",
+                "label": "Bronze"
+              },
+              {
+                "value": 37,
+                "color": "#B8B8B8",
+                "label": "Silver"
+              },
+              {
+                "value": 42,
+                "color": "#D4AF37",
+                "label": "Gold"
+              },
+              {
+                "value": 47,
+                "color": "#2DD4BF",
+                "label": "Platinum"
+              },
+              {
+                "value": 53,
+                "color": "#10B981",
+                "label": "Emerald"
+              },
+              {
+                "value": 60,
+                "color": "#60A5FA",
+                "label": "Diamond"
+              },
+              {
+                "value": 68,
+                "color": "#C084FC",
+                "label": "Master"
+              },
+              {
+                "value": 75,
+                "color": "#DC2626",
+                "label": "Grandmaster"
+              },
+              {
+                "value": 80,
+                "color": "#F59E0B",
+                "label": "Challenger"
+              }
+            ]
+          },
+          "color": {
+            "mode": "thresholds"
+          }
+        }
+      },
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        }
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "measurement": "VO2_Max",
+          "policy": "default",
+          "resultFormat": "time_series",
+          "orderByTime": "ASC",
+          "select": [
+            [
+              {
+                "params": [
+                  "VO2_max_value"
+                ],
+                "type": "field"
+              },
+              {
+                "params": [],
+                "type": "last"
+              }
+            ]
+          ],
+          "groupBy": [],
+          "tags": []
+        }
+      ]
+    },
+    {
+      "type": "stat",
+      "id": 3,
+      "title": "Endurance Score",
+      "gridPos": {
+        "x": 5,
+        "y": 0,
+        "w": 5,
+        "h": 4
+      },
+      "datasource": {
+        "type": "influxdb",
+        "uid": "garmin_influxdb"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "decimals": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "value": null,
+                "color": "#EF4444",
+                "label": "Recreational"
+              },
+              {
+                "value": 5100,
+                "color": "#F97316",
+                "label": "Intermediate"
+              },
+              {
+                "value": 5800,
+                "color": "#FBBF24",
+                "label": "Trained"
+              },
+              {
+                "value": 6600,
+                "color": "#10B981",
+                "label": "Well-trained"
+              },
+              {
+                "value": 7300,
+                "color": "#3B82F6",
+                "label": "Expert"
+              },
+              {
+                "value": 8100,
+                "color": "#7C3AED",
+                "label": "Superior"
+              },
+              {
+                "value": 8800,
+                "color": "#EC4899",
+                "label": "Elite"
+              }
+            ]
+          },
+          "color": {
+            "mode": "thresholds"
+          }
+        }
+      },
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        }
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "measurement": "EnduranceScore",
+          "policy": "default",
+          "resultFormat": "time_series",
+          "orderByTime": "ASC",
+          "select": [
+            [
+              {
+                "params": [
+                  "EnduranceScore"
+                ],
+                "type": "field"
+              },
+              {
+                "params": [],
+                "type": "last"
+              }
+            ]
+          ],
+          "groupBy": [],
+          "tags": []
+        }
+      ]
+    },
+    {
+      "type": "stat",
+      "id": 4,
+      "title": "Hill Score (overall)",
+      "gridPos": {
+        "x": 10,
+        "y": 0,
+        "w": 5,
+        "h": 4
+      },
+      "datasource": {
+        "type": "influxdb",
+        "uid": "garmin_influxdb"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "min": 0,
+          "max": 100,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "value": null,
+                "color": "#EF4444",
+                "label": "Recreational"
+              },
+              {
+                "value": 25,
+                "color": "#F97316",
+                "label": "Challenger"
+              },
+              {
+                "value": 50,
+                "color": "#10B981",
+                "label": "Trained"
+              },
+              {
+                "value": 70,
+                "color": "#3B82F6",
+                "label": "Skilled"
+              },
+              {
+                "value": 85,
+                "color": "#7C3AED",
+                "label": "Expert"
+              },
+              {
+                "value": 95,
+                "color": "#9333EA",
+                "label": "Elite"
+              }
+            ]
+          },
+          "color": {
+            "mode": "thresholds"
+          }
+        }
+      },
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        }
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "measurement": "HillScore",
+          "policy": "default",
+          "resultFormat": "time_series",
+          "orderByTime": "ASC",
+          "select": [
+            [
+              {
+                "params": [
+                  "overallScore"
+                ],
+                "type": "field"
+              },
+              {
+                "params": [],
+                "type": "last"
+              }
+            ]
+          ],
+          "groupBy": [],
+          "tags": []
+        }
+      ],
+      "description": "Numeric rating of your ability to run uphill, based on VO2 Max and training history.\n\nTiers: Recreational (1-24) | Challenger (25-49) | Trained (50-69) | Skilled (70-84) | Expert (85-94) | Elite (95-100).\n\nFactors: Hill Endurance (sustain pace uphill, elevation gain + time on hills at low intensity), Hill Strength (maintain running power on hills, higher-intensity efforts), VO2 Max (peak oxygen consumption, predictor of uphill ability)."
+    },
+    {
+      "type": "stat",
+      "id": 5,
+      "title": "Fitness Age",
+      "gridPos": {
+        "x": 15,
+        "y": 0,
+        "w": 5,
+        "h": 4
+      },
+      "datasource": {
+        "type": "influxdb",
+        "uid": "garmin_influxdb"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "y",
+          "decimals": 1
+        }
+      },
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        }
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "measurement": "FitnessAge",
+          "policy": "default",
+          "resultFormat": "time_series",
+          "orderByTime": "ASC",
+          "select": [
+            [
+              {
+                "params": [
+                  "fitnessAge"
+                ],
+                "type": "field"
+              },
+              {
+                "params": [],
+                "type": "last"
+              }
+            ]
+          ],
+          "groupBy": [],
+          "tags": []
+        }
+      ]
+    },
+    {
+      "type": "stat",
+      "id": 23,
+      "title": "Current Weight",
+      "gridPos": {
+        "x": 20,
+        "y": 0,
+        "w": 4,
+        "h": 4
+      },
+      "datasource": {
+        "type": "influxdb",
+        "uid": "garmin_influxdb"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "kg",
+          "decimals": 1
+        }
+      },
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        }
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "alias": "kg",
+          "measurement": "BodyComposition",
+          "policy": "default",
+          "resultFormat": "time_series",
+          "orderByTime": "ASC",
+          "query": "SELECT last(\"weight\") / 1000 AS \"kg\" FROM \"BodyComposition\" WHERE $timeFilter",
+          "rawQuery": true,
+          "groupBy": [],
+          "tags": []
+        }
+      ]
+    },
+    {
+      "type": "stat",
+      "id": 16,
+      "title": "FCmax (Running)",
+      "description": "Frequence cardiaque max utilisee par Garmin pour calculer les zones running. Recalibree apres test FCmax.",
+      "gridPos": {
+        "x": 0,
+        "y": 4,
+        "w": 5,
+        "h": 3
+      },
+      "datasource": {
+        "type": "influxdb",
+        "uid": "garmin_influxdb"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "bpm",
+          "decimals": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "blue"
+              }
+            ]
+          }
+        }
+      },
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        }
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "rawQuery": true,
+          "query": "SELECT last(\"maxHeartRate\") FROM \"HRZones\" WHERE \"sport\"='RUNNING' AND $timeFilter",
+          "resultFormat": "time_series",
+          "groupBy": [],
+          "tags": []
+        }
+      ]
+    },
+    {
+      "type": "stat",
+      "id": 17,
+      "title": "LTHR (Running)",
+      "description": "Lactate Threshold Heart Rate utilise par Garmin. Recalibre apres test seuil 30min ou auto-detection durant les efforts.",
+      "gridPos": {
+        "x": 5,
+        "y": 4,
+        "w": 5,
+        "h": 3
+      },
+      "datasource": {
+        "type": "influxdb",
+        "uid": "garmin_influxdb"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "bpm",
+          "decimals": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "orange"
+              }
+            ]
+          }
+        }
+      },
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        }
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "rawQuery": true,
+          "query": "SELECT last(\"lactateThresholdHeartRate\") FROM \"HRZones\" WHERE \"sport\"='RUNNING' AND $timeFilter",
+          "resultFormat": "time_series",
+          "groupBy": [],
+          "tags": []
+        }
+      ]
+    },
+    {
+      "type": "stat",
+      "id": 18,
+      "title": "Resting HR",
+      "description": "Frequence cardiaque de repos utilisee pour calculer HRR (Heart Rate Reserve). Auto-update Garmin (moyenne sur sommeil).",
+      "gridPos": {
+        "x": 10,
+        "y": 4,
+        "w": 5,
+        "h": 3
+      },
+      "datasource": {
+        "type": "influxdb",
+        "uid": "garmin_influxdb"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "bpm",
+          "decimals": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              }
+            ]
+          }
+        }
+      },
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        }
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "rawQuery": true,
+          "query": "SELECT last(\"restingHeartRate\") FROM \"HRZones\" WHERE \"sport\"='RUNNING' AND $timeFilter",
+          "resultFormat": "time_series",
+          "groupBy": [],
+          "tags": []
+        }
+      ]
+    },
+    {
+      "type": "stat",
+      "id": 19,
+      "title": "FTP Power (Running)",
+      "description": "Functional Threshold Power running. Auto-FTP calcule par la FR 955 a partir des efforts. Cible de progression : +20-40 W sur 6 mois de plan.",
+      "gridPos": {
+        "x": 15,
+        "y": 4,
+        "w": 5,
+        "h": 3
+      },
+      "datasource": {
+        "type": "influxdb",
+        "uid": "garmin_influxdb"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "watt",
+          "decimals": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "purple"
+              }
+            ]
+          }
+        }
+      },
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        }
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "rawQuery": true,
+          "query": "SELECT last(\"functionalThresholdPower\") FROM \"PowerZones\" WHERE \"sport\"='RUNNING' AND $timeFilter",
+          "resultFormat": "time_series",
+          "groupBy": [],
+          "tags": []
+        }
+      ]
+    },
+    {
+      "type": "stat",
+      "id": 24,
+      "title": "Delta vs 30d",
+      "description": "Variation depuis ~30 jours.",
+      "gridPos": {
+        "x": 20,
+        "y": 4,
+        "w": 4,
+        "h": 3
+      },
+      "datasource": {
+        "type": "influxdb",
+        "uid": "garmin_influxdb"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "kg",
+          "decimals": 2,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "blue"
+              },
+              {
+                "color": "green",
+                "value": -2
+              },
+              {
+                "color": "yellow",
+                "value": 0
+              },
+              {
+                "color": "red",
+                "value": 2
+              }
+            ]
+          }
+        }
+      },
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        }
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "alias": "delta",
+          "measurement": "BodyComposition",
+          "policy": "default",
+          "resultFormat": "time_series",
+          "orderByTime": "ASC",
+          "query": "SELECT (last(\"weight\") - first(\"weight\")) / 1000 AS \"delta\" FROM \"BodyComposition\" WHERE time > now() - 30d",
+          "rawQuery": true,
+          "groupBy": [],
+          "tags": []
+        }
+      ]
+    },
+    {
+      "type": "timeseries",
+      "id": 8,
+      "title": "VO2max",
+      "gridPos": {
+        "x": 0,
+        "y": 7,
+        "w": 12,
+        "h": 8
+      },
+      "datasource": {
+        "type": "influxdb",
+        "uid": "garmin_influxdb"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "none",
+          "decimals": 1,
+          "custom": {
+            "lineWidth": 3,
+            "fillOpacity": 8,
+            "spanNulls": true,
+            "pointSize": 4,
+            "lineInterpolation": "smooth",
+            "showPoints": "never",
+            "drawStyle": "line",
+            "gradientMode": "scheme",
+            "thresholdsStyle": {
+              "mode": "area"
+            }
+          },
+          "color": {
+            "mode": "thresholds"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "value": null,
+                "color": "#4A4458",
+                "label": "Iron"
+              },
+              {
+                "value": 28,
+                "color": "#8B5A2B",
+                "label": "Bronze"
+              },
+              {
+                "value": 37,
+                "color": "#B8B8B8",
+                "label": "Silver"
+              },
+              {
+                "value": 42,
+                "color": "#D4AF37",
+                "label": "Gold"
+              },
+              {
+                "value": 47,
+                "color": "#2DD4BF",
+                "label": "Platinum"
+              },
+              {
+                "value": 53,
+                "color": "#10B981",
+                "label": "Emerald"
+              },
+              {
+                "value": 60,
+                "color": "#60A5FA",
+                "label": "Diamond"
+              },
+              {
+                "value": 68,
+                "color": "#C084FC",
+                "label": "Master"
+              },
+              {
+                "value": 75,
+                "color": "#DC2626",
+                "label": "Grandmaster"
+              },
+              {
+                "value": 80,
+                "color": "#F59E0B",
+                "label": "Challenger"
+              }
+            ]
+          }
+        }
+      },
+      "options": {
+        "legend": {
+          "showLegend": true,
+          "displayMode": "list",
+          "placement": "bottom",
+          "calcs": [
+            "lastNotNull",
+            "min",
+            "max"
+          ]
+        },
+        "tooltip": {
+          "mode": "single"
+        }
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "alias": "VO2max",
+          "measurement": "VO2_Max",
+          "policy": "default",
+          "resultFormat": "time_series",
+          "orderByTime": "ASC",
+          "select": [
+            [
+              {
+                "params": [
+                  "VO2_max_value"
+                ],
+                "type": "field"
+              },
+              {
+                "params": [],
+                "type": "last"
+              }
+            ]
+          ],
+          "groupBy": [
+            {
+              "params": [
+                "1d"
+              ],
+              "type": "time"
+            },
+            {
+              "params": [
+                "null"
+              ],
+              "type": "fill"
+            }
+          ],
+          "tags": []
+        }
+      ],
+      "description": "VO2max running, ranks LoL-style (percentiles Cooper + elite extrapolation):\nIron <28 (bottom 3%) | Bronze 28-37 (3-20%) | Silver 37-42 (20-42%) | Gold 42-47 (42-67%) | Platinum 47-53 (67-85%) | Emerald 53-60 (85-95%) | Diamond 60-68 (95-99.2%) | Master 68-75 (99.2-99.9%) | Grandmaster 75-80 (99.9-99.98%) | Challenger >=80 (top 0.02%, world class)."
+    },
+    {
+      "type": "timeseries",
+      "id": 12,
+      "title": "Endurance Score (Weekly)",
+      "gridPos": {
+        "x": 12,
+        "y": 7,
+        "w": 12,
+        "h": 8
+      },
+      "datasource": {
+        "type": "influxdb",
+        "uid": "garmin_influxdb"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "lineWidth": 3,
+            "fillOpacity": 8,
+            "drawStyle": "line",
+            "spanNulls": true,
+            "lineInterpolation": "smooth",
+            "showPoints": "never",
+            "gradientMode": "scheme",
+            "thresholdsStyle": {
+              "mode": "area"
+            }
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "value": null,
+                "color": "#EF4444",
+                "label": "Recreational"
+              },
+              {
+                "value": 5100,
+                "color": "#F97316",
+                "label": "Intermediate"
+              },
+              {
+                "value": 5800,
+                "color": "#FBBF24",
+                "label": "Trained"
+              },
+              {
+                "value": 6600,
+                "color": "#10B981",
+                "label": "Well-trained"
+              },
+              {
+                "value": 7300,
+                "color": "#3B82F6",
+                "label": "Expert"
+              },
+              {
+                "value": 8100,
+                "color": "#7C3AED",
+                "label": "Superior"
+              },
+              {
+                "value": 8800,
+                "color": "#EC4899",
+                "label": "Elite"
+              }
+            ]
+          },
+          "color": {
+            "mode": "thresholds"
+          }
+        }
+      },
+      "options": {
+        "legend": {
+          "showLegend": true,
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single"
+        }
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "alias": "Endurance Score",
+          "measurement": "EnduranceScore",
+          "policy": "default",
+          "resultFormat": "time_series",
+          "orderByTime": "ASC",
+          "select": [
+            [
+              {
+                "params": [
+                  "EnduranceScore"
+                ],
+                "type": "field"
+              },
+              {
+                "params": [],
+                "type": "last"
+              }
+            ]
+          ],
+          "groupBy": [
+            {
+              "params": [
+                "7d"
+              ],
+              "type": "time"
+            },
+            {
+              "params": [
+                "null"
+              ],
+              "type": "fill"
+            }
+          ],
+          "tags": []
+        }
+      ]
+    },
+    {
+      "id": 13,
+      "type": "timeseries",
+      "title": "Hill Score — Overall",
+      "datasource": {
+        "type": "influxdb",
+        "uid": "garmin_influxdb"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 15,
+        "w": 8,
+        "h": 7
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "drawStyle": "line",
+            "lineInterpolation": "smooth",
+            "lineWidth": 3,
+            "fillOpacity": 8,
+            "spanNulls": true,
+            "showPoints": "never",
+            "gradientMode": "scheme",
+            "thresholdsStyle": {
+              "mode": "area"
+            }
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "value": null,
+                "color": "#EF4444",
+                "label": "Recreational"
+              },
+              {
+                "value": 25,
+                "color": "#F97316",
+                "label": "Challenger"
+              },
+              {
+                "value": 50,
+                "color": "#10B981",
+                "label": "Trained"
+              },
+              {
+                "value": 70,
+                "color": "#3B82F6",
+                "label": "Skilled"
+              },
+              {
+                "value": 85,
+                "color": "#7C3AED",
+                "label": "Expert"
+              },
+              {
+                "value": 95,
+                "color": "#9333EA",
+                "label": "Elite"
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "showLegend": true,
+          "calcs": [
+            "last",
+            "min",
+            "max",
+            "mean"
+          ],
+          "displayMode": "table",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single"
+        }
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "alias": "Overall",
+          "measurement": "HillScore",
+          "policy": "default",
+          "resultFormat": "time_series",
+          "orderByTime": "ASC",
+          "select": [
+            [
+              {
+                "params": [
+                  "overallScore"
+                ],
+                "type": "field"
+              },
+              {
+                "params": [],
+                "type": "last"
+              }
+            ]
+          ],
+          "groupBy": [
+            {
+              "params": [
+                "1d"
+              ],
+              "type": "time"
+            },
+            {
+              "params": [
+                "null"
+              ],
+              "type": "fill"
+            }
+          ],
+          "tags": [],
+          "datasource": {
+            "type": "influxdb",
+            "uid": "garmin_influxdb"
+          }
+        }
+      ],
+      "pluginVersion": "12.4.2",
+      "description": "Numeric rating of your ability to run uphill, based on VO2 Max and training history.\n\nTiers: Recreational (1-24) | Challenger (25-49) | Trained (50-69) | Skilled (70-84) | Expert (85-94) | Elite (95-100).\n\nFactors: Hill Endurance (sustain pace uphill, elevation gain + time on hills at low intensity), Hill Strength (maintain running power on hills, higher-intensity efforts), VO2 Max (peak oxygen consumption, predictor of uphill ability)."
+    },
+    {
+      "id": 33,
+      "type": "timeseries",
+      "title": "Hill Score — Strength",
+      "datasource": {
+        "type": "influxdb",
+        "uid": "garmin_influxdb"
+      },
+      "gridPos": {
+        "x": 8,
+        "y": 15,
+        "w": 8,
+        "h": 7
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "drawStyle": "line",
+            "lineInterpolation": "smooth",
+            "lineWidth": 3,
+            "fillOpacity": 8,
+            "spanNulls": true,
+            "showPoints": "never",
+            "gradientMode": "scheme",
+            "thresholdsStyle": {
+              "mode": "area"
+            }
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "value": null,
+                "color": "#EF4444",
+                "label": "Recreational"
+              },
+              {
+                "value": 25,
+                "color": "#F97316",
+                "label": "Challenger"
+              },
+              {
+                "value": 50,
+                "color": "#10B981",
+                "label": "Trained"
+              },
+              {
+                "value": 70,
+                "color": "#3B82F6",
+                "label": "Skilled"
+              },
+              {
+                "value": 85,
+                "color": "#7C3AED",
+                "label": "Expert"
+              },
+              {
+                "value": 95,
+                "color": "#9333EA",
+                "label": "Elite"
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "showLegend": true,
+          "calcs": [
+            "last",
+            "min",
+            "max",
+            "mean"
+          ],
+          "displayMode": "table",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single"
+        }
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "alias": "Strength",
+          "measurement": "HillScore",
+          "policy": "default",
+          "resultFormat": "time_series",
+          "orderByTime": "ASC",
+          "select": [
+            [
+              {
+                "params": [
+                  "strengthScore"
+                ],
+                "type": "field"
+              },
+              {
+                "params": [],
+                "type": "last"
+              }
+            ]
+          ],
+          "groupBy": [
+            {
+              "params": [
+                "1d"
+              ],
+              "type": "time"
+            },
+            {
+              "params": [
+                "null"
+              ],
+              "type": "fill"
+            }
+          ],
+          "tags": [],
+          "datasource": {
+            "type": "influxdb",
+            "uid": "garmin_influxdb"
+          }
+        }
+      ],
+      "pluginVersion": "12.4.2",
+      "description": "Hill Strength measures your ability to maintain running power on hills. Based on higher-intensity hill efforts."
+    },
+    {
+      "id": 34,
+      "type": "timeseries",
+      "title": "Hill Score — Endurance",
+      "datasource": {
+        "type": "influxdb",
+        "uid": "garmin_influxdb"
+      },
+      "gridPos": {
+        "x": 16,
+        "y": 15,
+        "w": 8,
+        "h": 7
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "drawStyle": "line",
+            "lineInterpolation": "smooth",
+            "lineWidth": 3,
+            "fillOpacity": 8,
+            "spanNulls": true,
+            "showPoints": "never",
+            "gradientMode": "scheme",
+            "thresholdsStyle": {
+              "mode": "area"
+            }
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "value": null,
+                "color": "#EF4444",
+                "label": "Recreational"
+              },
+              {
+                "value": 25,
+                "color": "#F97316",
+                "label": "Challenger"
+              },
+              {
+                "value": 50,
+                "color": "#10B981",
+                "label": "Trained"
+              },
+              {
+                "value": 70,
+                "color": "#3B82F6",
+                "label": "Skilled"
+              },
+              {
+                "value": 85,
+                "color": "#7C3AED",
+                "label": "Expert"
+              },
+              {
+                "value": 95,
+                "color": "#9333EA",
+                "label": "Elite"
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "showLegend": true,
+          "calcs": [
+            "last",
+            "min",
+            "max",
+            "mean"
+          ],
+          "displayMode": "table",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single"
+        }
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "alias": "Endurance",
+          "measurement": "HillScore",
+          "policy": "default",
+          "resultFormat": "time_series",
+          "orderByTime": "ASC",
+          "select": [
+            [
+              {
+                "params": [
+                  "enduranceScore"
+                ],
+                "type": "field"
+              },
+              {
+                "params": [],
+                "type": "last"
+              }
+            ]
+          ],
+          "groupBy": [
+            {
+              "params": [
+                "1d"
+              ],
+              "type": "time"
+            },
+            {
+              "params": [
+                "null"
+              ],
+              "type": "fill"
+            }
+          ],
+          "tags": [],
+          "datasource": {
+            "type": "influxdb",
+            "uid": "garmin_influxdb"
+          }
+        }
+      ],
+      "pluginVersion": "12.4.2",
+      "description": "Hill Endurance measures how well you can sustain pace and performance when running uphill. Based on elevation gain and time spent on hills with low intensity."
+    },
+    {
+      "id": 29,
+      "type": "timeseries",
+      "title": "Race Prediction — 5K",
+      "datasource": {
+        "type": "influxdb",
+        "uid": "garmin_influxdb"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 22,
+        "w": 12,
+        "h": 8
+      },
+      "options": {
+        "legend": {
+          "calcs": [
+            "min",
+            "max",
+            "mean",
+            "lastNotNull"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "multi",
+          "sort": "none"
+        }
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "dthms",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "value": null,
+                "color": "#F59E0B"
+              },
+              {
+                "value": 822,
+                "color": "#DC2626"
+              },
+              {
+                "value": 890,
+                "color": "#C084FC"
+              },
+              {
+                "value": 978,
+                "color": "#60A5FA"
+              },
+              {
+                "value": 1074,
+                "color": "#10B981"
+              },
+              {
+                "value": 1191,
+                "color": "#2DD4BF"
+              },
+              {
+                "value": 1334,
+                "color": "#D4AF37"
+              },
+              {
+                "value": 1486,
+                "color": "#B8B8B8"
+              },
+              {
+                "value": 1662,
+                "color": "#8B5A2B"
+              },
+              {
+                "value": 1873,
+                "color": "#4A4458"
+              }
+            ]
+          },
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 8,
+            "gradientMode": "scheme",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "smooth",
+            "lineStyle": {
+              "fill": "solid"
+            },
+            "lineWidth": 3,
+            "pointSize": 3,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "never",
+            "showValues": false,
+            "spanNulls": true,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "area"
+            }
+          },
+          "min": 762,
+          "max": 1933,
+          "overrides": []
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Pace /km"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "dthms"
+              },
+              {
+                "id": "custom.lineWidth",
+                "value": 0
+              },
+              {
+                "id": "custom.fillOpacity",
+                "value": 0
+              },
+              {
+                "id": "custom.showPoints",
+                "value": "never"
+              },
+              {
+                "id": "custom.axisPlacement",
+                "value": "hidden"
+              }
+            ]
+          }
+        ]
+      },
+      "targets": [
+        {
+          "alias": "Time 5K",
+          "groupBy": [
+            {
+              "params": [
+                "1d"
+              ],
+              "type": "time"
+            },
+            {
+              "params": [
+                "null"
+              ],
+              "type": "fill"
+            }
+          ],
+          "measurement": "RacePredictions",
+          "orderByTime": "ASC",
+          "policy": "default",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "time5K"
+                ],
+                "type": "field"
+              },
+              {
+                "params": [],
+                "type": "mean"
+              }
+            ]
+          ],
+          "tags": [],
+          "refId": "A",
+          "datasource": {
+            "type": "influxdb",
+            "uid": "garmin_influxdb"
+          }
+        },
+        {
+          "alias": "Pace /km",
+          "refId": "B",
+          "rawQuery": true,
+          "query": "SELECT mean(\"time5K\") / 5 AS \"Pace /km\" FROM \"RacePredictions\" WHERE $timeFilter GROUP BY time(1d) fill(null)",
+          "resultFormat": "time_series",
+          "measurement": "RacePredictions",
+          "policy": "default",
+          "orderByTime": "ASC",
+          "groupBy": [
+            {
+              "params": [
+                "1d"
+              ],
+              "type": "time"
+            },
+            {
+              "params": [
+                "null"
+              ],
+              "type": "fill"
+            }
+          ],
+          "select": [
+            [
+              {
+                "params": [
+                  "time5K"
+                ],
+                "type": "field"
+              },
+              {
+                "params": [],
+                "type": "mean"
+              }
+            ]
+          ],
+          "tags": [],
+          "datasource": {
+            "type": "influxdb",
+            "uid": "garmin_influxdb"
+          }
+        }
+      ],
+      "description": "Garmin Race Prediction 5K. Tiers LoL-style bases table Daniels VDOT. Couleur = tier courant.",
+      "pluginVersion": "12.4.2"
+    },
+    {
+      "id": 30,
+      "type": "timeseries",
+      "title": "Race Prediction — 10K",
+      "datasource": {
+        "type": "influxdb",
+        "uid": "garmin_influxdb"
+      },
+      "gridPos": {
+        "x": 12,
+        "y": 22,
+        "w": 12,
+        "h": 8
+      },
+      "options": {
+        "legend": {
+          "calcs": [
+            "min",
+            "max",
+            "mean",
+            "lastNotNull"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "multi",
+          "sort": "none"
+        }
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "dthms",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "value": null,
+                "color": "#F59E0B"
+              },
+              {
+                "value": 1723,
+                "color": "#DC2626"
+              },
+              {
+                "value": 1860,
+                "color": "#C084FC"
+              },
+              {
+                "value": 2036,
+                "color": "#60A5FA"
+              },
+              {
+                "value": 2231,
+                "color": "#10B981"
+              },
+              {
+                "value": 2473,
+                "color": "#2DD4BF"
+              },
+              {
+                "value": 2754,
+                "color": "#D4AF37"
+              },
+              {
+                "value": 3069,
+                "color": "#B8B8B8"
+              },
+              {
+                "value": 3438,
+                "color": "#8B5A2B"
+              },
+              {
+                "value": 3874,
+                "color": "#4A4458"
+              }
+            ]
+          },
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 8,
+            "gradientMode": "scheme",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "smooth",
+            "lineStyle": {
+              "fill": "solid"
+            },
+            "lineWidth": 3,
+            "pointSize": 3,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "never",
+            "showValues": false,
+            "spanNulls": true,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "area"
+            }
+          },
+          "min": 1663,
+          "max": 3934,
+          "overrides": []
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Pace /km"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "dthms"
+              },
+              {
+                "id": "custom.lineWidth",
+                "value": 0
+              },
+              {
+                "id": "custom.fillOpacity",
+                "value": 0
+              },
+              {
+                "id": "custom.showPoints",
+                "value": "never"
+              },
+              {
+                "id": "custom.axisPlacement",
+                "value": "hidden"
+              }
+            ]
+          }
+        ]
+      },
+      "targets": [
+        {
+          "alias": "Time 10K",
+          "groupBy": [
+            {
+              "params": [
+                "1d"
+              ],
+              "type": "time"
+            },
+            {
+              "params": [
+                "null"
+              ],
+              "type": "fill"
+            }
+          ],
+          "measurement": "RacePredictions",
+          "orderByTime": "ASC",
+          "policy": "default",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "time10K"
+                ],
+                "type": "field"
+              },
+              {
+                "params": [],
+                "type": "mean"
+              }
+            ]
+          ],
+          "tags": [],
+          "refId": "A",
+          "datasource": {
+            "type": "influxdb",
+            "uid": "garmin_influxdb"
+          }
+        },
+        {
+          "alias": "Pace /km",
+          "refId": "B",
+          "rawQuery": true,
+          "query": "SELECT mean(\"time10K\") / 10 AS \"Pace /km\" FROM \"RacePredictions\" WHERE $timeFilter GROUP BY time(1d) fill(null)",
+          "resultFormat": "time_series",
+          "measurement": "RacePredictions",
+          "policy": "default",
+          "orderByTime": "ASC",
+          "groupBy": [
+            {
+              "params": [
+                "1d"
+              ],
+              "type": "time"
+            },
+            {
+              "params": [
+                "null"
+              ],
+              "type": "fill"
+            }
+          ],
+          "select": [
+            [
+              {
+                "params": [
+                  "time10K"
+                ],
+                "type": "field"
+              },
+              {
+                "params": [],
+                "type": "mean"
+              }
+            ]
+          ],
+          "tags": [],
+          "datasource": {
+            "type": "influxdb",
+            "uid": "garmin_influxdb"
+          }
+        }
+      ],
+      "description": "Garmin Race Prediction 10K. Tiers LoL-style bases table Daniels VDOT. Couleur = tier courant.",
+      "pluginVersion": "12.4.2"
+    },
+    {
+      "id": 31,
+      "type": "timeseries",
+      "title": "Race Prediction — Half Marathon",
+      "datasource": {
+        "type": "influxdb",
+        "uid": "garmin_influxdb"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 30,
+        "w": 12,
+        "h": 8
+      },
+      "options": {
+        "legend": {
+          "calcs": [
+            "min",
+            "max",
+            "mean",
+            "lastNotNull"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "multi",
+          "sort": "none"
+        }
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "dthms",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "value": null,
+                "color": "#F59E0B"
+              },
+              {
+                "value": 3780,
+                "color": "#DC2626"
+              },
+              {
+                "value": 4110,
+                "color": "#C084FC"
+              },
+              {
+                "value": 4500,
+                "color": "#60A5FA"
+              },
+              {
+                "value": 4950,
+                "color": "#10B981"
+              },
+              {
+                "value": 5490,
+                "color": "#2DD4BF"
+              },
+              {
+                "value": 6120,
+                "color": "#D4AF37"
+              },
+              {
+                "value": 6856,
+                "color": "#B8B8B8"
+              },
+              {
+                "value": 7658,
+                "color": "#8B5A2B"
+              },
+              {
+                "value": 8700,
+                "color": "#4A4458"
+              }
+            ]
+          },
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 8,
+            "gradientMode": "scheme",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "smooth",
+            "lineStyle": {
+              "fill": "solid"
+            },
+            "lineWidth": 3,
+            "pointSize": 3,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "never",
+            "showValues": false,
+            "spanNulls": true,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "area"
+            }
+          },
+          "min": 3720,
+          "max": 8760,
+          "overrides": []
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Pace /km"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "dthms"
+              },
+              {
+                "id": "custom.lineWidth",
+                "value": 0
+              },
+              {
+                "id": "custom.fillOpacity",
+                "value": 0
+              },
+              {
+                "id": "custom.showPoints",
+                "value": "never"
+              },
+              {
+                "id": "custom.axisPlacement",
+                "value": "hidden"
+              }
+            ]
+          }
+        ]
+      },
+      "targets": [
+        {
+          "alias": "Half Marathon",
+          "groupBy": [
+            {
+              "params": [
+                "1d"
+              ],
+              "type": "time"
+            },
+            {
+              "params": [
+                "null"
+              ],
+              "type": "fill"
+            }
+          ],
+          "measurement": "RacePredictions",
+          "orderByTime": "ASC",
+          "policy": "default",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "timeHalfMarathon"
+                ],
+                "type": "field"
+              },
+              {
+                "params": [],
+                "type": "mean"
+              }
+            ]
+          ],
+          "tags": [],
+          "refId": "A",
+          "datasource": {
+            "type": "influxdb",
+            "uid": "garmin_influxdb"
+          }
+        },
+        {
+          "alias": "Pace /km",
+          "refId": "B",
+          "rawQuery": true,
+          "query": "SELECT mean(\"timeHalfMarathon\") / 21.0975 AS \"Pace /km\" FROM \"RacePredictions\" WHERE $timeFilter GROUP BY time(1d) fill(null)",
+          "resultFormat": "time_series",
+          "measurement": "RacePredictions",
+          "policy": "default",
+          "orderByTime": "ASC",
+          "groupBy": [
+            {
+              "params": [
+                "1d"
+              ],
+              "type": "time"
+            },
+            {
+              "params": [
+                "null"
+              ],
+              "type": "fill"
+            }
+          ],
+          "select": [
+            [
+              {
+                "params": [
+                  "timeHalfMarathon"
+                ],
+                "type": "field"
+              },
+              {
+                "params": [],
+                "type": "mean"
+              }
+            ]
+          ],
+          "tags": [],
+          "datasource": {
+            "type": "influxdb",
+            "uid": "garmin_influxdb"
+          }
+        }
+      ],
+      "description": "Garmin Race Prediction Half Marathon. Tiers LoL-style bases table Daniels VDOT. Couleur = tier courant.",
+      "pluginVersion": "12.4.2"
+    },
+    {
+      "id": 32,
+      "type": "timeseries",
+      "title": "Race Prediction — Full Marathon",
+      "datasource": {
+        "type": "influxdb",
+        "uid": "garmin_influxdb"
+      },
+      "gridPos": {
+        "x": 12,
+        "y": 30,
+        "w": 12,
+        "h": 8
+      },
+      "options": {
+        "legend": {
+          "calcs": [
+            "min",
+            "max",
+            "mean",
+            "lastNotNull"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "multi",
+          "sort": "none"
+        }
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "dthms",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "value": null,
+                "color": "#F59E0B"
+              },
+              {
+                "value": 8340,
+                "color": "#DC2626"
+              },
+              {
+                "value": 8940,
+                "color": "#C084FC"
+              },
+              {
+                "value": 9600,
+                "color": "#60A5FA"
+              },
+              {
+                "value": 10249,
+                "color": "#10B981"
+              },
+              {
+                "value": 11449,
+                "color": "#2DD4BF"
+              },
+              {
+                "value": 12759,
+                "color": "#D4AF37"
+              },
+              {
+                "value": 14315,
+                "color": "#B8B8B8"
+              },
+              {
+                "value": 15900,
+                "color": "#8B5A2B"
+              },
+              {
+                "value": 17640,
+                "color": "#4A4458"
+              }
+            ]
+          },
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 8,
+            "gradientMode": "scheme",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "smooth",
+            "lineStyle": {
+              "fill": "solid"
+            },
+            "lineWidth": 3,
+            "pointSize": 3,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "never",
+            "showValues": false,
+            "spanNulls": true,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "area"
+            }
+          },
+          "min": 8280,
+          "max": 17700,
+          "overrides": []
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Pace /km"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "dthms"
+              },
+              {
+                "id": "custom.lineWidth",
+                "value": 0
+              },
+              {
+                "id": "custom.fillOpacity",
+                "value": 0
+              },
+              {
+                "id": "custom.showPoints",
+                "value": "never"
+              },
+              {
+                "id": "custom.axisPlacement",
+                "value": "hidden"
+              }
+            ]
+          }
+        ]
+      },
+      "targets": [
+        {
+          "alias": "Full Marathon",
+          "groupBy": [
+            {
+              "params": [
+                "1d"
+              ],
+              "type": "time"
+            },
+            {
+              "params": [
+                "null"
+              ],
+              "type": "fill"
+            }
+          ],
+          "measurement": "RacePredictions",
+          "orderByTime": "ASC",
+          "policy": "default",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "timeMarathon"
+                ],
+                "type": "field"
+              },
+              {
+                "params": [],
+                "type": "mean"
+              }
+            ]
+          ],
+          "tags": [],
+          "refId": "A",
+          "datasource": {
+            "type": "influxdb",
+            "uid": "garmin_influxdb"
+          }
+        },
+        {
+          "alias": "Pace /km",
+          "refId": "B",
+          "rawQuery": true,
+          "query": "SELECT mean(\"timeMarathon\") / 42.195 AS \"Pace /km\" FROM \"RacePredictions\" WHERE $timeFilter GROUP BY time(1d) fill(null)",
+          "resultFormat": "time_series",
+          "measurement": "RacePredictions",
+          "policy": "default",
+          "orderByTime": "ASC",
+          "groupBy": [
+            {
+              "params": [
+                "1d"
+              ],
+              "type": "time"
+            },
+            {
+              "params": [
+                "null"
+              ],
+              "type": "fill"
+            }
+          ],
+          "select": [
+            [
+              {
+                "params": [
+                  "timeMarathon"
+                ],
+                "type": "field"
+              },
+              {
+                "params": [],
+                "type": "mean"
+              }
+            ]
+          ],
+          "tags": [],
+          "datasource": {
+            "type": "influxdb",
+            "uid": "garmin_influxdb"
+          }
+        }
+      ],
+      "description": "Garmin Race Prediction Marathon. Tiers LoL-style bases table Daniels VDOT. Couleur = tier courant.",
+      "pluginVersion": "12.4.2"
+    },
+    {
+      "type": "timeseries",
+      "id": 20,
+      "title": "HR Zone Boundaries — Trajectory",
+      "description": "Evolution des floors Z1..Z5 + LTHR + FCmax sur la duree du plan. Si Garmin recalibre une zone, tu verras un step ici.",
+      "gridPos": {
+        "x": 0,
+        "y": 38,
+        "w": 12,
+        "h": 8
+      },
+      "datasource": {
+        "type": "influxdb",
+        "uid": "garmin_influxdb"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "bpm",
+          "decimals": 0,
+          "custom": {
+            "lineWidth": 2,
+            "fillOpacity": 8,
+            "spanNulls": true,
+            "drawStyle": "line",
+            "showPoints": "never",
+            "lineInterpolation": "stepAfter",
+            "gradientMode": "opacity"
+          },
+          "min": 100
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Z1"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "rgba(80, 140, 220, 1)"
+                }
+              },
+              {
+                "id": "custom.lineWidth",
+                "value": 2
+              },
+              {
+                "id": "custom.fillOpacity",
+                "value": 8
+              },
+              {
+                "id": "custom.showPoints",
+                "value": "never"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Z2"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "rgba(60, 180, 140, 1)"
+                }
+              },
+              {
+                "id": "custom.lineWidth",
+                "value": 2
+              },
+              {
+                "id": "custom.fillOpacity",
+                "value": 8
+              },
+              {
+                "id": "custom.showPoints",
+                "value": "never"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Z3"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "rgba(240, 200, 60, 1)"
+                }
+              },
+              {
+                "id": "custom.lineWidth",
+                "value": 2
+              },
+              {
+                "id": "custom.fillOpacity",
+                "value": 8
+              },
+              {
+                "id": "custom.showPoints",
+                "value": "never"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Z4"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "rgba(245, 130, 48, 1)"
+                }
+              },
+              {
+                "id": "custom.lineWidth",
+                "value": 2
+              },
+              {
+                "id": "custom.fillOpacity",
+                "value": 8
+              },
+              {
+                "id": "custom.showPoints",
+                "value": "never"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Z5"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "rgba(230, 60, 60, 1)"
+                }
+              },
+              {
+                "id": "custom.lineWidth",
+                "value": 2
+              },
+              {
+                "id": "custom.fillOpacity",
+                "value": 8
+              },
+              {
+                "id": "custom.showPoints",
+                "value": "never"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "LTHR"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "rgba(245, 245, 245, 1)"
+                }
+              },
+              {
+                "id": "custom.lineWidth",
+                "value": 3
+              },
+              {
+                "id": "custom.fillOpacity",
+                "value": 0
+              },
+              {
+                "id": "custom.showPoints",
+                "value": "never"
+              },
+              {
+                "id": "custom.lineStyle",
+                "value": {
+                  "fill": "dash",
+                  "dash": [
+                    8,
+                    6
+                  ]
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "FCmax"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "rgba(255, 90, 90, 0.85)"
+                }
+              },
+              {
+                "id": "custom.lineWidth",
+                "value": 3
+              },
+              {
+                "id": "custom.fillOpacity",
+                "value": 0
+              },
+              {
+                "id": "custom.showPoints",
+                "value": "never"
+              },
+              {
+                "id": "custom.lineStyle",
+                "value": {
+                  "fill": "dash",
+                  "dash": [
+                    8,
+                    6
+                  ]
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "options": {
+        "legend": {
+          "showLegend": true,
+          "displayMode": "list",
+          "placement": "bottom",
+          "calcs": [
+            "lastNotNull"
+          ]
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "rawQuery": true,
+          "query": "SELECT last(\"zone1Floor\") AS \"Z1\", last(\"zone2Floor\") AS \"Z2\", last(\"zone3Floor\") AS \"Z3\", last(\"zone4Floor\") AS \"Z4\", last(\"zone5Floor\") AS \"Z5\", last(\"lactateThresholdHeartRate\") AS \"LTHR\", last(\"maxHeartRate\") AS \"FCmax\" FROM \"HRZones\" WHERE \"sport\"='RUNNING' AND $timeFilter GROUP BY time(1d) fill(previous)",
+          "resultFormat": "time_series",
+          "groupBy": [],
+          "tags": []
+        }
+      ],
+      "transformations": [
+        {
+          "id": "renameByRegex",
+          "options": {
+            "regex": "^(?:HRZones|PowerZones)\\.(.*)$",
+            "renamePattern": "$1"
+          }
+        }
+      ]
+    },
+    {
+      "type": "timeseries",
+      "id": 21,
+      "title": "Power Zone Boundaries — Trajectory",
+      "description": "Evolution des floors Z1..Z5 + FTP. Auto-FTP Garmin = pilote l'echelle des zones. Une bonne progression du plan = FTP qui monte progressivement.",
+      "gridPos": {
+        "x": 12,
+        "y": 38,
+        "w": 12,
+        "h": 8
+      },
+      "datasource": {
+        "type": "influxdb",
+        "uid": "garmin_influxdb"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "watt",
+          "decimals": 0,
+          "custom": {
+            "lineWidth": 2,
+            "fillOpacity": 8,
+            "spanNulls": true,
+            "drawStyle": "line",
+            "showPoints": "never",
+            "lineInterpolation": "stepAfter",
+            "gradientMode": "opacity"
+          },
+          "min": 200
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Z1"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "rgba(80, 140, 220, 1)"
+                }
+              },
+              {
+                "id": "custom.lineWidth",
+                "value": 2
+              },
+              {
+                "id": "custom.fillOpacity",
+                "value": 8
+              },
+              {
+                "id": "custom.showPoints",
+                "value": "never"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Z2"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "rgba(60, 180, 140, 1)"
+                }
+              },
+              {
+                "id": "custom.lineWidth",
+                "value": 2
+              },
+              {
+                "id": "custom.fillOpacity",
+                "value": 8
+              },
+              {
+                "id": "custom.showPoints",
+                "value": "never"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Z3"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "rgba(240, 200, 60, 1)"
+                }
+              },
+              {
+                "id": "custom.lineWidth",
+                "value": 2
+              },
+              {
+                "id": "custom.fillOpacity",
+                "value": 8
+              },
+              {
+                "id": "custom.showPoints",
+                "value": "never"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Z4"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "rgba(245, 130, 48, 1)"
+                }
+              },
+              {
+                "id": "custom.lineWidth",
+                "value": 2
+              },
+              {
+                "id": "custom.fillOpacity",
+                "value": 8
+              },
+              {
+                "id": "custom.showPoints",
+                "value": "never"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Z5"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "rgba(230, 60, 60, 1)"
+                }
+              },
+              {
+                "id": "custom.lineWidth",
+                "value": 2
+              },
+              {
+                "id": "custom.fillOpacity",
+                "value": 8
+              },
+              {
+                "id": "custom.showPoints",
+                "value": "never"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "FTP"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "rgba(245, 245, 245, 1)"
+                }
+              },
+              {
+                "id": "custom.lineWidth",
+                "value": 3
+              },
+              {
+                "id": "custom.fillOpacity",
+                "value": 0
+              },
+              {
+                "id": "custom.showPoints",
+                "value": "never"
+              },
+              {
+                "id": "custom.lineStyle",
+                "value": {
+                  "fill": "dash",
+                  "dash": [
+                    8,
+                    6
+                  ]
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "options": {
+        "legend": {
+          "showLegend": true,
+          "displayMode": "list",
+          "placement": "bottom",
+          "calcs": [
+            "lastNotNull"
+          ]
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "rawQuery": true,
+          "query": "SELECT last(\"zone1Floor\") AS \"Z1\", last(\"zone2Floor\") AS \"Z2\", last(\"zone3Floor\") AS \"Z3\", last(\"zone4Floor\") AS \"Z4\", last(\"zone5Floor\") AS \"Z5\", last(\"functionalThresholdPower\") AS \"FTP\" FROM \"PowerZones\" WHERE \"sport\"='RUNNING' AND $timeFilter GROUP BY time(1d) fill(previous)",
+          "resultFormat": "time_series",
+          "groupBy": [],
+          "tags": []
+        }
+      ],
+      "transformations": [
+        {
+          "id": "renameByRegex",
+          "options": {
+            "regex": "^(?:HRZones|PowerZones)\\.(.*)$",
+            "renamePattern": "$1"
+          }
+        }
+      ]
+    },
+    {
+      "id": 35,
+      "type": "timeseries",
+      "title": "Threshold — LTHR (% FCmax · bpm · pace)",
+      "description": "Trajectoire LTHR (Lactate Threshold HR). Serie principale = LTHR / FCmax(historique) en %. FCmax historique : snapshot HRZones quand dispo (>= 2026-05-01), fallback sur la plus vieille valeur connue (195) pour les dates anterieures. Bandes : <82% debutant, 82-87 recreatif, 87-92 bien entraine, 92-95 elite endurance, >95 elite mondial. Survole pour voir LTHR (bpm), pace seuil, et FCmax utilise.",
+      "datasource": {
+        "type": "influxdb",
+        "uid": "garmin_influxdb"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 46,
+        "w": 24,
+        "h": 7
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percent",
+          "decimals": 1,
+          "min": 75,
+          "max": 100,
+          "color": {
+            "mode": "thresholds"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "value": null,
+                "color": "#E53935"
+              },
+              {
+                "value": 82,
+                "color": "#F57C00"
+              },
+              {
+                "value": 87,
+                "color": "#FBC02D"
+              },
+              {
+                "value": 92,
+                "color": "#43A047"
+              },
+              {
+                "value": 95,
+                "color": "#1E88E5"
+              }
+            ]
+          },
+          "custom": {
+            "drawStyle": "line",
+            "lineInterpolation": "smooth",
+            "lineWidth": 3,
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "showPoints": "always",
+            "pointSize": 5,
+            "spanNulls": true,
+            "thresholdsStyle": {
+              "mode": "area"
+            }
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Pace seuil"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "dthms"
+              },
+              {
+                "id": "custom.lineWidth",
+                "value": 0
+              },
+              {
+                "id": "custom.fillOpacity",
+                "value": 0
+              },
+              {
+                "id": "custom.showPoints",
+                "value": "never"
+              },
+              {
+                "id": "custom.axisPlacement",
+                "value": "hidden"
+              },
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "#60A5FA"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "LTHR (bpm)"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "none"
+              },
+              {
+                "id": "custom.lineWidth",
+                "value": 0
+              },
+              {
+                "id": "custom.fillOpacity",
+                "value": 0
+              },
+              {
+                "id": "custom.showPoints",
+                "value": "never"
+              },
+              {
+                "id": "custom.axisPlacement",
+                "value": "hidden"
+              },
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "#DC2626"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "FCmax bpm"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "bpm"
+              },
+              {
+                "id": "decimals",
+                "value": 0
+              },
+              {
+                "id": "custom.lineWidth",
+                "value": 0
+              },
+              {
+                "id": "custom.fillOpacity",
+                "value": 0
+              },
+              {
+                "id": "custom.showPoints",
+                "value": "never"
+              },
+              {
+                "id": "custom.axisPlacement",
+                "value": "hidden"
+              },
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "#A78BFA"
+                }
+              },
+              {
+                "id": "max",
+                "value": 300
+              }
+            ]
+          }
+        ]
+      },
+      "options": {
+        "legend": {
+          "showLegend": true,
+          "displayMode": "list",
+          "placement": "bottom",
+          "calcs": [
+            "lastNotNull"
+          ]
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "alias": "% FCmax",
+          "rawQuery": true,
+          "query": "SELECT mean(\"pct_fcmax\") AS \"% FCmax\" FROM \"ThresholdComputed\" WHERE $timeFilter GROUP BY time(1d) fill(null) tz('Europe/Paris')",
+          "resultFormat": "time_series",
+          "groupBy": [],
+          "tags": [],
+          "datasource": {
+            "type": "influxdb",
+            "uid": "garmin_influxdb"
+          }
+        },
+        {
+          "refId": "B",
+          "alias": "LTHR (bpm)",
+          "rawQuery": true,
+          "query": "SELECT mean(\"lthr_bpm\") AS \"LTHR (bpm)\" FROM \"ThresholdComputed\" WHERE $timeFilter GROUP BY time(1d) fill(null) tz('Europe/Paris')",
+          "resultFormat": "time_series",
+          "groupBy": [],
+          "tags": [],
+          "datasource": {
+            "type": "influxdb",
+            "uid": "garmin_influxdb"
+          }
+        },
+        {
+          "refId": "C",
+          "alias": "Pace seuil",
+          "rawQuery": true,
+          "query": "SELECT mean(\"pace_per_km_sec\") AS \"Pace seuil\" FROM \"ThresholdComputed\" WHERE $timeFilter GROUP BY time(1d) fill(null) tz('Europe/Paris')",
+          "resultFormat": "time_series",
+          "groupBy": [],
+          "tags": [],
+          "datasource": {
+            "type": "influxdb",
+            "uid": "garmin_influxdb"
+          }
+        },
+        {
+          "refId": "D",
+          "alias": "FCmax bpm",
+          "rawQuery": true,
+          "query": "SELECT mean(\"fcmax_used\") AS \"FCmax bpm\" FROM \"ThresholdComputed\" WHERE $timeFilter GROUP BY time(1d) fill(null) tz('Europe/Paris')",
+          "resultFormat": "time_series",
+          "groupBy": [],
+          "tags": [],
+          "datasource": {
+            "type": "influxdb",
+            "uid": "garmin_influxdb"
+          }
+        }
+      ],
+      "pluginVersion": "12.4.2"
+    },
+    {
+      "id": 36,
+      "type": "timeseries",
+      "title": "Weight 3m",
+      "datasource": {
+        "type": "influxdb",
+        "uid": "garmin_influxdb"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 53,
+        "w": 12,
+        "h": 7
+      },
+      "timeFrom": "90d",
+      "fieldConfig": {
+        "defaults": {
+          "unit": "kg",
+          "decimals": 1,
+          "color": {
+            "mode": "fixed",
+            "fixedColor": "rgba(120, 220, 140, 1)"
+          },
+          "custom": {
+            "drawStyle": "line",
+            "lineInterpolation": "smooth",
+            "lineWidth": 2,
+            "fillOpacity": 15,
+            "showPoints": "never",
+            "spanNulls": true,
+            "axisPlacement": "auto"
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "showLegend": false
+        },
+        "tooltip": {
+          "mode": "single"
+        }
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "rawQuery": true,
+          "query": "SELECT mean(\"weight\") / 1000 AS \"kg\" FROM \"BodyComposition\" WHERE $timeFilter GROUP BY time(1d) fill(null)",
+          "resultFormat": "time_series",
+          "groupBy": [],
+          "tags": [],
+          "datasource": {
+            "type": "influxdb",
+            "uid": "garmin_influxdb"
+          }
+        }
+      ],
+      "pluginVersion": "12.4.2"
+    },
+    {
+      "id": 101,
+      "type": "timeseries",
+      "title": "Cardiac Efficiency (Power/HR) — 14d Trend",
+      "description": "Ratio mean(Power) / mean(HR) par jour (running, samples Power>100W et HR>130bpm pour exclure warmup/cooldown). Plus le ratio monte, plus tu produis de watts par bpm. Tendance ascendante sur 90j = adaptation aerobie reussie.",
+      "datasource": {
+        "type": "influxdb",
+        "uid": "garmin_influxdb"
+      },
+      "gridPos": {
+        "x": 12,
+        "y": 53,
+        "w": 12,
+        "h": 7
+      },
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "drawStyle": "points",
+            "pointSize": 6,
+            "lineWidth": 0,
+            "showPoints": "always",
+            "spanNulls": false
+          },
+          "unit": "short",
+          "decimals": 2,
+          "color": {
+            "mode": "fixed",
+            "fixedColor": "#F59E0B"
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "ActivityGPS.W/bpm"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "rgba(230, 170, 50, 0.45)",
+                  "mode": "fixed"
+                }
+              },
+              {
+                "id": "custom.drawStyle",
+                "value": "points"
+              },
+              {
+                "id": "custom.pointSize",
+                "value": 5
+              },
+              {
+                "id": "custom.lineWidth",
+                "value": 0
+              },
+              {
+                "id": "custom.showPoints",
+                "value": "always"
+              },
+              {
+                "id": "displayName",
+                "value": "W/bpm"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "14d Moving Avg"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "#F59E0B",
+                  "mode": "fixed"
+                }
+              },
+              {
+                "id": "custom.drawStyle",
+                "value": "line"
+              },
+              {
+                "id": "custom.lineWidth",
+                "value": 3
+              },
+              {
+                "id": "custom.lineInterpolation",
+                "value": "smooth"
+              },
+              {
+                "id": "custom.showPoints",
+                "value": "never"
+              },
+              {
+                "id": "custom.fillOpacity",
+                "value": 6
+              },
+              {
+                "id": "custom.gradientMode",
+                "value": "opacity"
+              },
+              {
+                "id": "custom.spanNulls",
+                "value": true
+              }
+            ]
+          }
+        ]
+      },
+      "options": {
+        "legend": {
+          "showLegend": false
+        },
+        "tooltip": {
+          "mode": "single"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "garmin_influxdb"
+          },
+          "query": "SELECT mean(\"Power\") / mean(\"HeartRate\") AS \"W/bpm\" FROM \"ActivityGPS\" WHERE $timeFilter AND \"ActivitySelector\" =~ /running/ AND \"Power\" > 100 AND \"HeartRate\" > 130 GROUP BY time(1d) fill(null)",
+          "rawQuery": true,
+          "refId": "A",
+          "resultFormat": "time_series"
+        }
+      ],
+      "transformations": [
+        {
+          "id": "calculateField",
+          "options": {
+            "mode": "windowFunctions",
+            "window": {
+              "windowSize": 14,
+              "windowSizeMode": "absolute",
+              "field": "ActivityGPS.W/bpm",
+              "reducer": "mean",
+              "windowAlignment": "center"
+            },
+            "replaceFields": false,
+            "alias": "14d Moving Avg"
+          }
+        }
+      ]
+    },
+    {
+      "id": 10,
+      "type": "barchart",
+      "title": "Eddington — Running (Lifetime)",
+      "datasource": {
+        "type": "influxdb",
+        "uid": "garmin_influxdb"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 60,
+        "w": 24,
+        "h": 8
+      },
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "lineWidth": 1,
+            "fillOpacity": 90,
+            "gradientMode": "none",
+            "axisPlacement": "auto"
+          },
+          "unit": "none",
+          "decimals": 0,
+          "color": {
+            "mode": "thresholds"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "#3B82F6",
+                "value": null
+              },
+              {
+                "color": "#22C55E",
+                "value": 13
+              },
+              {
+                "color": "#3B82F6",
+                "value": 14
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "diagonal"
+            },
+            "properties": [
+              {
+                "id": "custom.hideFrom",
+                "value": {
+                  "viz": true,
+                  "legend": true,
+                  "tooltip": true
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "cumcount"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Runs >= N km"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "xMax"
+            },
+            "properties": [
+              {
+                "id": "custom.hideFrom",
+                "value": {
+                  "viz": true,
+                  "legend": true,
+                  "tooltip": true
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "km"
+            },
+            "properties": [
+              {
+                "id": "custom.hideFrom",
+                "value": {
+                  "viz": true,
+                  "legend": true,
+                  "tooltip": true
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "options": {
+        "xField": "xMin",
+        "colorByField": "xMin",
+        "orientation": "auto",
+        "stacking": "none",
+        "groupWidth": 0.7,
+        "barWidth": 0.45,
+        "barRadius": 0,
+        "showValue": "auto",
+        "xTickLabelRotation": 0,
+        "xTickLabelSpacing": 0,
+        "legend": {
+          "showLegend": false
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "rawQuery": true,
+          "datasource": {
+            "type": "influxdb",
+            "uid": "garmin_influxdb"
+          },
+          "query": "SELECT \"distance\" FROM \"ActivitySummary\" WHERE \"ActivitySelector\" =~ /running/ AND \"distance\" > 1000 AND time > '2010-01-01T00:00:00Z' LIMIT 10000"
+        }
+      ],
+      "transformations": [
+        {
+          "id": "renameByRegex",
+          "options": {
+            "regex": "^(Value|ActivitySummary\\.distance)$",
+            "renamePattern": "distance"
+          }
+        },
+        {
+          "id": "calculateField",
+          "options": {
+            "mode": "binary",
+            "binary": {
+              "left": "distance",
+              "operator": "/",
+              "right": "1000"
+            },
+            "alias": "km",
+            "replaceFields": true
+          }
+        },
+        {
+          "id": "histogram",
+          "options": {
+            "bucketSize": 1,
+            "bucketOffset": 0,
+            "combine": false
+          }
+        },
+        {
+          "id": "sortBy",
+          "options": {
+            "fields": {},
+            "sort": [
+              {
+                "field": "xMin",
+                "desc": true
+              }
+            ]
+          }
+        },
+        {
+          "id": "calculateField",
+          "options": {
+            "mode": "cumulativeFunctions",
+            "cumulative": {
+              "field": "km",
+              "reducer": "sum"
+            },
+            "alias": "cumcount",
+            "replaceFields": false
+          }
+        },
+        {
+          "id": "sortBy",
+          "options": {
+            "fields": {},
+            "sort": [
+              {
+                "field": "xMin",
+                "desc": false
+              }
+            ]
+          }
+        },
+        {
+          "id": "calculateField",
+          "options": {
+            "mode": "binary",
+            "binary": {
+              "left": "xMin",
+              "operator": "+",
+              "right": "0"
+            },
+            "alias": "diagonal",
+            "replaceFields": false
+          }
+        },
+        {
+          "id": "filterByValue",
+          "options": {
+            "filters": [
+              {
+                "fieldName": "xMin",
+                "config": {
+                  "id": "greaterOrEqual",
+                  "options": {
+                    "value": 10
+                  }
+                }
+              }
+            ],
+            "type": "include",
+            "match": "all"
+          }
+        }
+      ],
+      "description": "Distribution Eddington - runs >= N km pour chaque N de 10 a max(runs_km). Filtre N>=10 pour zoomer sur la zone de crossing (l'Eddington actuel est dans cette zone).\n\nCE QUE ÇA MONTRE\nBarres bleues : nombre de runs >= N km. Ligne grise pointillee : seuil de qualification y=x (= N).\n\nEDDINGTON VISUEL\nL'Eddington E = derniere barre qui depasse encore la ligne diagonale. Pour qu'un E=N soit valide, il faut barre(N) >= N (= diagonale). Des que barre(N) tombe sous la ligne, on a depasse E.\n\nNEXT LEDGE\nA N=E+1, la barre est juste sous la diagonale. Le 'gap' visuel (diag - barre) = nombre de runs manquants pour passer a E+1.\nExemple : si barre(14) = 13 et diag(14) = 14, il manque 1 run de >= 14 km pour passer a E=14.\n\nLECTURE LONG-TERME\nAvec des LR systematiques, les barres autour de 14-18 km grossissent. L'Eddington progresse a mesure que les bars depassent la diagonale.\n\nPIPELINE\n1. Query distances lifetime\n2. Conversion km\n3. Histogram bucketSize=1 (= 1 bar par km entier)\n4. Tri descending par bucket\n5. Cumulative sum sur la colonne count (cumsum desc = count >= N)\n6. Tri ascending pour affichage\n7. Field diagonal = BucketMin (pour tracer y=x)\n8. Filter BucketMin >= 1\n\nFILTRE\nSorties running uniquement (=~ /running/), distance min 1 km, lifetime depuis 2010."
+    },
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "garmin_influxdb"
+      },
+      "description": "Heat acclimation percentage from Garmin. >75% = well acclimated. Seasonal pattern expected.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "continuous-GrYlRd"
+          },
+          "custom": {
+            "fillOpacity": 15,
+            "gradientMode": "scheme",
+            "lineWidth": 2,
+            "spanNulls": true
+          },
+          "max": 100,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "red",
+                "value": null
+              },
+              {
+                "color": "orange",
+                "value": 25
+              },
+              {
+                "color": "yellow",
+                "value": 50
+              },
+              {
+                "color": "green",
+                "value": 75
+              }
+            ]
+          },
+          "unit": "percent"
+        }
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 68,
+        "w": 12,
+        "h": 7
+      },
+      "id": 302,
+      "options": {
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi"
+        }
+      },
+      "targets": [
+        {
+          "alias": "Heat Acclimation %",
+          "groupBy": [
+            {
+              "params": [
+                "1d"
+              ],
+              "type": "time"
+            },
+            {
+              "params": [
+                "previous"
+              ],
+              "type": "fill"
+            }
+          ],
+          "measurement": "HeatAltitudeAcclimation",
+          "orderByTime": "ASC",
+          "policy": "default",
+          "refId": "A",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "heatAcclimationPercentage"
+                ],
+                "type": "field"
+              },
+              {
+                "params": [],
+                "type": "mean"
+              }
+            ]
+          ],
+          "tags": []
+        }
+      ],
+      "title": "Heat Acclimation",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "garmin_influxdb"
+      },
+      "description": "Altitude acclimation from Garmin. Shows the altitude (in meters) you are fully adapted to. Tracking activates above 800m. Range: 800-4000m.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "fixedColor": "#4CAF50",
+            "mode": "fixed"
+          },
+          "custom": {
+            "fillOpacity": 10,
+            "gradientMode": "opacity",
+            "lineWidth": 2,
+            "spanNulls": true
+          },
+          "min": 0,
+          "max": 4000,
+          "unit": "lengthm",
+          "decimals": 0
+        }
+      },
+      "gridPos": {
+        "x": 12,
+        "y": 68,
+        "w": 12,
+        "h": 7
+      },
+      "id": 303,
+      "options": {
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi"
+        }
+      },
+      "targets": [
+        {
+          "alias": "Altitude Acclimation (m)",
+          "groupBy": [
+            {
+              "params": [
+                "1d"
+              ],
+              "type": "time"
+            },
+            {
+              "params": [
+                "previous"
+              ],
+              "type": "fill"
+            }
+          ],
+          "measurement": "HeatAltitudeAcclimation",
+          "orderByTime": "ASC",
+          "policy": "default",
+          "refId": "A",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "altitudeAcclimation"
+                ],
+                "type": "field"
+              },
+              {
+                "params": [],
+                "type": "mean"
+              }
+            ]
+          ],
+          "tags": []
+        }
+      ],
+      "title": "Altitude Acclimation",
+      "type": "timeseries"
+    }
+  ],
+  "refresh": "1h",
+  "schemaVersion": 39,
+  "tags": [
+    "vo2max",
+    "race-predictions",
+    "fitness-age",
+    "hill-score",
+    "endurance-score",
+    "lthr",
+    "rhr",
+    "hr-zones",
+    "power-zones",
+    "fcmax",
+    "ftp",
+    "weight",
+    "bmi",
+    "long-term",
+    "calibration"
+  ],
+  "templating": {
+    "list": []
+  },
+  "time": {
+    "from": "now-6M",
+    "to": "now"
+  },
+  "timezone": "browser",
+  "title": "08 Long-Term Trends",
+  "uid": "garvis-c-fitness",
+  "version": 25,
+  "weekStart": "monday"
+}

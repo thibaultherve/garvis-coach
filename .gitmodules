@@ -1,0 +1,12 @@
+[submodule "services/garmin-grafana"]
+	path = services/garmin-grafana
+	url = https://github.com/thibaultherve/garmin-grafana.git
+	branch = extended-fetch-fields
+[submodule "services/garmin-coach-mcp"]
+	path = services/garmin-coach-mcp
+	url = https://github.com/thibaultherve/garmin-grafana-mcp-server.git
+	branch = extended-coaching-tools
+[submodule "services/garmin-toolbox"]
+	path = services/garmin-toolbox
+	url = https://github.com/thibaultherve/garmin-toolbox.git
+	branch = main
