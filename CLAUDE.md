@@ -14,26 +14,42 @@
 
 ---
 
+## Source of truth (who owns what)
+
+Each topic has **one** owning file; the others summarize + point to it.
+Fix a rule/pitfall → edit the owner, never the copies (prevents drift across files).
+
+| Topic | Owner | Others |
+|---|---|---|
+| Claude behavior + sport-science | `COACHING_RULES.md` §0-13 | summary + pointer only |
+| Training plan (workouts) | `workouts_data.py` | read via MCP `garmin-toolbox` |
+| Stack / infra (dashboards, MCP, InfluxDB) + infra/build pitfalls | `CLAUDE.md` (this file) | — |
+| Data-read pitfalls (reading MCP/Influx values) | `CLAUDE.md` (this file + the PC entry file) | always-loaded quick-list |
+
+---
+
 ## TL;DR for a new Claude session
 
-0. **Read `COACHING_PROTOCOL.md` first** (8 sections). It defines behavioral rules: anti-sycophancy, verify-before-claim, Chain-of-Verification, Program-of-Thought, calibration, fallback flowchart, Reflexion log. **If it conflicts with any other file, the protocol wins.**
-1. **Read `./services/garmin-toolbox/workouts_data.py`** — the header covers the full plan (objectives, profile, zones, constraints, cycles, decisions). The `WORKOUTS` list below shows where we are. You can also list workouts via MCP: `garmin-toolbox.list_workouts(start_date, end_date)`.
-2. **Read this CLAUDE.md** for infra (dashboards, MCP, InfluxDB).
-3. **Before any analysis**: query fresh data via MCP `garmin-coach` (read InfluxDB raw) or MCP `grafana` / dashboards `garvis-*`. For derived metrics (TRIMP, ACWR, CTL/ATL/TSB, polarization, decoupling, HR drift), use MCP `garmin-toolbox.compute_*`. Never do mental math.
-4. **To modify a workout**: edit `workouts_data.py` then call `garmin-toolbox.garmin_upload_workout(code=..., replace=True)`.
-5. **NEVER** modify workouts directly in Garmin Connect (source of truth is workouts_data.py).
+0. **Read `COACHING_RULES.md` first** — regles comportement Claude (anti-sycophancy, verify-before-claim, zero mental math, calibration) + regles sport-science sourcees (Daniels, Seiler, Gabbett, Bakken, meta-analyses 2022-2025). Checklist pre-cycle incluse. **Si conflit avec un autre fichier, COACHING_RULES.md gagne.**
+2. **Read `./services/garmin-toolbox/workouts_data.py`** — the header covers the full plan (objectives, profile, zones, constraints, cycles, decisions). The `WORKOUTS` list below shows where we are. You can also list workouts via MCP: `garmin-toolbox.list_workouts(start_date, end_date)`.
+3. **Read this CLAUDE.md** for infra (dashboards, MCP, InfluxDB).
+4. **Before any analysis**: query fresh data via MCP `garmin-coach` (read InfluxDB raw) or MCP `grafana` / dashboards `garvis-*`. For derived metrics (TRIMP, ACWR, CTL/ATL/TSB, polarization, decoupling, HR drift), use MCP `garmin-toolbox.compute_*`. Never do mental math.
+   - **For any running activity analysis**: always query the **03 Activity Drill-Down** dashboard (`garvis-j-activity`) panels via MCP Grafana for each activity being analyzed. The per-second curves (HR, pace, power, cadence, GCT, vertical oscillation, stride length, vertical ratio) + GPS map + zone distributions reveal drift, decoupling, and form degradation far better than numbers alone.
+   - **For weekly reviews / bilans**: always query the **02 Training Load & ACWR** dashboard (`garvis-b-load`) panels via MCP Grafana. ACWR, acute vs chronic load, polarization, weekly volume, PMC (CTL/ATL/TSB), and training status timeline provide the full picture needed to assess the week and plan the next one.
+5. **To modify a workout**: edit `workouts_data.py` then call `garmin-toolbox.garmin_upload_workout(code=..., replace=True)`.
+6. **NEVER** modify workouts directly in Garmin Connect (source of truth is workouts_data.py).
 
 ---
 
 ## Tone & behavior
 
-> Full details: `COACHING_PROTOCOL.md`. Summary here.
+> Full details: `COACHING_RULES.md` §0. Summary here.
 
 - **No over-cautious health warnings.** When the athlete reports pain or fatigue, it's context for adapting training, not a signal to produce "red flag" checklists or repeated "see a doctor" disclaimers. Adapt pragmatically.
-- **No sycophancy.** If data contradicts the athlete, say so in the first sentence. No "great question" / "you're right to" / "indeed". Firm verdicts, no hedging. (cf. PROTOCOL section 1)
-- **Verify-before-claim.** No number without a traceable source in the same turn (MCP / InfluxQL / Python script). Missing data = "I don't have this, I need to query X" — never a plausible estimate. (cf. PROTOCOL section 2)
-- **ZERO mental arithmetic, even trivial.** Pace conversions, distance from pace x time, weighted means, percentages, deltas, projections, UTC to local time — **everything** goes through: (a) MCP `garmin-toolbox.compute_pace` for sport conversions, (b) a throwaway `python -c "..."`, or (c) MCP/dashboard if the number already exists. Advanced metrics (TRIMP, CTL/ATL/TSB, ACWR, decoupling, polarization, HR drift) via MCP `garmin-toolbox.compute_*`. Prose = number quoted verbatim from JSON. (cf. PROTOCOL sections 4 and 4bis)
-- **Explicit calibration**: tags `[conf X, n=Y, sigma=Z]` on key numeric claims. No confidence without `n=`. (cf. PROTOCOL section 5)
+- **No sycophancy.** If data contradicts the athlete, say so in the first sentence. No "great question" / "you're right to" / "indeed". Firm verdicts, no hedging. (cf. COACHING_RULES.md §0)
+- **Verify-before-claim.** No number without a traceable source in the same turn (MCP / InfluxQL / Python script). Missing data = "I don't have this, I need to query X" — never a plausible estimate. (cf. COACHING_RULES.md §0)
+- **ZERO mental arithmetic, even trivial.** Pace conversions, distance from pace x time, weighted means, percentages, deltas, projections, UTC to local time — **everything** goes through: (a) MCP `garmin-toolbox.compute_pace` for sport conversions, (b) a throwaway `python -c "..."`, or (c) MCP/dashboard if the number already exists. Advanced metrics (TRIMP, CTL/ATL/TSB, ACWR, decoupling, polarization, HR drift) via MCP `garmin-toolbox.compute_*`. Prose = number quoted verbatim from JSON. (cf. COACHING_RULES.md §0)
+- **Explicit calibration**: tags `[conf X, n=Y, sigma=Z]` on key numeric claims. No confidence without `n=`. (cf. COACHING_RULES.md §0)
 
 ---
 
@@ -85,7 +101,7 @@ garvis-coach/                          <- this monorepo
 |-- .env.example
 |-- CLAUDE.md                          <- this file (generic)
 |-- CLAUDE.local.md                    <- GITIGNORED (your personal config)
-|-- COACHING_PROTOCOL.md               <- behavioral rules (anti-sycophancy, PoT, etc.)
+|-- COACHING_RULES.md                  <- SoT: behavior rules + sport-science (anti-sycophancy, PoT, Daniels/Seiler/Gabbett)
 |-- README.md
 |-- CREDITS.md
 |

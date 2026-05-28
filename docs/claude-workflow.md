@@ -92,7 +92,7 @@ Need to modify a workout?
 
 ## Important rules
 
-These are enforced by `COACHING_PROTOCOL.md`:
+These are enforced by `COACHING_RULES.md` §0:
 
 - **No mental math.** All numeric calculations through code or MCP tools.
 - **Verify before claiming.** Every number needs a traceable source.
