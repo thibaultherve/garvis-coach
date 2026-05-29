@@ -53,18 +53,20 @@ See `workouts_data.example.py` for detailed examples.
 
 ## 3. Dashboard zone thresholds
 
-Dashboard 03 (Activity Drill-Down) and 07 (Validators) use HR/Power zone
-thresholds from InfluxDB. These auto-populate from the `HRZones` and
-`PowerZones` measurements once the fetcher has run.
+Dashboard 03 (Activity Drill-Down) and 07 (Validators) read your HR/Power zones
+from InfluxDB. The `HRZones` / `PowerZones` measurements (populated once the
+fetcher has run) feed Grafana dashboard variables (`z1_hr`…`z5_hr`,
+`z1_pwr`…`z5_pwr`) that the time-in-zone InfluxQL queries interpolate
+automatically — no regeneration needed.
 
-The visual zone bands (colored backgrounds) in the per-second charts use
-fallback defaults. To update them to your zones, run:
+The only static piece is the **colored band background** on the per-second
+charts: Grafana threshold steps can't interpolate variables, so those boundary
+values are hard-coded in the JSON. If your zones differ from the defaults and you
+want the colored bands to match, edit the `thresholds.steps[].value` numbers
+directly in `dashboards/03-activity-drill-down.json` (the HR / Power band panels).
 
-```bash
-python scripts/generate_dashboard_drilldown.py
-```
-
-This reads your current zones from Garmin Connect and regenerates dashboard 03.
+> Dashboard 03 is a hand-maintained canonical JSON — there is no generator
+> script. Read `dashboards/README.md` for the build invariants before editing it.
 
 ## 4. GPX routes and climbs (optional)
 
