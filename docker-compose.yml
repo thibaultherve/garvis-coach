@@ -66,6 +66,10 @@ services:
       INFLUXDB_HOST: influxdb
       MCP_HOST: "0.0.0.0"
       MCP_PORT: "8765"
+      # Daily/sleep aggregates are bucketed and date-labelled in this tz.
+      # DailyStats points are stamped at local midnight (e.g. 22:00Z = 00:00 CEST),
+      # so UTC bucketing mislabels every day by one. Must match the athlete's tz.
+      QUERY_TIMEZONE: "Europe/Paris"
     command: uvicorn server:app --host 0.0.0.0 --port 8765 --reload
     healthcheck:
       test:

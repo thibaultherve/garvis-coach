@@ -201,7 +201,7 @@ Training load calendar heatmap (green <60, yellow 60-120, orange 120-200, red >2
 **Notes**:
 - Activities expose `training_effect_label`: `AEROBIC_BASE` / `TEMPO` / `LACTATE_THRESHOLD` / `VO2MAX` / `ANAEROBIC_CAPACITY` / `SPRINT`.
 - Do NOT use `garmin_coaching_advice` — FIT SDK enum mapping is incorrect on some codes. Read `trainingBalanceFeedbackPhrase` directly via `get_training_status_tool`.
-- `recovery_time_h` is in **minutes** (naming bug) — divide by 60.
+- ~~`recovery_time_h` is in minutes — divide by 60~~ **FIXED (2026-05-29)**: `get_training_status_tool` now returns `recovery_time_min` (minutes, native Garmin) **and** `recovery_time_h` (hours, already converted). Do not divide. The `training_readiness.factors` breakdown (hrv/sleep_score/recovery_time/acwr/stress_history %) is now populated too.
 - All Garmin timestamps are **UTC** — always convert to athlete's local timezone.
 
 ### 2. MCP `garmin-toolbox` (derived metrics + dump + workout ops)
