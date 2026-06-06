@@ -28,7 +28,9 @@ services:
       INFLUXDB_DATABASE: ${INFLUXDB_DATABASE:-GarminStats}
       GARMINCONNECT_IS_CN: "False"
       FETCH_SELECTION: "daily_avg,sleep,steps,heartrate,stress,breathing,hrv,fitness_age,vo2,activity,race_prediction,body_composition,lifestyle,training_status,training_readiness,hill_score,endurance_score,lactate_threshold,zones,weather"
-    depends_on: [influxdb]
+      ENRICH_SURFACE_VALHALLA: "${ENRICH_SURFACE_VALHALLA:-False}"
+      VALHALLA_URL: "http://valhalla:8002"
+    depends_on: [influxdb, valhalla]
     restart: unless-stopped
 
   grafana:
@@ -44,7 +46,7 @@ services:
       - ./provisioning/datasources.yml:/etc/grafana/provisioning/datasources/influxdb.yml:ro
     environment:
       GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_ADMIN_PASSWORD:-admin}
-      GF_PLUGINS_PREINSTALL: marcusolsson-hourly-heatmap-panel
+      GF_PLUGINS_PREINSTALL: marcusolsson-hourly-heatmap-panel,volkovlabs-echarts-panel
       GF_DATE_FORMATS_FULL_DATE: "MMM Do, YYYY - hh:mm:ss a"
       GF_DATE_FORMATS_INTERVAL_SECOND: "hh:mm:ss a"
       GF_DATE_FORMATS_INTERVAL_MINUTE: "hh:mm a"
@@ -121,6 +123,26 @@ services:
       - "--enabled-tools"
       - "search,dashboard,datasource,influxdb"
     depends_on: [grafana]
+    restart: unless-stopped
+
+  # Map-matching engine: recale les traces GPS d'activite sur OSM pour en lire
+  # surface + type de voie (trace_attributes). Construit les tuiles France au
+  # 1er demarrage (long, one-off), puis sert sur :8002. Consomme par le fetcher.
+  valhalla:
+    image: ghcr.io/gis-ops/docker-valhalla/valhalla:latest
+    container_name: valhalla
+    ports: ["${VALHALLA_PORT:-8002}:8002"]
+    volumes:
+      - ./services/valhalla/custom_files:/custom_files
+    environment:
+      tile_urls: https://download.geofabrik.de/europe/france-latest.osm.pbf
+      use_tiles_ignore_pbf: "True"
+      force_rebuild: "False"
+      build_elevation: "False"      # pente prise de l'altimetre Garmin (barometrique), pas du SRTM
+      build_admins: "False"         # inutile pour surface/waytype, allege le build
+      build_time_zones: "False"
+      serve_tiles: "True"
+      server_threads: "2"
     restart: unless-stopped
 
 volumes:
