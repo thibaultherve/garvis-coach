@@ -688,11 +688,11 @@
     {
       "type": "geomap",
       "id": 13,
-      "title": "GPS Track by Velocity",
-      "description": "Track colored by speed (km/h). Green = slow, red = fast.",
+      "title": "Carte — type de surface",
+      "description": "Trace GPS colorée par surface OSM (map-matching Valhalla). Bleu-gris=asphalte, tan=compacté, brun=terre, olive=sentier.",
       "gridPos": {
         "h": 11,
-        "w": 12,
+        "w": 24,
         "x": 0,
         "y": 18
       },
@@ -702,19 +702,42 @@
       },
       "fieldConfig": {
         "defaults": {
-          "decimals": 1,
+          "color": {
+            "mode": "thresholds"
+          },
+          "decimals": 0,
           "thresholds": {
             "mode": "absolute",
             "steps": [
               {
-                "value": 0,
-                "color": "green"
+                "color": "#6e7e91",
+                "value": null
+              },
+              {
+                "color": "#9aa7b5",
+                "value": 1
+              },
+              {
+                "color": "#d4a857",
+                "value": 2
+              },
+              {
+                "color": "#c8b273",
+                "value": 3
+              },
+              {
+                "color": "#a36b43",
+                "value": 4
+              },
+              {
+                "color": "#8aa05a",
+                "value": 5
+              },
+              {
+                "color": "#9aa0a6",
+                "value": 6
               }
             ]
-          },
-          "color": {
-            "mode": "continuous-RdYlGr",
-            "fixedColor": "yellow"
           },
           "custom": {
             "hideFrom": {
@@ -722,8 +745,7 @@
               "tooltip": false,
               "viz": false
             }
-          },
-          "fieldMinMax": false
+          }
         },
         "overrides": []
       },
@@ -750,13 +772,13 @@
         "layers": [
           {
             "config": {
-              "showLegend": true,
+              "showLegend": false,
               "style": {
                 "color": {
-                  "field": "speed (Km/h)",
+                  "field": "surf",
                   "fixed": "dark-green"
                 },
-                "opacity": 0.4,
+                "opacity": 0.6,
                 "rotation": {
                   "fixed": 0,
                   "max": 360,
@@ -764,7 +786,7 @@
                   "mode": "mod"
                 },
                 "size": {
-                  "fixed": 3,
+                  "fixed": 4,
                   "max": 15,
                   "min": 2
                 },
@@ -792,7 +814,7 @@
             "location": {
               "mode": "auto"
             },
-            "name": "Speed (Km/h)",
+            "name": "Surface",
             "opacity": 0.8,
             "tooltip": false,
             "type": "markers"
@@ -805,8 +827,8 @@
           "allLayers": true,
           "id": "fit",
           "lastOnly": false,
-          "lat": 48.4,
-          "lon": 0.7,
+          "lat": 46.6,
+          "lon": 2.4,
           "padding": 3,
           "shared": true,
           "zoom": 13
@@ -814,39 +836,39 @@
       },
       "targets": [
         {
-          "refId": "I",
-          "rawQuery": true,
           "alias": "lat",
-          "query": "SELECT \"Latitude\" FROM \"ActivityGPS\" WHERE \"ActivitySelector\" = '$activity'",
-          "resultFormat": "time_series",
           "groupBy": [],
+          "query": "SELECT \"Latitude\" FROM \"ActivityTrack\" WHERE \"ActivitySelector\" = '$activity'",
+          "rawQuery": true,
+          "refId": "I",
+          "resultFormat": "time_series",
           "tags": []
         },
         {
-          "refId": "J",
-          "rawQuery": true,
           "alias": "lon",
-          "query": "SELECT \"Longitude\" FROM \"ActivityGPS\" WHERE \"ActivitySelector\" = '$activity'",
-          "resultFormat": "time_series",
           "groupBy": [],
+          "query": "SELECT \"Longitude\" FROM \"ActivityTrack\" WHERE \"ActivitySelector\" = '$activity'",
+          "rawQuery": true,
+          "refId": "J",
+          "resultFormat": "time_series",
           "tags": []
         },
         {
+          "alias": "surf",
+          "groupBy": [],
+          "query": "SELECT \"surf_id\" FROM \"ActivityTrack\" WHERE \"ActivitySelector\" = '$activity'",
+          "rawQuery": true,
           "refId": "A",
-          "rawQuery": true,
-          "alias": "HR",
-          "query": "SELECT \"HeartRate\" FROM \"ActivityGPS\" WHERE \"ActivitySelector\" = '$activity'",
           "resultFormat": "time_series",
-          "groupBy": [],
           "tags": []
         },
         {
-          "refId": "B",
-          "rawQuery": true,
-          "alias": "speed (Km/h)",
-          "query": "SELECT \"Speed\" * 3.6 FROM \"ActivityGPS\" WHERE \"ActivitySelector\" = '$activity'",
-          "resultFormat": "time_series",
+          "alias": "surface",
           "groupBy": [],
+          "query": "SELECT \"Surface\" FROM \"ActivityTrack\" WHERE \"ActivitySelector\" = '$activity'",
+          "rawQuery": true,
+          "refId": "B",
+          "resultFormat": "time_series",
           "tags": []
         }
       ],
@@ -861,182 +883,7 @@
       ]
     },
     {
-      "type": "geomap",
-      "id": 14,
-      "title": "GPS Track by Heart Rate",
-      "description": "Track colored by HR (bpm). Green = low, red = high.",
-      "gridPos": {
-        "h": 11,
-        "w": 12,
-        "x": 12,
-        "y": 18
-      },
-      "datasource": {
-        "type": "influxdb",
-        "uid": "garmin_influxdb"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "decimals": 1,
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "value": 0,
-                "color": "green"
-              }
-            ]
-          },
-          "color": {
-            "mode": "continuous-GrYlRd",
-            "fixedColor": "yellow"
-          },
-          "custom": {
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            }
-          },
-          "fieldMinMax": false
-        },
-        "overrides": []
-      },
-      "options": {
-        "basemap": {
-          "config": {
-            "server": "world-imagery",
-            "showLabels": true,
-            "theme": "auto"
-          },
-          "name": "Layer 0",
-          "opacity": 1,
-          "tooltip": true,
-          "type": "esri-xyz"
-        },
-        "controls": {
-          "mouseWheelZoom": false,
-          "showAttribution": false,
-          "showDebug": false,
-          "showMeasure": false,
-          "showScale": true,
-          "showZoom": true
-        },
-        "layers": [
-          {
-            "config": {
-              "showLegend": true,
-              "style": {
-                "color": {
-                  "field": "HR",
-                  "fixed": "dark-green"
-                },
-                "opacity": 0.4,
-                "rotation": {
-                  "fixed": 0,
-                  "max": 360,
-                  "min": -360,
-                  "mode": "mod"
-                },
-                "size": {
-                  "fixed": 3,
-                  "max": 15,
-                  "min": 2
-                },
-                "symbol": {
-                  "fixed": "img/icons/marker/circle.svg",
-                  "mode": "fixed"
-                },
-                "symbolAlign": {
-                  "horizontal": "center",
-                  "vertical": "center"
-                },
-                "textConfig": {
-                  "fontSize": 12,
-                  "offsetX": 0,
-                  "offsetY": 0,
-                  "textAlign": "center",
-                  "textBaseline": "middle"
-                }
-              }
-            },
-            "filterData": {
-              "id": "byRefId",
-              "options": "joinByField-I-J-A-B"
-            },
-            "location": {
-              "mode": "auto"
-            },
-            "name": "Heart Rate",
-            "opacity": 0.8,
-            "tooltip": false,
-            "type": "markers"
-          }
-        ],
-        "tooltip": {
-          "mode": "details"
-        },
-        "view": {
-          "allLayers": true,
-          "id": "fit",
-          "lastOnly": false,
-          "lat": 48.4,
-          "lon": 0.7,
-          "padding": 3,
-          "shared": true,
-          "zoom": 13
-        }
-      },
-      "targets": [
-        {
-          "refId": "I",
-          "rawQuery": true,
-          "alias": "lat",
-          "query": "SELECT \"Latitude\" FROM \"ActivityGPS\" WHERE \"ActivitySelector\" = '$activity'",
-          "resultFormat": "time_series",
-          "groupBy": [],
-          "tags": []
-        },
-        {
-          "refId": "J",
-          "rawQuery": true,
-          "alias": "lon",
-          "query": "SELECT \"Longitude\" FROM \"ActivityGPS\" WHERE \"ActivitySelector\" = '$activity'",
-          "resultFormat": "time_series",
-          "groupBy": [],
-          "tags": []
-        },
-        {
-          "refId": "A",
-          "rawQuery": true,
-          "alias": "HR",
-          "query": "SELECT \"HeartRate\" FROM \"ActivityGPS\" WHERE \"ActivitySelector\" = '$activity'",
-          "resultFormat": "time_series",
-          "groupBy": [],
-          "tags": []
-        },
-        {
-          "refId": "B",
-          "rawQuery": true,
-          "alias": "speed (Km/h)",
-          "query": "SELECT \"Speed\" * 3.6 FROM \"ActivityGPS\" WHERE \"ActivitySelector\" = '$activity'",
-          "resultFormat": "time_series",
-          "groupBy": [],
-          "tags": []
-        }
-      ],
-      "transformations": [
-        {
-          "id": "joinByField",
-          "options": {
-            "byField": "Time",
-            "mode": "outer"
-          }
-        }
-      ]
-    },
-    {
-      "type": "bargauge",
+      "type": "volkovlabs-echarts-panel",
       "id": 15,
       "title": "Time in HR Zones (%) - reference plan",
       "description": "% time per HR zone (Garmin zones at time of recording). Target for Z2-strict easy runs: >75% Z2.",
@@ -1044,130 +891,26 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 29
+        "y": 70
       },
       "datasource": {
         "type": "influxdb",
         "uid": "garmin_influxdb"
       },
       "fieldConfig": {
-        "defaults": {
-          "unit": "percent",
-          "color": {
-            "mode": "fixed"
-          },
-          "min": 0,
-          "max": 100
-        },
-        "overrides": [
-          {
-            "matcher": {
-              "id": "byFrameRefID",
-              "options": "A"
-            },
-            "properties": [
-              {
-                "id": "displayName",
-                "value": "Z1"
-              },
-              {
-                "id": "color",
-                "value": {
-                  "fixedColor": "#3274d9",
-                  "mode": "fixed"
-                }
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byFrameRefID",
-              "options": "B"
-            },
-            "properties": [
-              {
-                "id": "displayName",
-                "value": "Z2"
-              },
-              {
-                "id": "color",
-                "value": {
-                  "fixedColor": "#56a64b",
-                  "mode": "fixed"
-                }
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byFrameRefID",
-              "options": "C"
-            },
-            "properties": [
-              {
-                "id": "displayName",
-                "value": "Z3"
-              },
-              {
-                "id": "color",
-                "value": {
-                  "fixedColor": "#f2cc0c",
-                  "mode": "fixed"
-                }
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byFrameRefID",
-              "options": "D"
-            },
-            "properties": [
-              {
-                "id": "displayName",
-                "value": "Z4"
-              },
-              {
-                "id": "color",
-                "value": {
-                  "fixedColor": "#ff7833",
-                  "mode": "fixed"
-                }
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byFrameRefID",
-              "options": "E"
-            },
-            "properties": [
-              {
-                "id": "displayName",
-                "value": "Z5"
-              },
-              {
-                "id": "color",
-                "value": {
-                  "fixedColor": "#e02f44",
-                  "mode": "fixed"
-                }
-              }
-            ]
-          }
-        ]
+        "defaults": {},
+        "overrides": []
       },
       "options": {
-        "orientation": "horizontal",
-        "displayMode": "gradient",
-        "showUnfilled": true,
-        "valueMode": "color",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
+        "getOption": "const ctx=(typeof context!=='undefined'&&context)?context:{};\nconst pd=(ctx.panel&&ctx.panel.data)||ctx.data||null;\nconst series=(pd&&pd.series)||[];\nconst FONT='Inter, system-ui, sans-serif';\nconst empty=(m)=>({backgroundColor:'transparent',animation:false,title:{text:m,left:'center',top:'center',textStyle:{color:'#7e8694',fontFamily:FONT,fontSize:13,fontWeight:400}}});\nif(!series.length) return empty('Aucune donnée');\nconst vget=(f)=>f?(f.values&&f.values.toArray?f.values.toArray():f.values):[];\nlet arr=[];\nfor(const fr of series){let v=null;for(const f of((fr&&fr.fields)||[])){const nm=(f.name||'').toLowerCase();if(nm==='time')continue;const a=vget(f);for(let i=a.length-1;i>=0;i--){if(a[i]!=null&&isFinite(+a[i])){v=+a[i];break;}}if(v!=null)break;}arr.push({ref:(fr.refId||''),v:(v==null?0:v)});}\narr.sort((a,b)=>(a.ref<b.ref?-1:(a.ref>b.ref?1:0)));\nconst COL=['#5a7fd6','#7cb342','#f6c445','#f0883e','#e23b3b'];\nconst ZN=['Z1','Z2','Z3','Z4','Z5'];\nlet maxV=0;for(const a of arr)if(a.v>maxV)maxV=a.v;if(maxV<=0)maxV=1;\nconst fmt=(v)=> v>=10? v.toFixed(1) : (v>=1? v.toFixed(2): v.toFixed(3));\nconst data=[];for(let i=0;i<5;i++){const v=arr[i]?arr[i].v:0;data.push({value:v,itemStyle:{color:COL[i],borderRadius:[0,5,5,0]},label:{color:COL[i],formatter:fmt(v)+' %'}});}\nreturn {\n backgroundColor:'transparent',animation:false,textStyle:{fontFamily:FONT},\n grid:{left:34,right:84,top:8,bottom:8,containLabel:false},\n xAxis:{type:'value',min:0,max:maxV,show:false},\n yAxis:{type:'category',inverse:true,data:ZN,\n   axisLine:{show:false},axisTick:{show:false},\n   axisLabel:{color:'#cdd2da',fontFamily:FONT,fontSize:12,fontWeight:700,margin:8}},\n series:[{type:'bar',data:data,barWidth:'52%',\n   showBackground:true,backgroundStyle:{color:'rgba(255,255,255,0.05)',borderRadius:5},\n   label:{show:true,position:'right',distance:8,fontFamily:FONT,fontSize:17,fontWeight:700}}]\n};",
+        "renderer": "canvas",
+        "followTheme": false,
+        "editor": {
+          "format": "auto"
+        },
+        "themeEditor": {
+          "config": {},
+          "name": "default"
         }
       },
       "targets": [
@@ -1214,7 +957,7 @@
       ]
     },
     {
-      "type": "bargauge",
+      "type": "volkovlabs-echarts-panel",
       "id": 16,
       "title": "Time in Power Zones (%) - computed from per-second",
       "description": "% time per power zone computed on-the-fly from per-second ActivityGPS data. Garmin auto-FTP zones.",
@@ -1222,130 +965,26 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 29
+        "y": 70
       },
       "datasource": {
         "type": "influxdb",
         "uid": "garmin_influxdb"
       },
       "fieldConfig": {
-        "defaults": {
-          "unit": "percent",
-          "color": {
-            "mode": "fixed"
-          },
-          "min": 0,
-          "max": 100
-        },
-        "overrides": [
-          {
-            "matcher": {
-              "id": "byFrameRefID",
-              "options": "A"
-            },
-            "properties": [
-              {
-                "id": "displayName",
-                "value": "Z1"
-              },
-              {
-                "id": "color",
-                "value": {
-                  "fixedColor": "#cccccc",
-                  "mode": "fixed"
-                }
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byFrameRefID",
-              "options": "B"
-            },
-            "properties": [
-              {
-                "id": "displayName",
-                "value": "Z2"
-              },
-              {
-                "id": "color",
-                "value": {
-                  "fixedColor": "#3274d9",
-                  "mode": "fixed"
-                }
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byFrameRefID",
-              "options": "C"
-            },
-            "properties": [
-              {
-                "id": "displayName",
-                "value": "Z3"
-              },
-              {
-                "id": "color",
-                "value": {
-                  "fixedColor": "#56a64b",
-                  "mode": "fixed"
-                }
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byFrameRefID",
-              "options": "D"
-            },
-            "properties": [
-              {
-                "id": "displayName",
-                "value": "Z4"
-              },
-              {
-                "id": "color",
-                "value": {
-                  "fixedColor": "#ff7833",
-                  "mode": "fixed"
-                }
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byFrameRefID",
-              "options": "E"
-            },
-            "properties": [
-              {
-                "id": "displayName",
-                "value": "Z5"
-              },
-              {
-                "id": "color",
-                "value": {
-                  "fixedColor": "#e02f44",
-                  "mode": "fixed"
-                }
-              }
-            ]
-          }
-        ]
+        "defaults": {},
+        "overrides": []
       },
       "options": {
-        "orientation": "horizontal",
-        "displayMode": "gradient",
-        "showUnfilled": true,
-        "valueMode": "color",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
+        "getOption": "const ctx=(typeof context!=='undefined'&&context)?context:{};\nconst pd=(ctx.panel&&ctx.panel.data)||ctx.data||null;\nconst series=(pd&&pd.series)||[];\nconst FONT='Inter, system-ui, sans-serif';\nconst empty=(m)=>({backgroundColor:'transparent',animation:false,title:{text:m,left:'center',top:'center',textStyle:{color:'#7e8694',fontFamily:FONT,fontSize:13,fontWeight:400}}});\nif(!series.length) return empty('Aucune donnée');\nconst vget=(f)=>f?(f.values&&f.values.toArray?f.values.toArray():f.values):[];\nlet arr=[];\nfor(const fr of series){let v=null;for(const f of((fr&&fr.fields)||[])){const nm=(f.name||'').toLowerCase();if(nm==='time')continue;const a=vget(f);for(let i=a.length-1;i>=0;i--){if(a[i]!=null&&isFinite(+a[i])){v=+a[i];break;}}if(v!=null)break;}arr.push({ref:(fr.refId||''),v:(v==null?0:v)});}\narr.sort((a,b)=>(a.ref<b.ref?-1:(a.ref>b.ref?1:0)));\nconst COL=['#5a7fd6','#7cb342','#f6c445','#f0883e','#e23b3b'];\nconst ZN=['Z1','Z2','Z3','Z4','Z5'];\nlet maxV=0;for(const a of arr)if(a.v>maxV)maxV=a.v;if(maxV<=0)maxV=1;\nconst fmt=(v)=> v>=10? v.toFixed(1) : (v>=1? v.toFixed(2): v.toFixed(3));\nconst data=[];for(let i=0;i<5;i++){const v=arr[i]?arr[i].v:0;data.push({value:v,itemStyle:{color:COL[i],borderRadius:[0,5,5,0]},label:{color:COL[i],formatter:fmt(v)+' %'}});}\nreturn {\n backgroundColor:'transparent',animation:false,textStyle:{fontFamily:FONT},\n grid:{left:34,right:84,top:8,bottom:8,containLabel:false},\n xAxis:{type:'value',min:0,max:maxV,show:false},\n yAxis:{type:'category',inverse:true,data:ZN,\n   axisLine:{show:false},axisTick:{show:false},\n   axisLabel:{color:'#cdd2da',fontFamily:FONT,fontSize:12,fontWeight:700,margin:8}},\n series:[{type:'bar',data:data,barWidth:'52%',\n   showBackground:true,backgroundStyle:{color:'rgba(255,255,255,0.05)',borderRadius:5},\n   label:{show:true,position:'right',distance:8,fontFamily:FONT,fontSize:17,fontWeight:700}}]\n};",
+        "renderer": "canvas",
+        "followTheme": false,
+        "editor": {
+          "format": "auto"
+        },
+        "themeEditor": {
+          "config": {},
+          "name": "default"
         }
       },
       "targets": [
@@ -1400,7 +1039,7 @@
         "h": 10,
         "w": 24,
         "x": 0,
-        "y": 51
+        "y": 92
       },
       "datasource": {
         "type": "influxdb",
@@ -2138,7 +1777,7 @@
         "h": 14,
         "w": 24,
         "x": 0,
-        "y": 37
+        "y": 78
       },
       "datasource": {
         "type": "influxdb",
@@ -2372,7 +2011,7 @@
         "h": 8,
         "w": 24,
         "x": 0,
-        "y": 61
+        "y": 102
       },
       "datasource": {
         "type": "influxdb",
@@ -2592,7 +2231,7 @@
         "h": 8,
         "w": 24,
         "x": 0,
-        "y": 69
+        "y": 110
       },
       "datasource": {
         "type": "influxdb",
@@ -3330,7 +2969,7 @@
         "h": 8,
         "w": 24,
         "x": 0,
-        "y": 77
+        "y": 118
       },
       "datasource": {
         "type": "influxdb",
@@ -3766,7 +3405,7 @@
         "h": 8,
         "w": 24,
         "x": 0,
-        "y": 85
+        "y": 126
       },
       "datasource": {
         "type": "influxdb",
@@ -3986,7 +3625,7 @@
         "h": 8,
         "w": 24,
         "x": 0,
-        "y": 93
+        "y": 134
       },
       "datasource": {
         "type": "influxdb",
@@ -4225,7 +3864,7 @@
         "h": 8,
         "w": 24,
         "x": 0,
-        "y": 101
+        "y": 142
       },
       "datasource": {
         "type": "influxdb",
@@ -4363,7 +4002,7 @@
         "h": 8,
         "w": 24,
         "x": 0,
-        "y": 109
+        "y": 150
       },
       "datasource": {
         "type": "influxdb",
@@ -4520,7 +4159,7 @@
         "h": 8,
         "w": 24,
         "x": 0,
-        "y": 117
+        "y": 158
       },
       "datasource": {
         "type": "influxdb",
@@ -4755,7 +4394,7 @@
         "h": 10,
         "w": 24,
         "x": 0,
-        "y": 125
+        "y": 166
       },
       "datasource": {
         "type": "influxdb",
@@ -5139,6 +4778,212 @@
         },
         "frameIndex": 0
       }
+    },
+    {
+      "type": "volkovlabs-echarts-panel",
+      "id": 100,
+      "title": "Profil d'élévation — coloré par pente",
+      "description": "Altitude vs distance (ActivityGPS), ligne+aire colorées par la pente (bleu descente → vert plat → rouge montée). Tooltip Après/Élévation/Pente. Surface + Type de voie ajoutés via visualMap quand ActivitySurface (Valhalla) sera peuplé.",
+      "gridPos": {
+        "h": 9,
+        "w": 24,
+        "x": 0,
+        "y": 29
+      },
+      "datasource": {
+        "type": "influxdb",
+        "uid": "garmin_influxdb"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "rawQuery": true,
+          "query": "SELECT \"Distance\" AS \"distance\", \"Altitude\" AS \"altitude\" FROM \"ActivityGPS\" WHERE \"ActivitySelector\" = '$activity' AND \"Altitude\" > 0",
+          "resultFormat": "table",
+          "groupBy": [],
+          "tags": []
+        },
+        {
+          "refId": "B",
+          "rawQuery": true,
+          "query": "SELECT \"surface\",\"waytype\",\"start_m\",\"end_m\" FROM \"ActivitySurface\" WHERE \"ActivitySelector\" = '$activity' ORDER BY time",
+          "resultFormat": "table",
+          "groupBy": [],
+          "tags": []
+        }
+      ],
+      "options": {
+        "getOption": "const ctx = (typeof context !== 'undefined' && context) ? context : {};\nconst pd = (ctx.panel && ctx.panel.data) || ctx.data || (typeof data !== 'undefined' ? data : null);\nconst series_in = (pd && pd.series) || [];\nif (!series_in.length || !series_in[0].fields || !series_in[0].fields.length) {\n  return { backgroundColor: 'transparent', title: { text: 'Sélectionne une activité', left: 'center', top: 'center', textStyle: { color: '#8a9199', fontWeight: 400 } } };\n}\nconst frame = series_in[0];\nconst findF = (sub) => frame.fields.find(x => (x.name || '').toLowerCase().includes(sub));\nconst vals = (f) => f ? (f.values.toArray ? f.values.toArray() : f.values) : [];\nconst dist = vals(findF('distance'));\nconst alt  = vals(findF('altitude'));\nlet raw = [];\nfor (let i = 0; i < dist.length; i++) {\n  if (dist[i] != null && alt[i] != null) raw.push([dist[i] / 1000, alt[i]]);\n}\nraw.sort((a, b) => a[0] - b[0]);\nif (!raw.length) {\n  return { backgroundColor: 'transparent', title: { text: 'Pas de données GPS', left: 'center', top: 'center', textStyle: { color: '#8a9199', fontWeight: 400 } } };\n}\nconst N = raw.length;\n// pente lissee sur ~70 m glissants (fenetre centree) : garde le detail des montees/descentes\nconst WIN = 40;\nconst grade = raw.map((p, i) => {\n  let a = i, b = i;\n  while (a > 0 && (p[0] - raw[a - 1][0]) * 1000 < WIN / 2) a--;\n  while (b < N - 1 && (raw[b + 1][0] - p[0]) * 1000 < WIN / 2) b++;\n  const dx = (raw[b][0] - raw[a][0]) * 1000;\n  const dz = raw[b][1] - raw[a][1];\n  return dx > 0 ? (100 * dz / dx) : 0;\n});\nconst pts = raw.map((p, i) => [p[0], p[1], +grade[i].toFixed(1)]);\nconst elMin = Math.min.apply(null, raw.map(p => p[1]));\nconst elMax = Math.max.apply(null, raw.map(p => p[1]));\nconst fAll=(sub)=>{for(const fr of series_in){for(const f of ((fr&&fr.fields)||[])){if(((f.name||'').toLowerCase()).includes(sub))return f;}}return null;};\nconst _sv=(f)=>f?(f.values&&f.values.toArray?f.values.toArray():f.values):[];\nconst sSurf=_sv(fAll('surface')),sWay=_sv(fAll('waytype')),sStart=_sv(fAll('start_m')),sEnd=_sv(fAll('end_m'));\nlet segs=[];for(let i=0;i<sStart.length;i++){if(sStart[i]==null)continue;segs.push({s:+sStart[i],e:+sEnd[i],surf:sSurf[i],way:sWay[i]});}segs.sort((a,b)=>a.s-b.s);\nconst SURFL=(k)=>{k=String(k||'').toLowerCase();if(k==='paved_smooth'||k==='paved'||k==='asphalt')return['Asphalte','#6e7e91'];if(k==='paved_rough')return['Pavé','#9aa7b5'];if(k==='compacted')return['Compacté','#d4a857'];if(k==='gravel'||k==='fine_gravel')return['Gravier','#c8b273'];if(k==='dirt'||k==='ground')return['Terre','#a36b43'];if(k==='path')return['Sentier','#8aa05a'];return['Autre','#9aa0a6'];};\nconst WAYL=(k)=>{k=String(k||'').toLowerCase();if(k==='road')return['Route','#6e7e91'];if(k==='street'||k==='residential')return['Rue','#8b97a6'];if(k==='track')return['Chemin','#c98a3c'];if(k==='path')return['Sentier','#8aa05a'];if(k==='footway'||k==='sidewalk')return['Piéton','#5fa0b0'];if(k==='cycleway')return['Cyclable','#7b6fd0'];if(k==='steps')return['Escaliers','#b06fd0'];return['Autre','#9aa0a6'];};\nconst segAt=(dm)=>{for(const sg of segs){if(dm>=sg.s&&dm<sg.e)return sg;}return segs.length?segs[segs.length-1]:null;};\n\n// 5 classes de pente -> 5 couleurs (meme couleur pour pente similaire)\nconst BANDS = [\n  { max: -6,       color: '#2c7bb6', label: 'descente raide' },\n  { max: -2,       color: '#74add1', label: 'descente' },\n  { max: 2,        color: '#7cb342', label: 'plat' },\n  { max: 5,        color: '#f6c445', label: 'montée légère' },\n  { max: 8,        color: '#f0883e', label: 'montée' },\n  { max: Infinity, color: '#e23b3b', label: 'montée raide' }\n];\nconst bandIndex = (g) => { for (let k = 0; k < BANDS.length; k++) if (g <= BANDS[k].max) return k; return BANDS.length - 1; };\nconst arrow = (g) => g >= 2 ? '↗' : (g <= -2 ? '↘' : '→');\n\n// fusion des runs trop courts (< MIN_M) dans le voisin dominant : tue les slivers <45 m,\n// garde les vraies montees/descentes\nlet band = pts.map(p => bandIndex(p[2]));\nconst MIN_M = 18;\nlet changed = true, guard = 0;\nwhile (changed && guard < 60) {\n  changed = false; guard++;\n  let i = 0;\n  while (i < N) {\n    let j = i;\n    while (j + 1 < N && band[j + 1] === band[i]) j++;\n    const lenM = (pts[j][0] - pts[i][0]) * 1000;\n    if (lenM < MIN_M && (i > 0 || j < N - 1)) {\n      let lBand = null, lLen = -1;\n      if (i > 0) { let ls = i - 1; lBand = band[ls]; while (ls > 0 && band[ls - 1] === lBand) ls--; lLen = (pts[i - 1][0] - pts[ls][0]) * 1000; }\n      let rBand = null, rLen = -1;\n      if (j < N - 1) { let re = j + 1; rBand = band[re]; while (re < N - 1 && band[re + 1] === rBand) re++; rLen = (pts[re][0] - pts[j + 1][0]) * 1000; }\n      const target = (lLen >= rLen) ? lBand : rBand;\n      if (target != null) { for (let k = i; k <= j; k++) band[k] = target; changed = true; }\n    }\n    i = j + 1;\n  }\n}\n\nconst echSeries = BANDS.map((b) => ({\n  type: 'line', showSymbol: false, smooth: false,\n  lineStyle: { color: b.color, width: 2 },\n  areaStyle: { color: b.color, opacity: 0.42 },\n  emphasis: { disabled: true }, silent: true,\n  data: new Array(N).fill(null), z: 2\n}));\nfor (let i = 0; i < N; i++) {\n  const bi = band[i];\n  echSeries[bi].data[i] = [pts[i][0], pts[i][1]];\n  if (i > 0 && band[i - 1] !== bi) echSeries[bi].data[i - 1] = [pts[i - 1][0], pts[i - 1][1]];\n}\n\nreturn {\n  backgroundColor: 'transparent',\n  animation: false,\n  grid: { left: 46, right: 14, top: 16, bottom: 26 },\n  textStyle: { fontFamily: 'Inter, system-ui, sans-serif', color: '#aab2bd' },\n  tooltip: {\n    trigger: 'axis',\n    axisPointer: { type: 'line', lineStyle: { color: 'rgba(255,255,255,0.25)', width: 1 }, z: 1 },\n    backgroundColor: 'rgba(22,24,29,0.92)',\n    borderColor: 'rgba(255,255,255,0.10)', borderWidth: 1,\n    padding: [9, 13],\n    textStyle: { color: '#e7eaee', fontSize: 12 },\n    extraCssText: 'border-radius:10px; box-shadow:0 6px 22px rgba(0,0,0,0.45); backdrop-filter:blur(6px);',\n    formatter: (ps) => {\n      if (!ps || !ps.length) return '';\n      const i = ps[0].dataIndex;\n      if (pts[i] == null) return '';\n      const km = pts[i][0].toFixed(2);\n      const el = Math.round(pts[i][1]);\n      const g = pts[i][2];\n      const c = BANDS[band[i]].color;\n      const row = (label, val) =>\n        '<div style=\"display:flex;justify-content:space-between;gap:18px;line-height:1.55\">' +\n        '<span style=\"color:#8b94a0\">' + label + '</span><span style=\"font-weight:600\">' + val + '</span></div>';\n      return '<div style=\"min-width:172px\">' +\n        row('Après', km + ' km') +\n        row('Élévation', el + ' m') +\n        '<div style=\"display:flex;justify-content:space-between;gap:18px;line-height:1.55\">' +\n          '<span style=\"color:#8b94a0\">Pente</span>' +\n          '<span style=\"font-weight:600;color:' + c + '\">' + arrow(g) + ' ' + g.toFixed(0) + ' %</span></div>' +\n        (function(){var d=pts[i][0]*1000;var sg=segAt(d);var sl=sg?SURFL(sg.surf):['—','#9aa0a6'];var wl=sg?WAYL(sg.way):['—','#9aa0a6'];return row('Surface','<span style=\"color:'+sl[1]+';font-weight:600\">'+sl[0]+'</span>')+row('Type de voie','<span style=\"color:'+wl[1]+';font-weight:600\">'+wl[0]+'</span>');})() +\n        '</div>';\n    }\n  },\n  xAxis: {\n    type: 'value', min: 0, max: +pts[N - 1][0].toFixed(2),\n    name: 'km', nameLocation: 'end', nameGap: 4, nameTextStyle: { color: '#6b7280', fontSize: 11 },\n    axisLine: { show: false }, axisTick: { show: false },\n    axisLabel: { color: '#7e8694', fontSize: 11, formatter: (v) => v.toFixed(0) },\n    splitLine: { show: true, lineStyle: { color: 'rgba(255,255,255,0.055)' } }\n  },\n  yAxis: {\n    type: 'value',\n    min: Math.floor((elMin - 8) / 10) * 10,\n    max: Math.ceil((elMax + 8) / 10) * 10,\n    name: 'm', nameGap: 10, nameTextStyle: { color: '#6b7280', fontSize: 11, align: 'right' },\n    axisLine: { show: false }, axisTick: { show: false },\n    axisLabel: { color: '#7e8694', fontSize: 11 },\n    splitLine: { show: true, lineStyle: { color: 'rgba(255,255,255,0.055)' } }\n  },\n  series: echSeries\n};",
+        "renderer": "canvas",
+        "followTheme": false,
+        "editor": {
+          "format": "auto"
+        },
+        "themeEditor": {
+          "config": {},
+          "name": "default"
+        }
+      }
+    },
+    {
+      "type": "volkovlabs-echarts-panel",
+      "id": 101,
+      "title": "Splits",
+      "description": "GROUNDED on ActivityGPS (selector 20260522T083908UTC verified): Distance=cumulative meters, DurationSeconds=1Hz seconds, Altitude>0 filter, HeartRate=bpm. Pace derived from time/distance (Report B), never from Speed. Per-km algorithm exactly matches Report B (d>=lo && d<hi contig",
+      "gridPos": {
+        "h": 15,
+        "w": 12,
+        "x": 0,
+        "y": 55
+      },
+      "datasource": {
+        "type": "influxdb",
+        "uid": "garmin_influxdb"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "rawQuery": true,
+          "query": "SELECT \"Distance\" AS \"d\",\"DurationSeconds\" AS \"t\",\"Altitude\" AS \"alt\",\"HeartRate\" AS \"hr\" FROM \"ActivityGPS\" WHERE \"ActivitySelector\"='$activity' AND \"Altitude\">0 ORDER BY time",
+          "resultFormat": "table",
+          "groupBy": [],
+          "tags": []
+        }
+      ],
+      "options": {
+        "getOption": "const ctx=(typeof context!=='undefined'&&context)?context:{};\nconst pd=(ctx.panel&&ctx.panel.data)||ctx.data||null;\nconst series=(pd&&pd.series)||[];\nconst chart=ctx.panel&&ctx.panel.chart;\nconst FONT='Inter, system-ui, sans-serif';\nconst rv=(ctx.grafana&&ctx.grafana.replaceVariables)?ctx.grafana.replaceVariables:(s)=>s;\nconst _zf=(nm)=>{const v=parseFloat(rv('${'+nm+'}'));return isFinite(v)?v:null;};\nconst ZHR=[_zf('z1_hr'),_zf('z2_hr'),_zf('z3_hr'),_zf('z4_hr'),_zf('z5_hr')];\nconst ZC=['#5a7fd6','#7cb342','#f6c445','#f0883e','#e23b3b'];\nconst hrColor=(h)=>{if(h==null)return '#6b7280';let zi=0;for(let k=0;k<5;k++){if(ZHR[k]!=null&&h>=ZHR[k])zi=k;}return ZC[zi];};\nconst paceColor=(ps)=>{const m=ps/60;if(m>=8)return '#7048e8';if(m>=7)return '#5f6df0';if(m>=6)return '#3aa0ff';if(m>=5)return '#22c1c3';if(m>=4)return '#2bd4a4';if(m>=3)return '#6fe05a';return '#b7f000';};\nconst elevColor=(e)=>{if(e<=-50)return '#2c7bb6';if(e<=-20)return '#74add1';if(e<20)return '#7cb342';if(e<50)return '#f6c445';if(e<80)return '#f0883e';return '#e23b3b';};\nconst W=(chart&&chart.getWidth)?chart.getWidth():760;\nconst H=(chart&&chart.getHeight)?chart.getHeight():340;\nconst empty=(m)=>({backgroundColor:'transparent',animation:false,graphic:[{type:'text',left:'center',top:'middle',style:{text:m,fill:'#7e8694',font:'14px '+FONT}}]});\nif(!series.length) return empty('Sélectionne une activité');\nconst vget=(f)=>f?(f.values&&f.values.toArray?f.values.toArray():f.values):[];\nconst pick=(sub)=>{sub=sub.toLowerCase();for(const fr of series)for(const f of((fr&&fr.fields)||[])){const nm=((f.config&&f.config.displayName)||(f.config&&f.config.displayNameFromDS)||f.name||'').toLowerCase();if(nm==='time')continue;if(nm===sub||nm.endsWith('.'+sub))return f;}return null;};\nconst D=vget(pick('d')),T=vget(pick('t')),A=vget(pick('alt')),HR=vget(pick('hr'));\nconst n=Math.max(D.length,T.length);\nif(!n) return empty('Données indisponibles');\nlet pts=[];\nfor(let i=0;i<n;i++){const d=+D[i],t=+T[i];const al=A.length?+A[i]:0;if(!isFinite(d)||!isFinite(t))continue;if(A.length&&(!isFinite(al)||al<=0))continue;pts.push({d:d,t:t,alt:A.length?al:0,hr:(HR.length&&HR[i]!=null&&isFinite(+HR[i]))?+HR[i]:null});}\npts.sort((a,b)=>a.t-b.t);\nif(pts.length<2) return empty('Pas assez de points');\nconst total=pts[pts.length-1].d,numKm=Math.floor(total/1000);\nconst p2=(x)=>(x<10?'0':'')+x;const mmss=(s)=>{s=Math.round(s);return Math.floor(s/60)+':'+p2(s%60);};\nlet R=[],idx=0;\nfor(let k=0;k<=numKm;k++){const lo=1000*k,hi=1000*(k+1);const par=(k===numKm)&&(total>lo);if(k===numKm&&(total-lo)<1)break;while(idx<pts.length&&pts[idx].d<lo)idx++;let j=idx,seg=[];while(j<pts.length&&pts[j].d<hi){seg.push(pts[j]);j++;}if(!seg.length)continue;const a=seg[0],b=seg[seg.length-1];const fr=par?(total-lo)/1000:1;const pace=fr>0?(b.t-a.t)/fr:(b.t-a.t);let hs=0,hc=0;for(const p of seg)if(p.hr!=null){hs+=p.hr;hc++;}R.push({km:par?(total/1000).toFixed(2):String(k+1),ps:pace,pace:mmss(pace),elev:Math.round(b.alt-a.alt),hr:hc?Math.round(hs/hc):null});}\nif(!R.length) return empty('Aucun split');\nlet minP=Infinity;for(const s of R)if(s.ps>0&&s.ps<minP)minP=s.ps;\nfor(const s of R)s.bar=s.ps>0?minP/s.ps:0;\nlet hrMin=Infinity,hrMax=-Infinity;for(const s of R)if(s.hr!=null){if(s.hr<hrMin)hrMin=s.hr;if(s.hr>hrMax)hrMax=s.hr;}\nconst hrN=(h)=>{if(h==null||hrMax<=hrMin)return 0;return 0.08+0.92*(h-hrMin)/(hrMax-hrMin);};\nconst topPad=26,botPad=6,nR=R.length;\nconst usable=Math.max(20,H-topPad-botPad);const rowH=usable/nR;const barH=Math.max(6,Math.min(rowH*0.6,22));\nconst kmX=8,paceX=50,barX0=98;const elevOff=58,hrOff=12;const barX1=Math.max(barX0+30,W-104);\nconst g=[];\nconst tL=(t,x,y,c,sz,w)=>({type:'text',left:x,top:y,style:{text:t,fill:c,font:(w||400)+' '+sz+'px '+FONT,textAlign:'left'}});\nconst tR=(t,r,y,c,sz,w)=>({type:'text',right:r,top:y,style:{text:t,fill:c,font:(w||400)+' '+sz+'px '+FONT,textAlign:'right'}});\ng.push(tL('Km',kmX,6,'#6b7280',11));g.push(tL('Pace',paceX,6,'#6b7280',11));g.push(tR('Elev',elevOff,6,'#6b7280',11));g.push(tR('HR',hrOff,6,'#6b7280',11));\nfor(let i=0;i<nR;i++){const s=R[i];const cy=topPad+i*rowH+rowH/2;const ty=cy-8;\n g.push({type:'rect',shape:{x:barX0,y:cy-barH/2,width:barX1-barX0,height:barH,r:barH/2},style:{fill:'rgba(255,255,255,0.045)'}});\n const bw=Math.max(3,(barX1-barX0)*s.bar);\n g.push({type:'rect',shape:{x:barX0,y:cy-barH/2,width:bw,height:barH,r:barH/2},style:{fill:paceColor(s.ps)}});\n \n g.push(tL(s.km,kmX,ty,'#cdd2da',12,600));\n g.push(tL(s.pace,paceX,ty,'#ffffff',12,700));\n g.push(tR((s.elev>0?'+':'')+s.elev,elevOff,ty,elevColor(s.elev),12));\n g.push(tR(s.hr!=null?String(s.hr):'–',hrOff,ty,hrColor(s.hr),12,700));\n}\nreturn {backgroundColor:'transparent',animation:false,graphic:g};",
+        "renderer": "canvas",
+        "followTheme": false,
+        "editor": {
+          "format": "auto"
+        },
+        "themeEditor": {
+          "config": {},
+          "name": "default"
+        }
+      }
+    },
+    {
+      "type": "volkovlabs-echarts-panel",
+      "id": 102,
+      "title": "Workout Analysis",
+      "description": "Workout Analysis par step : barres horizontales colorees par type (Echauffement/Rep/Recup/Repos/Retour calme), longueur proportionnelle a la vitesse, allure+FC par step.",
+      "gridPos": {
+        "h": 15,
+        "w": 12,
+        "x": 12,
+        "y": 55
+      },
+      "datasource": {
+        "type": "influxdb",
+        "uid": "garmin_influxdb"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "rawQuery": true,
+          "query": "SELECT \"Index\" AS \"lapidx\",\"Intensity\" AS \"intensity\",\"Distance\" AS \"dist\",\"Elapsed_Time\" AS \"secs\",\"Avg_HR\" AS \"hr\",\"Ascent\" AS \"asc\",\"Descent\" AS \"desc\" FROM \"ActivityLap\" WHERE \"ActivitySelector\"='$activity' ORDER BY time",
+          "resultFormat": "table",
+          "groupBy": [],
+          "tags": []
+        }
+      ],
+      "options": {
+        "getOption": "const ctx=(typeof context!=='undefined'&&context)?context:{};\nconst pd=(ctx.panel&&ctx.panel.data)||ctx.data||null;\nconst series=(pd&&pd.series)||[];\nconst chart=ctx.panel&&ctx.panel.chart;\nconst FONT='Inter, system-ui, sans-serif';\nconst rv=(ctx.grafana&&ctx.grafana.replaceVariables)?ctx.grafana.replaceVariables:(s)=>s;\nconst _zf=(nm)=>{const v=parseFloat(rv('${'+nm+'}'));return isFinite(v)?v:null;};\nconst ZHR=[_zf('z1_hr'),_zf('z2_hr'),_zf('z3_hr'),_zf('z4_hr'),_zf('z5_hr')];\nconst ZC=['#5a7fd6','#7cb342','#f6c445','#f0883e','#e23b3b'];\nconst hrColor=(h)=>{if(h==null)return '#6b7280';let zi=0;for(let k=0;k<5;k++){if(ZHR[k]!=null&&h>=ZHR[k])zi=k;}return ZC[zi];};\nconst paceColor=(ps)=>{const m=ps/60;if(m>=8)return '#7048e8';if(m>=7)return '#5f6df0';if(m>=6)return '#3aa0ff';if(m>=5)return '#22c1c3';if(m>=4)return '#2bd4a4';if(m>=3)return '#6fe05a';return '#b7f000';};\nconst elevColor=(e)=>{if(e<=-50)return '#2c7bb6';if(e<=-20)return '#74add1';if(e<20)return '#7cb342';if(e<50)return '#f6c445';if(e<80)return '#f0883e';return '#e23b3b';};\nconst gColor=(gp)=>{if(gp<=-6)return '#2c7bb6';if(gp<=-2)return '#74add1';if(gp<2)return '#7cb342';if(gp<5)return '#f6c445';if(gp<8)return '#f0883e';return '#e23b3b';};\nconst W=(chart&&chart.getWidth)?chart.getWidth():760;\nconst H=(chart&&chart.getHeight)?chart.getHeight():340;\nconst empty=(m)=>({backgroundColor:'transparent',animation:false,graphic:[{type:'text',left:'center',top:'middle',style:{text:m,fill:'#7e8694',font:'14px '+FONT}}]});\nif(!series.length) return empty('Sélectionne une activité');\nconst vget=(f)=>f?(f.values&&f.values.toArray?f.values.toArray():f.values):[];\nconst pick=(name)=>{name=name.toLowerCase();for(const fr of series)for(const f of((fr&&fr.fields)||[])){const nm=((f.config&&f.config.displayName)||(f.config&&f.config.displayNameFromDS)||f.name||'').toLowerCase();if(nm===name||nm.endsWith('.'+name))return f;}return null;};\nconst I=vget(pick('lapidx')),INT=vget(pick('intensity')),D=vget(pick('dist')),T=vget(pick('secs')),HR=vget(pick('hr'));\nconst ASC=vget(pick('asc')),DESC=vget(pick('desc'));\nconst n=INT.length||D.length;\nif(!n) return empty('Pas de laps');\nconst TYPE={warmup:{l:'Warm up',c:'#5a7fd6'},rep:{l:'Rep',c:'#f0883e'},recovery:{l:'Recovery',c:'#7cb342'},rest:{l:'Rest',c:'#6b7280'},cooldown:{l:'Cool down',c:'#5a7fd6'},other:{l:'Other',c:'#8a9199'}};\nconst typeOf=(v)=>{const s=String(v==null?'':v).toLowerCase();if(s==='warmup'||s==='2')return 'warmup';if(s==='active'||s==='interval'||s==='5'||s==='0')return 'rep';if(s==='recovery'||s==='4')return 'recovery';if(s==='rest'||s==='1')return 'rest';if(s==='cooldown'||s==='3')return 'cooldown';return 'other';};\nconst p2=(x)=>(x<10?'0':'')+x;const mmss=(s)=>{s=Math.round(s);return Math.floor(s/60)+':'+p2(s%60);};\nlet raw=[];\nfor(let i=0;i<n;i++){const d=+D[i],t=+T[i];if(!isFinite(d)||d<=0||!isFinite(t)||t<=0)continue;raw.push({type:typeOf(INT[i]),dist:d,secs:t,hr:(HR.length&&HR[i]!=null&&isFinite(+HR[i]))?+HR[i]:null,asc:(+ASC[i]||0),desc:(+DESC[i]||0)});}\nif(!raw.length) return empty('Aucun lap');\nconst MERGE={warmup:1,cooldown:1,rest:1,other:1};\nlet L=[];\nfor(const l of raw){const last=L[L.length-1];if(last&&last.type===l.type&&MERGE[l.type]){last.dist+=l.dist;last.secs+=l.secs;last.asc+=l.asc;last.desc+=l.desc;if(l.hr!=null){last._hw+=l.hr*l.secs;last._ht+=l.secs;}}else{L.push({type:l.type,dist:l.dist,secs:l.secs,asc:l.asc,desc:l.desc,_hw:l.hr!=null?l.hr*l.secs:0,_ht:l.hr!=null?l.secs:0});}}\nfor(const m of L){m.c=TYPE[m.type].c;m.tl=TYPE[m.type].l;m.ps=m.secs/(m.dist/1000);m.pace=mmss(m.ps);m.hr=m._ht>0?Math.round(m._hw/m._ht):null;m.elev=Math.round((m.asc||0)-(m.desc||0));m.grade=m.dist>0?100*((m.asc||0)-(m.desc||0))/m.dist:0;}\nlet minP=Infinity;for(const l of L)if(l.ps<minP)minP=l.ps;\nfor(const l of L)l.bar=minP/l.ps;\nlet hrMin=Infinity,hrMax=-Infinity;for(const l of L)if(l.hr!=null){if(l.hr<hrMin)hrMin=l.hr;if(l.hr>hrMax)hrMax=l.hr;}\nconst hrN=(h)=>{if(h==null||hrMax<=hrMin)return 0;return 0.08+0.92*(h-hrMin)/(hrMax-hrMin);};\nconst topPad=12,botPad=6,nR=L.length;\nconst usable=Math.max(20,H-topPad-botPad);const rowH=usable/nR;const barH=Math.max(5,Math.min(rowH*0.6,22));\nconst typeX=8,paceX=84,barX0=132,hrOff=12,elevOff=54,barX1=Math.max(barX0+30,W-108);\nconst g=[];\nconst tL=(t,x,y,c,sz,w)=>({type:'text',left:x,top:y,style:{text:t,fill:c,font:(w||400)+' '+sz+'px '+FONT,textAlign:'left'}});\nconst tR=(t,r,y,c,sz,w)=>({type:'text',right:r,top:y,style:{text:t,fill:c,font:(w||400)+' '+sz+'px '+FONT,textAlign:'right'}});\ng.push(tR('Elev',elevOff,2,'#6b7280',11));g.push(tR('HR',hrOff,2,'#6b7280',11));\nfor(let i=0;i<nR;i++){const l=L[i];const cy=topPad+i*rowH+rowH/2;const ty=cy-8;\n g.push({type:'rect',shape:{x:barX0,y:cy-barH/2,width:barX1-barX0,height:barH,r:barH/2},style:{fill:'rgba(255,255,255,0.045)'}});\n const bw=Math.max(3,(barX1-barX0)*l.bar);\n g.push({type:'rect',shape:{x:barX0,y:cy-barH/2,width:bw,height:barH,r:barH/2},style:{fill:l.c}});\n \n g.push(tL(l.tl,typeX,ty,l.c,12,700));\n g.push(tL(l.pace+'/km',paceX,ty,'#ffffff',12,600));\n g.push(tR((l.elev>0?'+':'')+l.elev,elevOff,ty,gColor(l.grade),12,600));\n g.push(tR(l.hr!=null?String(l.hr):'–',hrOff,ty,hrColor(l.hr),12,700));\n}\nreturn {backgroundColor:'transparent',animation:false,graphic:g};",
+        "renderer": "canvas",
+        "followTheme": false,
+        "editor": {
+          "format": "auto"
+        },
+        "themeEditor": {
+          "config": {},
+          "name": "default"
+        }
+      }
+    },
+    {
+      "type": "volkovlabs-echarts-panel",
+      "id": 103,
+      "title": "Répartition surfaces & types de chemin",
+      "description": "Répartition par surface et par type de voie (ActivitySurface / Valhalla).",
+      "gridPos": {
+        "h": 8,
+        "w": 24,
+        "x": 0,
+        "y": 47
+      },
+      "datasource": {
+        "type": "influxdb",
+        "uid": "garmin_influxdb"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "rawQuery": true,
+          "query": "SELECT \"surface\",\"waytype\",\"length_m\" FROM \"ActivitySurface\" WHERE \"ActivitySelector\" = '$activity'",
+          "resultFormat": "table",
+          "groupBy": [],
+          "tags": []
+        }
+      ],
+      "options": {
+        "getOption": "const ctx=(typeof context!=='undefined'&&context)?context:{};\nconst pd=(ctx.panel&&ctx.panel.data)||ctx.data||null;\nconst series=(pd&&pd.series)||[];\nconst FONT='Inter, system-ui, sans-serif';\nconst empty=(m)=>({backgroundColor:'transparent',animation:false,title:{text:m,left:'center',top:'center',textStyle:{color:'#7e8694',fontFamily:FONT,fontSize:13,fontWeight:400}}});\nif(!series.length) return empty('Sélectionne une activité');\nconst vget=(f)=>f?(f.values&&f.values.toArray?f.values.toArray():f.values):[];\nconst pick=(name)=>{name=name.toLowerCase();for(const fr of series)for(const f of((fr&&fr.fields)||[])){const nm=((f.config&&f.config.displayName)||(f.config&&f.config.displayNameFromDS)||f.name||'').toLowerCase();if(nm===name||nm.endsWith('.'+name))return f;}return null;};\nconst SU=vget(pick('surface')),WA=vget(pick('waytype')),LE=vget(pick('length_m'));\nconst n=LE.length;\nif(!n) return empty('Pas de données surface');\nconst SURF=(k)=>{k=String(k||'').toLowerCase();if(k==='paved_smooth'||k==='paved'||k==='asphalt')return['Asphalte','#6e7e91'];if(k==='paved_rough')return['Pavé','#9aa7b5'];if(k==='compacted')return['Compacté','#d4a857'];if(k==='gravel'||k==='fine_gravel')return['Gravier','#c8b273'];if(k==='dirt'||k==='ground')return['Terre','#a36b43'];if(k==='path')return['Sentier','#8aa05a'];return['Autre','#9aa0a6'];};\nconst WAYC=(k)=>{k=String(k||'').toLowerCase();if(k==='road')return['Route','#6e7e91'];if(k==='street'||k==='residential')return['Rue','#8b97a6'];if(k==='track')return['Chemin','#c98a3c'];if(k==='path')return['Sentier','#8aa05a'];if(k==='footway'||k==='sidewalk')return['Piéton','#5fa0b0'];if(k==='cycleway')return['Cyclable','#7b6fd0'];if(k==='steps')return['Escaliers','#b06fd0'];return['Autre','#9aa0a6'];};\nfunction agg(keys,mapper){const m={};for(let i=0;i<n;i++){const L=+LE[i]||0;if(L<=0)continue;const o=mapper(keys[i]);if(!m[o[0]])m[o[0]]={name:o[0],value:0,itemStyle:{color:o[1],borderColor:'rgba(20,22,26,0.6)',borderWidth:2}};m[o[0]].value+=L/1000;}return Object.keys(m).map(k=>m[k]).sort((x,y)=>y.value-x.value);}\nconst Sd=agg(SU,SURF), Wd=agg(WA,WAYC);\nconst lab={show:true,color:'#cdd2da',fontFamily:FONT,fontSize:11,formatter:(p)=>p.name+'\\n'+p.percent.toFixed(0)+'%'};\nconst lline={length:8,length2:8,lineStyle:{color:'#555'}};\nreturn {\n backgroundColor:'transparent',animation:false,textStyle:{fontFamily:FONT},\n title:[\n   {text:'Surfaces',left:'25%',top:6,textAlign:'center',textStyle:{color:'#9aa2af',fontSize:12,fontWeight:600,fontFamily:FONT}},\n   {text:'Types de chemin',left:'75%',top:6,textAlign:'center',textStyle:{color:'#9aa2af',fontSize:12,fontWeight:600,fontFamily:FONT}}\n ],\n tooltip:{trigger:'item',backgroundColor:'rgba(22,24,29,0.92)',borderColor:'rgba(255,255,255,0.10)',borderWidth:1,textStyle:{color:'#e7eaee',fontFamily:FONT,fontSize:12},extraCssText:'border-radius:10px;',formatter:(p)=>p.name+' : <b>'+p.value.toFixed(2)+' km</b> ('+p.percent.toFixed(0)+'%)'},\n series:[\n  {type:'pie',center:['25%','58%'],radius:['40%','66%'],data:Sd,label:lab,labelLine:lline,emphasis:{scale:true,scaleSize:4}},\n  {type:'pie',center:['75%','58%'],radius:['40%','66%'],data:Wd,label:lab,labelLine:lline,emphasis:{scale:true,scaleSize:4}}\n ]\n};",
+        "renderer": "canvas",
+        "followTheme": false,
+        "editor": {
+          "format": "auto"
+        },
+        "themeEditor": {
+          "config": {},
+          "name": "default"
+        }
+      }
+    },
+    {
+      "type": "volkovlabs-echarts-panel",
+      "id": 104,
+      "title": "Profil d'élévation — coloré par surface",
+      "description": "Même profil, bandes colorées par surface OSM (Asphalte/Compacté/Terre/Sentier…). Tooltip surface + type de voie + pente.",
+      "gridPos": {
+        "h": 9,
+        "w": 24,
+        "x": 0,
+        "y": 38
+      },
+      "datasource": {
+        "type": "influxdb",
+        "uid": "garmin_influxdb"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "rawQuery": true,
+          "query": "SELECT \"Distance\" AS \"distance\",\"Altitude\" AS \"altitude\" FROM \"ActivityGPS\" WHERE \"ActivitySelector\" = '$activity' AND \"Altitude\" > 0",
+          "resultFormat": "table",
+          "groupBy": [],
+          "tags": []
+        },
+        {
+          "refId": "B",
+          "rawQuery": true,
+          "query": "SELECT \"surface\",\"waytype\",\"start_m\",\"end_m\" FROM \"ActivitySurface\" WHERE \"ActivitySelector\" = '$activity' ORDER BY time",
+          "resultFormat": "table",
+          "groupBy": [],
+          "tags": []
+        }
+      ],
+      "options": {
+        "getOption": "const ctx=(typeof context!=='undefined'&&context)?context:{};\nconst pd=(ctx.panel&&ctx.panel.data)||ctx.data||null;\nconst series_in=(pd&&pd.series)||[];\nconst FONT='Inter, system-ui, sans-serif';\nconst empty=(m)=>({backgroundColor:'transparent',animation:false,title:{text:m,left:'center',top:'center',textStyle:{color:'#8a9199',fontFamily:FONT,fontWeight:400}}});\nif(!series_in.length) return empty('Sélectionne une activité');\nconst fAll=(sub)=>{for(const fr of series_in){for(const f of ((fr&&fr.fields)||[])){if(((f.name||'').toLowerCase()).includes(sub))return f;}}return null;};\nconst _sv=(f)=>f?(f.values&&f.values.toArray?f.values.toArray():f.values):[];\nconst D=_sv(fAll('distance')),A=_sv(fAll('altitude'));\nlet raw=[];for(let i=0;i<D.length;i++){if(D[i]!=null&&A[i]!=null)raw.push([D[i]/1000,A[i]]);}\nraw.sort((a,b)=>a[0]-b[0]);\nif(!raw.length) return empty('Pas de données GPS');\nconst N=raw.length;\nconst grade=raw.map((p,i)=>{let a=i,b=i;while(a>0&&(p[0]-raw[a-1][0])*1000<30)a--;while(b<N-1&&(raw[b+1][0]-p[0])*1000<30)b++;const dx=(raw[b][0]-raw[a][0])*1000;return dx>0?100*(raw[b][1]-raw[a][1])/dx:0;});\nconst elMin=Math.min.apply(null,raw.map(p=>p[1])),elMax=Math.max.apply(null,raw.map(p=>p[1]));\nconst sSurf=_sv(fAll('surface')),sWay=_sv(fAll('waytype')),sStart=_sv(fAll('start_m')),sEnd=_sv(fAll('end_m'));\nlet segs=[];for(let i=0;i<sStart.length;i++){if(sStart[i]==null)continue;segs.push({s:+sStart[i],e:+sEnd[i],surf:sSurf[i],way:sWay[i]});}segs.sort((a,b)=>a.s-b.s);\nconst SURFL=(k)=>{k=String(k||'').toLowerCase();if(k==='paved_smooth'||k==='paved'||k==='asphalt')return['Asphalte','#6e7e91'];if(k==='paved_rough')return['Pavé','#9aa7b5'];if(k==='compacted')return['Compacté','#d4a857'];if(k==='gravel'||k==='fine_gravel')return['Gravier','#c8b273'];if(k==='dirt'||k==='ground')return['Terre','#a36b43'];if(k==='path')return['Sentier','#8aa05a'];return['Autre','#9aa0a6'];};\nconst WAYL=(k)=>{k=String(k||'').toLowerCase();if(k==='road')return['Route','#6e7e91'];if(k==='street'||k==='residential')return['Rue','#8b97a6'];if(k==='track')return['Chemin','#c98a3c'];if(k==='path')return['Sentier','#8aa05a'];if(k==='footway'||k==='sidewalk')return['Piéton','#5fa0b0'];if(k==='cycleway')return['Cyclable','#7b6fd0'];if(k==='steps')return['Escaliers','#b06fd0'];return['Autre','#9aa0a6'];};\nconst segAt=(dm)=>{for(const sg of segs){if(dm>=sg.s&&dm<sg.e)return sg;}return segs.length?segs[segs.length-1]:null;};\n// couleur par point = surface\nconst col=raw.map((p)=>{const sg=segAt(p[0]*1000);return sg?SURFL(sg.surf)[1]:'#9aa0a6';});\nconst arrow=(g)=>g>=2?'↗':(g<=-2?'↘':'→');\n// series par couleur de surface (nulls ailleurs, partage transition)\nconst colors=[];const cidx={};\nfor(const c of col){if(cidx[c]==null){cidx[c]=colors.length;colors.push(c);}}\nconst ech=colors.map(c=>({type:'line',showSymbol:false,smooth:false,lineStyle:{color:c,width:2},areaStyle:{color:c,opacity:0.5},emphasis:{disabled:true},silent:true,data:new Array(N).fill(null),z:2}));\nfor(let i=0;i<N;i++){const ci=cidx[col[i]];ech[ci].data[i]=[raw[i][0],raw[i][1]];if(i>0&&col[i-1]!==col[i])ech[ci].data[i-1]=[raw[i-1][0],raw[i-1][1]];}\nreturn {\n backgroundColor:'transparent',animation:false,\n grid:{left:46,right:14,top:16,bottom:26},\n textStyle:{fontFamily:FONT,color:'#aab2bd'},\n tooltip:{trigger:'axis',axisPointer:{type:'line',lineStyle:{color:'rgba(255,255,255,0.25)',width:1},z:1},\n  backgroundColor:'rgba(22,24,29,0.92)',borderColor:'rgba(255,255,255,0.10)',borderWidth:1,padding:[9,13],\n  textStyle:{color:'#e7eaee',fontSize:12},extraCssText:'border-radius:10px; box-shadow:0 6px 22px rgba(0,0,0,0.45); backdrop-filter:blur(6px);',\n  formatter:(ps)=>{if(!ps||!ps.length)return '';const i=ps[0].dataIndex;if(raw[i]==null)return '';\n   const km=raw[i][0].toFixed(2),el=Math.round(raw[i][1]),g=grade[i];\n   const sg=segAt(raw[i][0]*1000);const sl=sg?SURFL(sg.surf):['—','#9aa0a6'];const wl=sg?WAYL(sg.way):['—','#9aa0a6'];\n   const row=(l,v)=>'<div style=\"display:flex;justify-content:space-between;gap:18px;line-height:1.55\"><span style=\"color:#8b94a0\">'+l+'</span><span style=\"font-weight:600\">'+v+'</span></div>';\n   return '<div style=\"min-width:182px\">'+row('Après',km+' km')+row('Élévation',el+' m')+\n     '<div style=\"display:flex;justify-content:space-between;gap:18px;line-height:1.55\"><span style=\"color:#8b94a0\">Pente</span><span style=\"font-weight:600\">'+arrow(g)+' '+g.toFixed(0)+' %</span></div>'+\n     row('Surface','<span style=\"color:'+sl[1]+';font-weight:600\">'+sl[0]+'</span>')+\n     row('Type de voie','<span style=\"color:'+wl[1]+';font-weight:600\">'+wl[0]+'</span>')+'</div>';}\n },\n xAxis:{type:'value',min:0,max:+raw[N-1][0].toFixed(2),name:'km',nameLocation:'end',nameGap:4,nameTextStyle:{color:'#6b7280',fontSize:11},axisLine:{show:false},axisTick:{show:false},axisLabel:{color:'#7e8694',fontSize:11,formatter:(v)=>v.toFixed(0)},splitLine:{show:true,lineStyle:{color:'rgba(255,255,255,0.055)'}}},\n yAxis:{type:'value',min:Math.floor((elMin-8)/10)*10,max:Math.ceil((elMax+8)/10)*10,name:'m',nameGap:10,nameTextStyle:{color:'#6b7280',fontSize:11,align:'right'},axisLine:{show:false},axisTick:{show:false},axisLabel:{color:'#7e8694',fontSize:11},splitLine:{show:true,lineStyle:{color:'rgba(255,255,255,0.055)'}}},\n series:ech\n};",
+        "renderer": "canvas",
+        "followTheme": false,
+        "editor": {
+          "format": "auto"
+        },
+        "themeEditor": {
+          "config": {},
+          "name": "default"
+        }
+      }
     }
   ],
   "refresh": "",
@@ -5170,8 +5015,8 @@
         "refresh": 1,
         "current": {
           "selected": false,
-          "text": "20260513T092228UTC-running",
-          "value": "20260513T092228UTC-running"
+          "text": "",
+          "value": ""
         },
         "multi": false,
         "includeAll": false
@@ -5395,5 +5240,99 @@
   "title": "03 Activity Drill-Down",
   "uid": "garvis-j-activity",
   "version": 1,
-  "weekStart": ""
+  "weekStart": "",
+  "timepicker": {
+    "quick_ranges": [
+      {
+        "display": "1 semaine",
+        "from": "now-1w",
+        "to": "now"
+      },
+      {
+        "display": "2 semaines",
+        "from": "now-2w",
+        "to": "now"
+      },
+      {
+        "display": "1 mois",
+        "from": "now-1M",
+        "to": "now"
+      },
+      {
+        "display": "2 mois",
+        "from": "now-2M",
+        "to": "now"
+      },
+      {
+        "display": "3 mois",
+        "from": "now-3M",
+        "to": "now"
+      },
+      {
+        "display": "4 mois",
+        "from": "now-4M",
+        "to": "now"
+      },
+      {
+        "display": "5 mois",
+        "from": "now-5M",
+        "to": "now"
+      },
+      {
+        "display": "6 mois",
+        "from": "now-6M",
+        "to": "now"
+      },
+      {
+        "display": "7 mois",
+        "from": "now-7M",
+        "to": "now"
+      },
+      {
+        "display": "8 mois",
+        "from": "now-8M",
+        "to": "now"
+      },
+      {
+        "display": "9 mois",
+        "from": "now-9M",
+        "to": "now"
+      },
+      {
+        "display": "10 mois",
+        "from": "now-10M",
+        "to": "now"
+      },
+      {
+        "display": "11 mois",
+        "from": "now-11M",
+        "to": "now"
+      },
+      {
+        "display": "1 an",
+        "from": "now-1y",
+        "to": "now"
+      },
+      {
+        "display": "2 ans",
+        "from": "now-2y",
+        "to": "now"
+      },
+      {
+        "display": "3 ans",
+        "from": "now-3y",
+        "to": "now"
+      },
+      {
+        "display": "4 ans",
+        "from": "now-4y",
+        "to": "now"
+      },
+      {
+        "display": "5 ans",
+        "from": "now-5y",
+        "to": "now"
+      }
+    ]
+  }
 }
