@@ -11,10 +11,11 @@
 ## 0. Comportement Claude — regles anti-bullshit
 
 ### Anti-sycophancy (Sharma et al. ICLR 2024)
+> Ce qui change vraiment les sorties = la contrainte structurelle (citer la data,
+> ne pas plier sous la contre-pression), pas la chasse aux phrases. Garder le fond :
 - **Data contredit l'athlete → le dire en premiere phrase.** Pas de sugar-coating.
 - **Contre-pression sans donnee = restaurer la position initiale.** Ne pas plier.
-- **Verdicts tranches.** "Drift 7.2%, c'est trop haut." Pas de hedging.
-- **Phrases bannies** : "great question", "you're right to", "indeed", "interesting observation".
+- **Verdicts tranches, pas de hedging.** "Drift 7.2%, c'est trop haut." (Eviter le remplissage flatteur type "great question / you're right to / indeed".)
 
 ### Anti-hallucination : verify-before-claim
 - **Chaque chiffre cite = source tracable dans le meme turn** (MCP, query, script).
@@ -27,9 +28,8 @@
 - `5:48/km` != `5.48 min/km` (c'est `5.8`). Toujours convertir explicitement.
 
 ### Calibration (Kadavath 2022)
-- Tags `[conf X, n=Y]` sur claims numeriques cles.
-- Pas de confidence sans `n=` (vient d'une query, pas invente).
-- Si analyse a au moins 1 incertitude reelle, forcer au moins un claim `<0.5`.
+- **Distinguer mesure et estimation** : un chiffre vient d'une query (n connu), ou c'est une estimation annoncee explicitement comme telle.
+- **Ne pas inventer de confiance.** Pas de `[conf X]` sorti du chapeau ; si incertitude reelle, le dire en clair plutot que tagger un score.
 
 ### Fallback data (ReAct, Yao 2022)
 1. `garmin-coach.*` (rapide, agrege)
@@ -77,7 +77,7 @@ Par ordre d'importance decroissant :
 - A 4-5h/sem (<350h/an), les athletes gravitent naturellement vers pyramidal/threshold
   (Frontiers Physiology 2025, fphys.2025.1657892)
 
-**Regle : ne pas forcer un modele. Tracker ce qui marche pour Thibault.**
+**Regle : ne pas forcer un modele. Tracker ce qui marche pour l'athlete.**
 
 ---
 
@@ -105,7 +105,7 @@ Par ordre d'importance decroissant :
 
 ### Seuil — methode norvegienne (Bakken)
 - Pas d'all-out. Intensite **REPETABLE**. Lactate 2-3 mmol/L
-- FC ~80-87% FCmax (~155-169 bpm pour Thibault si FCmax=195)
+- FC ~80-87% FCmax (zone seuil ; FC perso lue en live depuis `HRZones`)
 - Pour recreatif : 2 seances seuil/sem controlees (pas double session/jour)
 - Au moins 1 jour facile entre deux seances seuil
 
@@ -247,24 +247,11 @@ Pour un recreatif visant le club :
 
 ---
 
-## 13. Zones FC — LTHR confirme
+## 13. Zones FC — source live
 
-- LTHR Garmin auto-detecte : **177-178 bpm** (stable depuis mars 2026)
-- FCmax : 194 (test 01/05/2026), Garmin utilise 195
-- Ratio LTHR/FCmax : 90.8% (norme haute, bon signe aerobie)
-- Pace seuil : 4:27-4:34/km (progression 5:30 → 4:27 en 7 mois, +24%)
-
-### Zones Friel (a recalibrer apres test 27/06)
-
-| Zone | % LTHR | FC (LTHR=177) |
-|------|--------|---------------|
-| Z1 Recup | <81% | <143 |
-| Z2 Endurance | 81-89% | 143-158 |
-| Z3 Tempo | 90-93% | 159-165 |
-| Z4 Sous-seuil | 94-99% | 166-175 |
-| Z5a Seuil | 100-102% | 177-181 |
-| Z5b VO2max | 103-106% | 182-188 |
-| Z5c Anaerobie | >106% | >188 |
+- **FCmax, LTHR et zones sont lues en live depuis la mesure InfluxDB `HRZones`** (`maxHeartRate`/`lactateThresholdHeartRate`, sport=RUNNING), recalibree chaque jour par le fetcher.
+- **Ne jamais coder la FCmax/LTHR en dur.** Le toolbox (TRIMP/ACWR/CTL) les lit en live ; les dashboards 07/08 via la variable `$fcmax` / requetes HRZones. `ATHLETE_HR_MAX` du `.env` n'est qu'un fallback.
+- **Valeurs perso courantes** (FCmax, LTHR, pace seuil, ratio, zones Friel) : voir `COACHING_RULES.local.md` (non versionne — donnees de sante perso, hors repo public).
 
 ---
 

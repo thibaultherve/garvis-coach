@@ -38,6 +38,30 @@ was always false.)
   those boundaries are static numbers baked in the JSON (e.g. the HR bands at
   120/140/155/170/185 bpm). Edit them by hand if the athlete's zones shift.
 
+### ECharts panels (surface / grade / splits / workout analysis)
+
+Several panels use the **volkovlabs-echarts-panel** plugin (installed via
+`GF_PLUGINS_PREINSTALL` in the compose env). Building their `getOption` JS has a
+few non-obvious gotchas:
+
+- **Data access**: read the panel's series from `context.panel.data.series`
+  (NOT a global `data` object — that doesn't exist in this build).
+- **visualMap can't color a line/area by an arbitrary non-geometric dimension**
+  in this plugin build. To color the elevation profile by grade or by surface,
+  either emit **multiple line series** (one per band, `null` everywhere except
+  that band, and the bands **share the transition point** so the line stays
+  continuous), or fall back to **pure `graphic` custom rendering**.
+- **Per-bar color**: set `itemStyle` **inside each individual data item**
+  (e.g. pace-band color on Splits bars, grade color on Elev, HR-zone color on the
+  HR number) — not via a single series-level color.
+- **Strava-style column layouts** (Splits id 101, Workout Analysis id 102) are
+  drawn with **pure `graphic`** elements, sized off
+  `context.panel.chart.getWidth()` / `context.panel.chart.getHeight()`.
+
+These panels consume **3 new enriched measurements**: `ActivitySurface`,
+`ActivityGrade`, `ActivityTrack` (alongside the existing `ActivityGPS` /
+`ActivityLap`).
+
 ### CRITICAL build invariants (preserved from the retired generator)
 
 Every per-second "trend" panel (`xField=Duration`) carries two InfluxDB targets:

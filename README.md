@@ -1,18 +1,19 @@
 # Garvis Coach -- AI-powered running coach with Garmin data
 
-> Garmin watch -> InfluxDB -> Grafana dashboards + MCP servers -> Claude
+> Garmin watch -> InfluxDB -> Grafana dashboards + MCP servers -> an LLM
 > becomes a real running coach with access to all my training data.
+
+Garvis Coach is my own custom running coach — really just an aggregate of all my Garmin data, a set of Grafana dashboards to look at it, and a few MCP servers so an LLM can read it and talk back to me. The idea is to own my data and build the graphs I actually want for my training, instead of being stuck with whatever views Garmin decides to show.
+
+I also pull in things Garmin doesn't give you on its own — like the terrain and surface of each run (matched against OpenStreetMap) and the weather at the time I was out — thanks to a fork of garmin-grafana and a Garmin MCP server. That feeds custom dashboards with metrics you won't find in Garmin, including my planned workouts plotted against what I actually ran.
+
+With everything in one place, the LLM can cross-reference it and actually coach me — why a run felt hard, whether I'm ready for intervals, how two runs compare once you account for heat and elevation — analyze those graphs, and even build a workout and push it to my watch. It all runs privately on my NAS.
 
 ## What is this?
 
-This is my personal coaching stack. I built it to turn my Garmin watch data
-into something an AI can actually reason about -- not just display numbers,
-but cross-reference sleep, stress, training load, weather, and physiology
-to give real coaching advice backed by real data.
-
-It's not a product. It's not meant to work out of the box for everyone. It's
-an opinionated, customizable example of what you can build when you give an
-LLM direct access to structured athletic data. Fork it, tear it apart, make
+It's not a product, and it's not meant to work out of the box for everyone --
+it's an opinionated, customizable example of what you can build when you give
+an LLM direct access to structured athletic data. Fork it, tear it apart, make
 it yours.
 
 Garmin Connect shows you what happened. This stack helps you understand why,
@@ -22,7 +23,7 @@ and what to do next.
 
 ## What the AI coach unlocks
 
-The core idea: Claude gets direct read/write access to all my Garmin data
+The core idea: the LLM gets direct read/write access to all my Garmin data
 through 3 MCP servers. It can query, cross-reference, compute, and push
 workouts to my watch -- all from a conversation.
 
@@ -63,6 +64,8 @@ workouts to my watch -- all from a conversation.
 - **Full summary**: distance, duration, avg/max HR, pace, calories, elevation gain/loss, aerobic + anaerobic training effect (0-5)
 - **Per-second telemetry on a single timeline**: heart rate with zone shading, pace, power, cadence, stride length, ground contact time, vertical oscillation, vertical ratio -- *Garmin shows one metric at a time, this overlays all of them*
 - **GPS track on map**: color-coded by speed or by heart rate
+- **Terrain & surface enrichment**: every GPS activity is map-matched to OpenStreetMap to reconstruct the real surface (asphalt, gravel, dirt, grass...) and way type (path, track, road...) along the trace -- *Garmin gives no surface info; ~0% "unknown" vs ~60% with the old route-based approach*
+- **Strava/Komoot-style profiles**: GPS map colored by surface, two elevation profiles (one shaded by grade, one by surface), per-kilometer splits, per-step workout analysis, and surface/way-type breakdown donuts
 - **Lap-by-lap splits**: distance, time, HR, pace, cadence, power for each lap
 - **HR zone and power zone distribution**: time in each zone as percentages (5 HR zones, 7 Coggan power zones)
 - **Planned workout vs actual execution** side by side: prescribed steps and targets next to what you actually ran -- *not available in Garmin post-activity*
@@ -128,7 +131,7 @@ workouts to my watch -- all from a conversation.
 |---|---|---|
 | 01 | Daily Readiness & Recovery | Can I train today? |
 | 02 | Training Load & ACWR | Am I overtraining? |
-| 03 | Activity Drill-Down | How was this run? |
+| 03 | Activity Drill-Down | How was this run? (now with surface-aware map, dual elevation profiles, splits & workout steps) |
 | 04 | Running Form & Efficiency | Is my technique improving? |
 | 05 | Hill & Trail Performance | How strong am I on climbs? |
 | 06 | Recovery Diagnostics | Why am I tired? |
@@ -145,7 +148,9 @@ Garmin watch
     | (Garmin Connect cloud sync)
     v
 garmin-fetch-data (every 15 min)
-    |
+    |  | (per GPS activity)
+    |  +--> Valhalla (OSM map-matching, France tiles)
+    |           returns surface / way type / grade
     v
 InfluxDB 1.x
     |
@@ -161,8 +166,9 @@ InfluxDB 1.x
           (computations + Garmin Connect API)
 ```
 
-- **garmin-fetch-data** pulls data from Garmin Connect every 15 minutes into InfluxDB
-- **garmin-coach MCP** gives the AI read access to all Garmin data (activities, recovery, sleep, trends, zones, records)
+- **garmin-fetch-data** pulls data from Garmin Connect every 15 minutes into InfluxDB. For every GPS activity it calls Valhalla to map-match the trace against OpenStreetMap and writes surface, way type and grade as new measurements (`ActivitySurface`, `ActivityGrade`, `ActivityTrack`) -- gated by `ENRICH_SURFACE_VALHALLA=True`
+- **valhalla** is a local routing/map-matching engine (OSM France tiles) on port 8002, queried via its `/trace_attributes` endpoint -- no external service, no Komoot. Historical activities back to 2018 were backfilled straight from stored GPS (256/315, ~0.3% distance match error) without re-fetching from Garmin
+- **garmin-coach MCP** gives the AI read access to all Garmin data (activities, recovery, sleep, trends, zones, records) including the new terrain data (surface breakdown, grade summary, per-km splits, per-step workout analysis)
 - **garmin-toolbox MCP** gives the AI computation tools (TRIMP, ACWR, CTL/ATL/TSB, polarization, decoupling, drift) and Garmin Connect write access (upload, schedule, delete workouts)
 - **grafana MCP** lets the AI query InfluxDB directly and inspect/modify dashboards
 
@@ -215,6 +221,7 @@ InfluxDB 1.x
 | garmin-grafana (fetcher) | [garmin-grafana](https://github.com/thibaultherve/garmin-grafana) fork, branch `extended-fetch-fields` | Upstream |
 | garmin-grafana-mcp-server | [garmin-grafana-mcp-server](https://github.com/thibaultherve/garmin-grafana-mcp-server) fork, branch `extended-coaching-tools` | MIT |
 | grafana/mcp-grafana | [Official](https://github.com/grafana/mcp-grafana) | Apache 2.0 |
+| Valhalla (OSM map-matching) | [gis-ops/docker-valhalla](https://github.com/gis-ops/docker-valhalla) (`ghcr.io/gis-ops/docker-valhalla`) | MIT |
 
 ## Documentation
 

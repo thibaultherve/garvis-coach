@@ -10,7 +10,7 @@
 **Vocabulary**:
 - **garvis-coach** = this monorepo: docker-compose, Grafana dashboards, scripts, docs.
 - **garmin-toolbox** = MCP server (submodule in `./services/garmin-toolbox/`): pace conversions, training metrics, activity dumps, workout plan read/write, Garmin Connect operations.
-- **garmin-coach-mcp** = MCP server (submodule in `./services/garmin-coach-mcp/`): raw read access to all Garmin data in InfluxDB (22 tools).
+- **garmin-coach-mcp** = MCP server (submodule in `./services/garmin-coach-mcp/`): raw read access to all Garmin data in InfluxDB (33 tools).
 
 ---
 
@@ -43,13 +43,11 @@ Fix a rule/pitfall → edit the owner, never the copies (prevents drift across f
 
 ## Tone & behavior
 
-> Full details: `COACHING_RULES.md` §0. Summary here.
-
-- **No over-cautious health warnings.** When the athlete reports pain or fatigue, it's context for adapting training, not a signal to produce "red flag" checklists or repeated "see a doctor" disclaimers. Adapt pragmatically.
-- **No sycophancy.** If data contradicts the athlete, say so in the first sentence. No "great question" / "you're right to" / "indeed". Firm verdicts, no hedging. (cf. COACHING_RULES.md §0)
-- **Verify-before-claim.** No number without a traceable source in the same turn (MCP / InfluxQL / Python script). Missing data = "I don't have this, I need to query X" — never a plausible estimate. (cf. COACHING_RULES.md §0)
-- **ZERO mental arithmetic, even trivial.** Pace conversions, distance from pace x time, weighted means, percentages, deltas, projections, UTC to local time — **everything** goes through: (a) MCP `garmin-toolbox.compute_pace` for sport conversions, (b) a throwaway `python -c "..."`, or (c) MCP/dashboard if the number already exists. Advanced metrics (TRIMP, CTL/ATL/TSB, ACWR, decoupling, polarization, HR drift) via MCP `garmin-toolbox.compute_*`. Prose = number quoted verbatim from JSON. (cf. COACHING_RULES.md §0)
-- **Explicit calibration**: tags `[conf X, n=Y, sigma=Z]` on key numeric claims. No confidence without `n=`. (cf. COACHING_RULES.md §0)
+> Owner: `COACHING_RULES.md` §0 (read first every session — anti-sycophancy, no
+> over-cautious health warnings, calibration). The two rules that actually prevent
+> errors are restated here:
+> - **Verify-before-claim**: no number without a traceable source in the same turn (MCP / InfluxQL / script). Missing data = "I need to query X", never an estimate.
+> - **ZERO mental arithmetic**: pace, %, deltas, UTC→local → `garmin-toolbox.compute_*` or `python -c`. Quote numbers verbatim from JSON.
 
 ---
 
@@ -106,8 +104,8 @@ garvis-coach/                          <- this monorepo
 |-- CREDITS.md
 |
 |-- services/
-|   |-- garmin-grafana/                <- [submodule] extended fetcher
-|   |-- garmin-coach-mcp/              <- [submodule] MCP InfluxDB reader (22 tools)
+|   |-- garmin-grafana/                <- [submodule] extended fetcher (+ Valhalla surface enrichment)
+|   |-- garmin-coach-mcp/              <- [submodule] MCP InfluxDB reader (33 tools)
 |   +-- garmin-toolbox/                <- [submodule] MCP compute + workouts + Garmin write
 |       |-- workouts_helpers.py        <- DSL (committed)
 |       |-- workouts_data.example.py   <- template (committed)
@@ -135,6 +133,11 @@ garvis-coach/                          <- this monorepo
 +-- docs/
 ```
 
+### Services (docker-compose)
+
+- **garmin-grafana** — extended fetcher. Now also runs `enrich_activity_surface()` (`garmin_fetch.py`) at fetch time for each GPS activity: map-matches the trace against OSM via Valhalla and writes 3 measurements (see catalog). Gated by env `ENRICH_SURFACE_VALHALLA=True` (set in `.env`); **non-fatal** (failures log + skip, never block the fetch).
+- **valhalla** — `ghcr.io/gis-ops/docker-valhalla`, France OSM tiles, port **8002**. Routing/map-matching engine used for OSM surface + waytype enrichment. ⚠️ One-off France tile build is long (~3 h on the DS920+); once built the tiles persist (don't rebuild casually).
+
 ---
 
 ## Dashboards
@@ -147,7 +150,7 @@ garvis-coach/                          <- this monorepo
 |---|---|---|---|
 | `01-daily-readiness-recovery.json` | `garvis-a-daily` | 01 Daily Readiness & Recovery | Morning routine: can I train today? |
 | `02-training-load-acwr.json` | `garvis-b-load` | 02 Training Load & ACWR | Weekly load management, overtraining prevention |
-| `03-activity-drill-down.json` | `garvis-j-activity` | 03 Activity Drill-Down | Per-run drill-down (hand-maintained canonical JSON — see `dashboards/README.md`) |
+| `03-activity-drill-down.json` | `garvis-j-activity` | 03 Activity Drill-Down | Per-run drill-down (hand-maintained canonical JSON — see `dashboards/README.md`). ECharts panels: surface map, 2 elevation profiles, splits, workout analysis, surface/waytype donuts, zone bars. |
 | `04-running-form-efficiency.json` | `garvis-d-runq` | 04 Running Form & Efficiency | Running form (cadence, GCT, vertical ratio, stride) |
 | `05-hill-trail-performance.json` | `garvis-e-hill` | 05 Hill & Trail Performance | Hill Score, D+, climb rate |
 | `06-recovery-diagnostics.json` | `garvis-f-sleep` | 06 Recovery Diagnostics | Sleep, stress, body battery diagnostics |
@@ -157,36 +160,14 @@ garvis-coach/                          <- this monorepo
 
 ### Panels by dashboard
 
-**01 Daily Readiness & Recovery** (16 panels, 30d window, refresh 5min):
-Top stats: Body Battery, Sleep Score, HRV vs 7d, RHR, Training Readiness, Recovery Time. Heat acclimation: Heat %, Heat Trend. Time series: Body Battery 24h, Stress 24h, RHR & HRV 30d, Training Readiness components. Calendar/distribution: Month at a Glance, HR Distribution, HR Range, Selected time range table.
-
-**02 Training Load & ACWR** (21 panels, 90d window, refresh 10min):
-Top stats: ACWR, Acute 7d, Chronic 28d, Weekly load, Training Status. Time series: ACWR + sweet spot, Acute vs Chronic, TE cumul 30d, Polarisation 80/10/10 weekly (12w), Load Focus shortage, Load Focus vs optimal. Volume: Weekly volume 6m, Training Intensity, Activities calendar, Daily Intensity Minutes. PMC row: CTL/ATL/TSB, Training Status timeline, Load Focus history. HRV Status row: 7-day avg + baseline band.
-
-**03 Activity Drill-Down** (27 panels, per-activity vars):
-Header stats (12): Distance, Duration, Avg/Max HR, Avg Pace, Calories, D+/D-, Aerobic/Anaerobic TE, Exercise Load, VO2max. Geo: GPS Track by Velocity, GPS Track by HR. Zones: HR Zones %, Power Zones %. Per-second trends with overlay: HR + Z1-Z5 bands, Pace, Power, Cadence, Stride length, Vertical Ratio, Vertical Oscillation, GCT, Avg HR per lap + altitude. Tables: Workout steps prescribed/executed, Splits per lap. Time-in-zone queries auto-adapt to the athlete's zones via InfluxDB `HRZones`/`PowerZones` dashboard variables; the colored band thresholds are static values baked in the JSON (Grafana can't interpolate variables in threshold steps). Hand-maintained canonical JSON — see `dashboards/README.md`.
-
-**04 Running Form & Efficiency** (7 panels, 60d window, refresh 1h):
-Cadence, Vertical Ratio, GCT, Step Length, Speed, Recent runs table, HR difference per activity.
-
-**05 Hill & Trail Performance** (12 panels, 90d window):
-Hill Score Overall/Strength/Endurance, Balance Gap, D+ (7d/30d/365d/YTD), Hill Score trend, D+ per week, D+/km per run, Altitude profiles.
-
-**06 Recovery Diagnostics** (29 panels, 30d window, refresh 30min):
-Sleep row: Score, Duration, HRV, Breathing rate, Awakenings, SpO2, Sleep Score 30d, Sleep stages 14d, HRV + Breathing, Avg sleep stress. Stress row: Stress avg, High stress duration, Body Battery, BB drained/charged, Stress %, Body Battery 14d, Stress heatmap, Stress vs Sleep, Stress vs Training Load. Sleep complement: Regularity heatmap, Intraday HR/SpO2/HRV, Sleep piechart, Stress overview.
-
-**07 Sport-Science Validators** (22 panels, 90d window, refresh 1h):
-Top stats: EF 30d, Pace Z2 median, HRV CV, HR in altitude, Climb rate, Decoupling %. Sections: Aerobic Decoupling, Pace progression weekly (Z2 + Z4/Z5), HRV stability, Vertical climb rate, HR vs Pace scatter, Power Curve 90d, Critical Pace Curve 90d, EF trend. Z2 queries auto-adapt to athlete zones via InfluxDB `HRZones` variables.
-
-**08 Long-Term Trends** (37 panels, 6 month window, refresh 1h):
-Cardio: VO2max, Endurance Score, Hill Score, Fitness Age, LTHR, RHR, trends. Zones recalibration: HRmax, LTHR, HRrest, FTP, HR/Power zone boundary trends. Body: Weight. Race Predictions (LoL-style VDOT tiers): 5K, 10K, Half, Marathon. Power-HR ratio. Eddington number + distribution. Heat & Altitude Acclimation.
-
-**10 Calendar** (1 panel, 365d window):
-Training load calendar heatmap (green <60, yellow 60-120, orange 120-200, red >200).
+> Owner: `PANELS_CATALOG.md` (same dir) — every panel across the 9 dashboards with
+> title, description, and source query. Read it before any analysis/bilan.
+> Panel counts: 01 (16), 02 (21), 03 (27), 04 (7), 05 (12), 06 (29), 07 (22), 08 (37), 10 (1).
 
 ### Structural notes
 
 - **Datasource**: UID `garmin_influxdb`, schema v39, filter `"ActivitySelector" =~ /running/` on all activity panels.
+- **ECharts plugin**: `volkovlabs-echarts-panel` is installed via `GF_PLUGINS_PREINSTALL`. Used by the new dashboard-03 surface/elevation/splits/workout panels.
 - **Editing**: modify JSON in `dashboards/`, Grafana auto-reloads in ~10s. For rapid iteration, use `PUT /api/dashboards/db` (may be overwritten on next file reload).
 - Panel IDs are stable (not renumbered after refactors — gaps are normal, preserving deeplink `?viewPanel=N`).
 
@@ -196,12 +177,18 @@ Training load calendar heatmap (green <60, yellow 60-120, orange 120-200, red >2
 
 ### 1. MCP `garmin-coach` (preferred)
 
-22 tools covering: schema exploration, training zones (HR + Power), recent activities, activity details (per-second), weekly load summary, training status, fitness trends (VO2max, race predictions, weight), fitness age, Hill/Endurance Score history, daily recovery (sleep, HRV, RHR, body battery, training readiness), sleep physiology, stress/body battery intraday, personal records, peak power, power history, activity load history, energy balance, HRV status, heat acclimation.
+33 tools covering: schema exploration, training zones (HR + Power), recent activities, activity details (per-second), weekly load summary, training status, fitness trends (VO2max, race predictions, weight), fitness age, Hill/Endurance Score history, daily recovery (sleep, HRV, RHR, body battery, training readiness), sleep physiology, stress/body battery intraday, personal records, peak power, power history, activity load history, energy balance, HRV status, heat acclimation, plus terrain enrichment (surface/waytype breakdown, grade summary, per-km splits, per-step workout analysis).
+
+Surface/grade/splits tools (all accept an `ActivitySelector`, fall back to the last activity):
+- `get_activity_surface_tool` — merged OSM surface/waytype runs (from `ActivitySurface`).
+- `get_activity_grade_summary_tool` — per-bin steepness distribution (from `ActivityGrade`).
+- `get_activity_splits_tool` — per-km / per-lap splits.
+- `get_activity_workout_steps_tool` — structured workout steps + targets for the activity.
 
 **Notes**:
 - Activities expose `training_effect_label`: `AEROBIC_BASE` / `TEMPO` / `LACTATE_THRESHOLD` / `VO2MAX` / `ANAEROBIC_CAPACITY` / `SPRINT`.
 - Do NOT use `garmin_coaching_advice` — FIT SDK enum mapping is incorrect on some codes. Read `trainingBalanceFeedbackPhrase` directly via `get_training_status_tool`.
-- ~~`recovery_time_h` is in minutes — divide by 60~~ **FIXED (2026-05-29)**: `get_training_status_tool` now returns `recovery_time_min` (minutes, native Garmin) **and** `recovery_time_h` (hours, already converted). Do not divide. The `training_readiness.factors` breakdown (hrv/sleep_score/recovery_time/acwr/stress_history %) is now populated too.
+- `get_training_status_tool` returns `recovery_time_min` (minutes) and `recovery_time_h` (hours, already converted) — use directly, don't divide. `training_readiness.factors` (hrv/sleep_score/recovery_time/acwr/stress_history %) is populated.
 - All Garmin timestamps are **UTC** — always convert to athlete's local timezone.
 
 ### 2. MCP `garmin-toolbox` (derived metrics + dump + workout ops)
@@ -223,7 +210,7 @@ Training load calendar heatmap (green <60, yellow 60-120, orange 120-200, red >2
 
 ### 3. MCP `grafana` (dashboards + InfluxQL proxy)
 
-Official `grafana/mcp-grafana`. Key tools: `search_dashboards`, `get_dashboard_summary`, `get_dashboard_panel_queries`, `get_dashboard_property`, `query_influxdb`.
+Official `grafana/mcp-grafana`. Key tools: `search_dashboards`, `get_dashboard_summary`, `get_dashboard_panel_queries`, `get_dashboard_property`. ⚠️ Avoid `query_influxdb` for reads (anonymises columns + broken time window — see Common pitfalls); use curl direct or `garmin-coach.get_activity_profile_tool`. No PNG/panel render tool exists (so "visual" dashboard analysis isn't available to the LLM today).
 
 ### 4. InfluxDB direct (fallback)
 
@@ -243,11 +230,16 @@ curl -G http://$INFLUXDB_HOST:$INFLUXDB_PORT/query \
 - **Sleep**: `SleepSummary`
 - **Performance**: `VO2_Max`, `RacePredictions`, `LactateThreshold`, `FitnessAge`, `EnduranceScore`, `HillScore`, `TrainingStatus`, `TrainingReadiness`, `HRZones`, `PowerZones`, `HeatAltitudeAcclimation`, `HRVStatus`
 - **Activities**: `ActivitySummary` (per-run, with `trainingEffectLabel`), `ActivityGPS` (per-second), `ActivityLap`, `ActivitySession`, `ActivityLength`
+- **Surface enrichment** (Valhalla map-matching, all tagged `ActivityID` + `ActivitySelector`):
+  - `ActivitySurface` — one row per merged OSM edge run. Tags `surface`, `waytype`; fields `start_m`, `end_m`, `length_m`, `road_class`.
+  - `ActivityGrade` — per 100 m bin. Tag `steepness_class`; fields `distance_m`, `elev_m`, `avg_slope_pct`.
+  - `ActivityTrack` — downsampled points for the surface map. Fields `Latitude`, `Longitude`, `Surface`, `Waytype`, `surf_id`, `distance_m`.
 
 ---
 
 ## Common pitfalls
 
+- **`grafana.query_influxdb` is broken for coaching reads** -> it renames every column to `Value` (ambiguous) and its `start/end` window does NOT translate to a reliable InfluxQL time filter (returns nulls or out-of-range rows). To read InfluxDB: use **curl direct** (`curl -G http://$INFLUXDB_HOST:$INFLUXDB_PORT/query ... -u user:pass`, keeps named columns) or `garmin-coach.get_activity_profile_tool` (pre-aggregated, named blocks). Reserve `query_influxdb` for trivial single-field cases only — never `SELECT *` or time series.
 - **If Garmin API bugs** -> `pip install -U garminconnect` first (unofficial lib, frequent releases).
 - **Grafana unit `m` = minutes** (not meters). For D+: use `lengthm`. For pace: `dthms`.
 - **Garmin `trainingStatus` numeric mapping unreliable** -> use `trainingStatusFeedbackPhrase` string.
@@ -255,6 +247,11 @@ curl -G http://$INFLUXDB_HOST:$INFLUXDB_PORT/query \
 - **InfluxQL sub-queries with `TOP()` invalid** -> rethink as `GROUP BY ActivityID, time(30s)` + dashboard variable.
 - **New source to InfluxDB** -> check field types before first write (silent type conflict possible).
 - **Dashboard 03 xField=Duration**: the Duration query (refId B) must NOT share the metric filter (e.g. `Cadence>0`) **nor** `$activity_end` — either one makes the trend collapse to a single point. Full rationale + the `$activity` selector regex live in `dashboards/README.md`. (03 is a hand-maintained canonical JSON; the generator was retired 2026-05-29.)
+- **ECharts (`volkovlabs-echarts-panel`) gotchas**:
+  - In the `getOption` JS, read frames from `context.panel.data.series` — there is **no** global `data` object in this build.
+  - `visualMap` **cannot** color a single line by an arbitrary dimension in this build → use multiple series (one per category) or a pure `graphic` render instead.
+  - Per-bar color: set `itemStyle` on each individual data item (not via `visualMap`/series-level color).
+- **Surface-enrichment backfill**: history was backfilled by a one-off script reading `ActivityGPS` from InfluxDB and feeding it to Valhalla (no Garmin re-fetch). Going forward, new activities are enriched at fetch by `enrich_activity_surface()`.
 
 ---
 

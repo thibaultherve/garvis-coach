@@ -132,20 +132,43 @@ Source: SELECT last("activityTrainingLoad") FROM "ActivitySummary" WHERE "Activi
 ### VO2max (post-run)
 Source: SELECT last("vO2MaxValue") FROM "ActivitySummary" WHERE "ActivitySelector" = '$a...
 
-### GPS Track by Velocity
-Track colored by speed (km/h). Green = slow, red = fast.
+### Carte — type de surface (id 13, geomap)
+Full-width GPS track colored by OSM surface type. Replaced the two old geomaps
+("GPS Track by Velocity" + "GPS Track by Heart Rate", id 14, both removed 2026-06).
+Reads the enriched ActivitySurface measurement joined to ActivityGPS coordinates.
 Source: SELECT "Latitude" FROM "ActivityGPS" WHERE "ActivitySelector" = '$activity'; SELECT "Longitude" FROM "ActivityGPS" WHERE "ActivitySelector" = '$activity'
 
-### GPS Track by Heart Rate
-Track colored by HR (bpm). Green = low, red = high.
-Source: SELECT "Latitude" FROM "ActivityGPS" WHERE "ActivitySelector" = '$activity'; SELECT "Longitude" FROM "ActivityGPS" WHERE "ActivitySelector" = '$activity'
+### Profil d'élévation — coloré par pente (id 100, ECharts)
+Elevation vs distance, line/area colored by 6 grade-band colors. Tooltip shows
+surface + waytype + grade at the hovered point. ECharts panel (volkovlabs-echarts-panel).
+Reads ActivityGrade / ActivitySurface / ActivityTrack.
 
-### Time in HR Zones (%) - reference plan
-% time per HR zone (Garmin zones at time of recording). Target for Z2-strict easy runs: >75% Z2.
+### Profil d'élévation — coloré par surface (id 104, ECharts)
+Same elevation profile as id 100, colored by OSM surface type instead of grade.
+ECharts panel. Reads ActivitySurface / ActivityTrack.
+
+### Répartition surfaces & types de chemin (id 103, ECharts)
+Two % donut charts side-by-side: surface % (paved/gravel/dirt/…) and waytype %
+(path/track/road/…). ECharts panel. Reads ActivitySurface / ActivityTrack.
+
+### Splits (id 101, ECharts)
+Strava-style per-km columns: Km · Pace · horizontal bar · Elev · HR. Bars colored
+by pace band, Elev value colored by grade, HR number colored by HR zone. ECharts
+panel rendered with pure `graphic`. Reads ActivityLap / ActivityGrade.
+
+### Workout Analysis (id 102, ECharts)
+One column per workout step (warmup / rep / recovery / cooldown, consecutive easy
+blocks merged). Bar colored by step type, plus Elev + HR columns. ECharts panel.
+Reads WorkoutStep-derived steps + ActivityLap / ActivityGPS.
+
+### Time in HR Zones (%) - reference plan (id 15, ECharts)
+% time per HR zone (Garmin zones at time of recording). Target for Z2-strict easy
+runs: >75% Z2. Converted from bargauge to ECharts horizontal % bars.
 Source: SELECT 100.0 * last("hrTimeInZone_1") / (last("hrTimeInZone_1")+last("hrTimeInZo...; SELECT 100.0 * last("hrTimeInZone_2") / (last("hrTimeInZone_1")+last("hrTimeInZo...
 
-### Time in Power Zones (%) - computed from per-second
-% time per power zone computed on-the-fly from per-second ActivityGPS data. Garmin auto-FTP zones.
+### Time in Power Zones (%) - computed from per-second (id 16, ECharts)
+% time per power zone computed on-the-fly from per-second ActivityGPS data. Garmin
+auto-FTP zones. Converted from bargauge to ECharts horizontal % bars.
 Source: SELECT 100.0 * count("Power") / $activity_end FROM "ActivityGPS" WHERE "Activity...; SELECT 100.0 * count("Power") / $activity_end FROM "ActivityGPS" WHERE "Activity...
 
 ### Heart Rate (bpm) with HR zone bands + prescribed target overlay
@@ -448,18 +471,23 @@ Garmin Race Prediction Marathon. Tiers based on Daniels VDOT table.
 Source: SELECT mean("timeMarathon") / 42.195 AS "Pace /km" FROM "RacePredictions" WHERE ...
 
 ### HR Zone Boundaries — Trajectory
-Z1-Z5 floor + LTHR + HRmax evolution over time. Zone recalibrations by Garmin appear as steps.
-Source: SELECT last("zone1Floor") AS "Z1", last("zone2Floor") AS "Z2", last("zone3Floor"...
+Z1-Z5 HR floor evolution over time. Zone recalibrations by Garmin appear as steps. (LTHR & FCmax
+overlays removed 2026-06-04 — now in their own "Seuil" panels.)
+Source: SELECT last("zone1Floor") AS "Z1", ..., last("zone5Floor") AS "Z5" FROM "HRZones"...
 
 ### Power Zone Boundaries — Trajectory
-Z1-Z5 floor + FTP evolution. Garmin auto-FTP drives zone scale. Good plan progression = FTP rising over time.
-Source: SELECT last("zone1Floor") AS "Z1", last("zone2Floor") AS "Z2", last("zone3Floor"...
+Z1-Z5 power floor evolution. Garmin auto-FTP drives zone scale; rising floors = progression.
+(FTP overlay removed 2026-06-04 — FTP still shown via the top stat panel.)
+Source: SELECT last("zone1Floor") AS "Z1", ..., last("zone5Floor") AS "Z5" FROM "PowerZones"...
 
-### LTHR as % of HRmax
-LTHR as % of HRmax over time. Key marker of lactate threshold fitness.
-
-DASHED LINES (population benchmarks)
-Source: SELECT mean("pct_fcmax") AS "% HRmax" FROM "ThresholdComputed" WHERE $timeFilter...; SELECT mean("lthr_bpm") AS "LTHR (bpm)" FROM "ThresholdComputed" WHERE $timeFilt...
+### Seuil — FC (LTHR & FCmax) / LTHR / FCmax (%) / Allure  (3 panels, replaced "LTHR as % of HRmax" 2026-06-04)
+Threshold metrics, split into 3 single-scale panels (was 1 panel hiding 3 of 4 series).
+• "Seuil — FC (LTHR & FCmax)": LTHR + FCmax in bpm, live from "HRZones".
+• "Seuil — LTHR / FCmax (%)": ratio, marker of threshold fitness (~90% = well-trained).
+• "Seuil — Allure (min/km)": threshold pace, live from "LactateThreshold" (Garmin LT detection,
+  100/SpeedThreshold_RUNNING = sec/km). Lower = faster.
+Note: the old hand-seeded "ThresholdComputed" measurement (no writer, frozen) was DROPPED 2026-06-04.
+Source: SELECT last("lactateThresholdHeartRate") AS "LTHR", last("maxHeartRate") AS "FCmax" FROM "HRZones"...; SELECT 100/last("SpeedThreshold_RUNNING") AS "Allure seuil" FROM "LactateThreshold"...
 
 ### Weight 3m
 Source: SELECT mean("weight") / 1000 AS "kg" FROM "BodyComposition" WHERE $timeFilter GR...
