@@ -657,5 +657,99 @@
   "title": "04 Running Form & Efficiency",
   "uid": "garvis-d-runq",
   "version": 4,
-  "weekStart": ""
+  "weekStart": "",
+  "timepicker": {
+    "quick_ranges": [
+      {
+        "display": "1 semaine",
+        "from": "now-1w",
+        "to": "now"
+      },
+      {
+        "display": "2 semaines",
+        "from": "now-2w",
+        "to": "now"
+      },
+      {
+        "display": "1 mois",
+        "from": "now-1M",
+        "to": "now"
+      },
+      {
+        "display": "2 mois",
+        "from": "now-2M",
+        "to": "now"
+      },
+      {
+        "display": "3 mois",
+        "from": "now-3M",
+        "to": "now"
+      },
+      {
+        "display": "4 mois",
+        "from": "now-4M",
+        "to": "now"
+      },
+      {
+        "display": "5 mois",
+        "from": "now-5M",
+        "to": "now"
+      },
+      {
+        "display": "6 mois",
+        "from": "now-6M",
+        "to": "now"
+      },
+      {
+        "display": "7 mois",
+        "from": "now-7M",
+        "to": "now"
+      },
+      {
+        "display": "8 mois",
+        "from": "now-8M",
+        "to": "now"
+      },
+      {
+        "display": "9 mois",
+        "from": "now-9M",
+        "to": "now"
+      },
+      {
+        "display": "10 mois",
+        "from": "now-10M",
+        "to": "now"
+      },
+      {
+        "display": "11 mois",
+        "from": "now-11M",
+        "to": "now"
+      },
+      {
+        "display": "1 an",
+        "from": "now-1y",
+        "to": "now"
+      },
+      {
+        "display": "2 ans",
+        "from": "now-2y",
+        "to": "now"
+      },
+      {
+        "display": "3 ans",
+        "from": "now-3y",
+        "to": "now"
+      },
+      {
+        "display": "4 ans",
+        "from": "now-4y",
+        "to": "now"
+      },
+      {
+        "display": "5 ans",
+        "from": "now-5y",
+        "to": "now"
+      }
+    ]
+  }
 }
