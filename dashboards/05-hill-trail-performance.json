@@ -15,470 +15,35 @@
       }
     ]
   },
-  "description": "Hill Score, denivele cumule, D+/km, profil altitude, vitesse verticale.",
+  "description": "Charge verticale (D+/D-) & garde-fou surcharge (ACWR vertical), caractère du terrain par sortie (D+/km, VAM, coût terrain), montagne cumulée. Complémentaire — pas de Hill Score (→ 08) ni d'EF GAP/FC (→ 08).",
   "editable": true,
   "graphTooltip": 0,
   "id": null,
   "links": [],
   "panels": [
     {
-      "type": "stat",
-      "id": 1,
-      "title": "Hill Score Overall",
+      "type": "row",
+      "id": 100,
+      "collapsed": false,
+      "title": "① Garde-fou charge verticale — prévention surcharge",
       "gridPos": {
-        "h": 4,
-        "w": 4,
+        "h": 1,
+        "w": 24,
         "x": 0,
         "y": 0
       },
-      "datasource": {
-        "type": "influxdb",
-        "uid": "garmin_influxdb"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "min": 0,
-          "max": 100,
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "red"
-              },
-              {
-                "color": "yellow",
-                "value": 35
-              },
-              {
-                "color": "green",
-                "value": 50
-              },
-              {
-                "color": "blue",
-                "value": 65
-              }
-            ]
-          }
-        }
-      },
-      "options": {
-        "colorMode": "value",
-        "graphMode": "area",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        }
-      },
-      "targets": [
-        {
-          "refId": "A",
-          "measurement": "HillScore",
-          "policy": "default",
-          "resultFormat": "time_series",
-          "orderByTime": "ASC",
-          "select": [
-            [
-              {
-                "params": [
-                  "overallScore"
-                ],
-                "type": "field"
-              },
-              {
-                "params": [],
-                "type": "last"
-              }
-            ]
-          ],
-          "groupBy": [],
-          "tags": []
-        }
-      ]
-    },
-    {
-      "type": "stat",
-      "id": 2,
-      "title": "Strength",
-      "gridPos": {
-        "h": 4,
-        "w": 4,
-        "x": 4,
-        "y": 0
-      },
-      "datasource": {
-        "type": "influxdb",
-        "uid": "garmin_influxdb"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "min": 0,
-          "max": 100,
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "red"
-              },
-              {
-                "color": "yellow",
-                "value": 35
-              },
-              {
-                "color": "green",
-                "value": 50
-              },
-              {
-                "color": "blue",
-                "value": 65
-              }
-            ]
-          }
-        }
-      },
-      "options": {
-        "colorMode": "value",
-        "graphMode": "area",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        }
-      },
-      "targets": [
-        {
-          "refId": "A",
-          "measurement": "HillScore",
-          "policy": "default",
-          "resultFormat": "time_series",
-          "orderByTime": "ASC",
-          "select": [
-            [
-              {
-                "params": [
-                  "strengthScore"
-                ],
-                "type": "field"
-              },
-              {
-                "params": [],
-                "type": "last"
-              }
-            ]
-          ],
-          "groupBy": [],
-          "tags": []
-        }
-      ]
-    },
-    {
-      "type": "stat",
-      "id": 3,
-      "title": "Endurance",
-      "gridPos": {
-        "h": 4,
-        "w": 4,
-        "x": 8,
-        "y": 0
-      },
-      "datasource": {
-        "type": "influxdb",
-        "uid": "garmin_influxdb"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "min": 0,
-          "max": 100,
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "red"
-              },
-              {
-                "color": "yellow",
-                "value": 35
-              },
-              {
-                "color": "green",
-                "value": 50
-              },
-              {
-                "color": "blue",
-                "value": 65
-              }
-            ]
-          }
-        }
-      },
-      "options": {
-        "colorMode": "value",
-        "graphMode": "area",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        }
-      },
-      "targets": [
-        {
-          "refId": "A",
-          "measurement": "HillScore",
-          "policy": "default",
-          "resultFormat": "time_series",
-          "orderByTime": "ASC",
-          "select": [
-            [
-              {
-                "params": [
-                  "enduranceScore"
-                ],
-                "type": "field"
-              },
-              {
-                "params": [],
-                "type": "last"
-              }
-            ]
-          ],
-          "groupBy": [],
-          "tags": []
-        }
-      ]
-    },
-    {
-      "type": "stat",
-      "id": 4,
-      "title": "Balance Gap (str - end)",
-      "description": "Positive = strength dominant (hilly long runs need work). Target: balance within ±5.",
-      "gridPos": {
-        "h": 4,
-        "w": 4,
-        "x": 12,
-        "y": 0
-      },
-      "datasource": {
-        "type": "influxdb",
-        "uid": "garmin_influxdb"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "blue"
-              },
-              {
-                "color": "green",
-                "value": -5
-              },
-              {
-                "color": "yellow",
-                "value": 5
-              },
-              {
-                "color": "red",
-                "value": 15
-              }
-            ]
-          }
-        }
-      },
-      "options": {
-        "colorMode": "value",
-        "graphMode": "area",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        }
-      },
-      "targets": [
-        {
-          "refId": "A",
-          "measurement": "HillScore",
-          "policy": "default",
-          "resultFormat": "time_series",
-          "orderByTime": "ASC",
-          "query": "SELECT last(\"strengthScore\") - last(\"enduranceScore\") AS \"gap\" FROM \"HillScore\" WHERE $timeFilter",
-          "rawQuery": true,
-          "groupBy": [],
-          "tags": []
-        }
-      ]
-    },
-    {
-      "type": "stat",
-      "id": 5,
-      "title": "D+ 30j (m)",
-      "gridPos": {
-        "x": 6,
-        "y": 4,
-        "w": 6,
-        "h": 4
-      },
-      "datasource": {
-        "type": "influxdb",
-        "uid": "garmin_influxdb"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "unit": "locale",
-          "decimals": 0
-        }
-      },
-      "options": {
-        "colorMode": "value",
-        "graphMode": "area",
-        "reduceOptions": {
-          "calcs": [
-            "sum"
-          ],
-          "fields": "",
-          "values": false
-        }
-      },
-      "targets": [
-        {
-          "refId": "A",
-          "measurement": "ActivitySummary",
-          "policy": "default",
-          "resultFormat": "time_series",
-          "orderByTime": "ASC",
-          "select": [
-            [
-              {
-                "params": [
-                  "elevationGain"
-                ],
-                "type": "field"
-              },
-              {
-                "params": [],
-                "type": "sum"
-              }
-            ]
-          ],
-          "groupBy": [
-            {
-              "params": [
-                "1d"
-              ],
-              "type": "time"
-            },
-            {
-              "params": [
-                "null"
-              ],
-              "type": "fill"
-            }
-          ],
-          "tags": [
-            {
-              "key": "ActivitySelector",
-              "operator": "=~",
-              "value": "/running/"
-            }
-          ]
-        }
-      ],
-      "timeFrom": "30d"
-    },
-    {
-      "type": "stat",
-      "id": 6,
-      "title": "D+ 7j (m)",
-      "gridPos": {
-        "x": 0,
-        "y": 4,
-        "w": 6,
-        "h": 4
-      },
-      "datasource": {
-        "type": "influxdb",
-        "uid": "garmin_influxdb"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "unit": "locale",
-          "decimals": 0
-        }
-      },
-      "options": {
-        "colorMode": "value",
-        "graphMode": "area",
-        "reduceOptions": {
-          "calcs": [
-            "sum"
-          ],
-          "fields": "",
-          "values": false
-        }
-      },
-      "targets": [
-        {
-          "refId": "A",
-          "measurement": "ActivitySummary",
-          "policy": "default",
-          "resultFormat": "time_series",
-          "orderByTime": "ASC",
-          "select": [
-            [
-              {
-                "params": [
-                  "elevationGain"
-                ],
-                "type": "field"
-              },
-              {
-                "params": [],
-                "type": "sum"
-              }
-            ]
-          ],
-          "groupBy": [
-            {
-              "params": [
-                "1d"
-              ],
-              "type": "time"
-            },
-            {
-              "params": [
-                "null"
-              ],
-              "type": "fill"
-            }
-          ],
-          "tags": [
-            {
-              "key": "ActivitySelector",
-              "operator": "=~",
-              "value": "/running/"
-            }
-          ]
-        }
-      ],
-      "timeFrom": "7d"
+      "panels": []
     },
     {
       "type": "timeseries",
-      "id": 7,
-      "title": "Hill Score : Overall / Strength / Endurance",
+      "id": 1,
+      "title": "ACWR vertical — D+ aigu:chronique (le garde-fou surcharge)",
+      "description": "Ratio de charge verticale : moyenne glissante 7j du D+ quotidien / moyenne glissante 28j (fenêtres ACWR de Gabbett, appliquées au D+ — le facteur de charge verticale documenté, pas à la charge globale du dashboard 02).\nZone douce 0,80–1,30 (vert) · 1,30–1,50 prudence (ambre) · >1,50 surcharge verticale (rouge).\nAujourd'hui ~0,93. La semaine de surcharge (17/05) a culminé à 1,50. fill(0) = les jours de repos comptent 0 D+.",
       "gridPos": {
-        "h": 8,
-        "w": 12,
+        "h": 9,
+        "w": 16,
         "x": 0,
-        "y": 8
+        "y": 1
       },
       "datasource": {
         "type": "influxdb",
@@ -486,152 +51,93 @@
       },
       "fieldConfig": {
         "defaults": {
+          "unit": "none",
+          "decimals": 2,
           "min": 0,
-          "max": 100,
+          "max": 2,
+          "color": {
+            "mode": "thresholds"
+          },
           "custom": {
+            "drawStyle": "line",
             "lineWidth": 2,
-            "spanNulls": true
+            "fillOpacity": 8,
+            "pointSize": 5,
+            "showPoints": "auto",
+            "spanNulls": true,
+            "lineInterpolation": "smooth",
+            "gradientMode": "none",
+            "axisPlacement": "auto",
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "thresholdsStyle": {
+              "mode": "dashed"
+            }
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "#6e7079",
+                "value": null
+              },
+              {
+                "color": "#56A64B",
+                "value": 0.8
+              },
+              {
+                "color": "#E0B400",
+                "value": 1.3
+              },
+              {
+                "color": "#C4162A",
+                "value": 1.5
+              }
+            ]
           }
-        }
+        },
+        "overrides": []
       },
       "options": {
         "legend": {
           "showLegend": true,
+          "displayMode": "list",
+          "placement": "bottom",
           "calcs": [
-            "last",
-            "mean"
-          ],
-          "displayMode": "table",
-          "placement": "bottom"
+            "lastNotNull",
+            "max"
+          ]
         },
         "tooltip": {
-          "mode": "multi"
+          "mode": "single",
+          "sort": "none"
         }
       },
       "targets": [
         {
           "refId": "A",
-          "alias": "Overall",
-          "measurement": "HillScore",
-          "policy": "default",
+          "rawQuery": true,
+          "query": "SELECT moving_average(d,7)/moving_average(d,28) AS \"ACWR D+\" FROM (SELECT sum(\"elevationGain\") AS d FROM \"ActivitySummary\" WHERE \"activityType\"='running' AND \"distance\">1000 AND time > now()-400d GROUP BY time(1d) fill(0)) WHERE $timeFilter",
           "resultFormat": "time_series",
-          "orderByTime": "ASC",
-          "select": [
-            [
-              {
-                "params": [
-                  "overallScore"
-                ],
-                "type": "field"
-              },
-              {
-                "params": [],
-                "type": "last"
-              }
-            ]
-          ],
-          "groupBy": [
-            {
-              "params": [
-                "1d"
-              ],
-              "type": "time"
-            },
-            {
-              "params": [
-                "null"
-              ],
-              "type": "fill"
-            }
-          ],
-          "tags": []
-        },
-        {
-          "refId": "B",
-          "alias": "Strength",
-          "measurement": "HillScore",
           "policy": "default",
-          "resultFormat": "time_series",
-          "orderByTime": "ASC",
-          "select": [
-            [
-              {
-                "params": [
-                  "strengthScore"
-                ],
-                "type": "field"
-              },
-              {
-                "params": [],
-                "type": "last"
-              }
-            ]
-          ],
-          "groupBy": [
-            {
-              "params": [
-                "1d"
-              ],
-              "type": "time"
-            },
-            {
-              "params": [
-                "null"
-              ],
-              "type": "fill"
-            }
-          ],
-          "tags": []
-        },
-        {
-          "refId": "C",
-          "alias": "Endurance",
-          "measurement": "HillScore",
-          "policy": "default",
-          "resultFormat": "time_series",
-          "orderByTime": "ASC",
-          "select": [
-            [
-              {
-                "params": [
-                  "enduranceScore"
-                ],
-                "type": "field"
-              },
-              {
-                "params": [],
-                "type": "last"
-              }
-            ]
-          ],
-          "groupBy": [
-            {
-              "params": [
-                "1d"
-              ],
-              "type": "time"
-            },
-            {
-              "params": [
-                "null"
-              ],
-              "type": "fill"
-            }
-          ],
-          "tags": []
+          "datasource": {
+            "type": "influxdb",
+            "uid": "garmin_influxdb"
+          }
         }
-      ],
-      "timeFrom": "180d"
+      ]
     },
     {
-      "type": "barchart",
-      "id": 8,
-      "title": "Weekly D+ — last 12 weeks (m)",
+      "type": "gauge",
+      "id": 2,
+      "title": "ACWR vertical — maintenant",
+      "description": "Valeur actuelle de l'ACWR vertical (mêmes bandes Gabbett que la courbe). Vert = montée en charge maîtrisée.",
       "gridPos": {
-        "h": 8,
-        "w": 12,
-        "x": 12,
-        "y": 8
+        "h": 9,
+        "w": 8,
+        "x": 16,
+        "y": 1
       },
       "datasource": {
         "type": "influxdb",
@@ -639,42 +145,319 @@
       },
       "fieldConfig": {
         "defaults": {
-          "unit": "locale",
-          "decimals": 0
-        }
+          "unit": "none",
+          "decimals": 2,
+          "min": 0,
+          "max": 2,
+          "color": {
+            "mode": "thresholds"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "#6e7079",
+                "value": null
+              },
+              {
+                "color": "#56A64B",
+                "value": 0.8
+              },
+              {
+                "color": "#E0B400",
+                "value": 1.3
+              },
+              {
+                "color": "#C4162A",
+                "value": 1.5
+              }
+            ]
+          }
+        },
+        "overrides": []
       },
       "options": {
-        "legend": {
-          "showLegend": false
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
         },
-        "tooltip": {
-          "mode": "single"
-        },
-        "orientation": "auto",
-        "stacking": "none"
+        "showThresholdLabels": false,
+        "showThresholdMarkers": true,
+        "orientation": "auto"
       },
       "targets": [
         {
           "refId": "A",
-          "alias": "D+ semaine",
           "rawQuery": true,
-          "query": "SELECT sum(\"elevationGain\") FROM \"ActivitySummary\" WHERE $timeFilter AND \"ActivitySelector\" =~ /running/ GROUP BY time(7d, 4d) fill(0)",
+          "query": "SELECT moving_average(d,7)/moving_average(d,28) AS acwr FROM (SELECT sum(\"elevationGain\") AS d FROM \"ActivitySummary\" WHERE \"activityType\"='running' AND \"distance\">1000 AND time > now()-400d GROUP BY time(1d) fill(0)) WHERE time > now()-21d",
           "resultFormat": "time_series",
-          "policy": "default"
+          "policy": "default",
+          "datasource": {
+            "type": "influxdb",
+            "uid": "garmin_influxdb"
+          }
         }
-      ],
-      "timeFrom": "84d"
+      ]
     },
     {
       "type": "timeseries",
-      "id": 9,
-      "title": "D+/km per run (hill intensity)",
-      "description": "Higher = hillier course. >50 m/km = sustained trail intensity.",
+      "id": 3,
+      "title": "D+ / D- hebdomadaire + charge chronique — vs plafond perso",
+      "description": "D+ (barres, colorées par seuil) et D- (ligne bleue, miroir excentrique) par semaine. Rouge uniquement >800 m (ton plafond observé ~830). Ligne grise pointillée = D+ chronique (moyenne 4 semaines). Les semaines de surcharge (700 / 766 m) ressortent en ambre.",
+      "gridPos": {
+        "h": 8,
+        "w": 16,
+        "x": 0,
+        "y": 10
+      },
+      "datasource": {
+        "type": "influxdb",
+        "uid": "garmin_influxdb"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "lengthm",
+          "decimals": 0,
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "drawStyle": "bars",
+            "lineWidth": 1,
+            "fillOpacity": 70,
+            "pointSize": 6,
+            "showPoints": "never",
+            "spanNulls": true,
+            "lineInterpolation": "linear",
+            "gradientMode": "none",
+            "axisPlacement": "auto",
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "#56A64B",
+                "value": null
+              },
+              {
+                "color": "#E0B400",
+                "value": 600
+              },
+              {
+                "color": "#C4162A",
+                "value": 800
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "D-"
+            },
+            "properties": [
+              {
+                "id": "custom.drawStyle",
+                "value": "line"
+              },
+              {
+                "id": "custom.fillOpacity",
+                "value": 0
+              },
+              {
+                "id": "custom.lineWidth",
+                "value": 2
+              },
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "#3274D9"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "D+ chronique (4 sem)"
+            },
+            "properties": [
+              {
+                "id": "custom.drawStyle",
+                "value": "line"
+              },
+              {
+                "id": "custom.fillOpacity",
+                "value": 0
+              },
+              {
+                "id": "custom.lineWidth",
+                "value": 2
+              },
+              {
+                "id": "custom.lineStyle",
+                "value": {
+                  "fill": "dash",
+                  "dash": [
+                    8,
+                    6
+                  ]
+                }
+              },
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "#8e8e8e"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "options": {
+        "legend": {
+          "showLegend": true,
+          "displayMode": "list",
+          "placement": "bottom",
+          "calcs": [
+            "lastNotNull"
+          ]
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "rawQuery": true,
+          "query": "SELECT sum(\"elevationGain\") AS \"D+\", sum(\"elevationLoss\") AS \"D-\" FROM \"ActivitySummary\" WHERE \"activityType\"='running' AND \"distance\">1000 AND $timeFilter GROUP BY time(7d) fill(0)",
+          "resultFormat": "time_series",
+          "policy": "default",
+          "datasource": {
+            "type": "influxdb",
+            "uid": "garmin_influxdb"
+          }
+        },
+        {
+          "refId": "B",
+          "rawQuery": true,
+          "query": "SELECT moving_average(w,4) AS \"D+ chronique (4 sem)\" FROM (SELECT sum(\"elevationGain\") AS w FROM \"ActivitySummary\" WHERE \"activityType\"='running' AND \"distance\">1000 AND time > now()-400d GROUP BY time(7d) fill(0)) WHERE $timeFilter",
+          "resultFormat": "time_series",
+          "policy": "default",
+          "datasource": {
+            "type": "influxdb",
+            "uid": "garmin_influxdb"
+          }
+        }
+      ]
+    },
+    {
+      "type": "gauge",
+      "id": 4,
+      "title": "Budget vertical 4 sem. vs plafond",
+      "description": "Moyenne glissante 4 semaines du D+ hebdo vs ton plafond observé (~830 m). Traduit l'ACWR abstrait en 'où j'en suis vs ma ligne rouge perso'. Actuellement ~481 m (58%).",
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 16,
+        "y": 10
+      },
+      "datasource": {
+        "type": "influxdb",
+        "uid": "garmin_influxdb"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "lengthm",
+          "decimals": 0,
+          "min": 0,
+          "max": 830,
+          "color": {
+            "mode": "thresholds"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "#56A64B",
+                "value": null
+              },
+              {
+                "color": "#E0B400",
+                "value": 600
+              },
+              {
+                "color": "#C4162A",
+                "value": 800
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showThresholdLabels": false,
+        "showThresholdMarkers": true,
+        "orientation": "auto"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "rawQuery": true,
+          "query": "SELECT moving_average(wk,4) AS \"Budget 4 sem\" FROM (SELECT sum(\"elevationGain\") AS wk FROM \"ActivitySummary\" WHERE \"activityType\"='running' AND \"distance\">1000 AND time > now()-160d GROUP BY time(7d) fill(0))",
+          "resultFormat": "time_series",
+          "policy": "default",
+          "datasource": {
+            "type": "influxdb",
+            "uid": "garmin_influxdb"
+          }
+        }
+      ]
+    },
+    {
+      "type": "row",
+      "id": 101,
+      "collapsed": false,
+      "title": "② Caractère du terrain — par sortie dans le temps",
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 18
+      },
+      "panels": []
+    },
+    {
+      "type": "timeseries",
+      "id": 5,
+      "title": "Intensité de grimpe par sortie — D+/km (bandes locales)",
+      "description": "Intensité de grimpe par sortie, calibrée terrain local : <8 plat / 8–15 vallonné (ton pain quotidien) / 15–22 costaud / >22 raide (rare, ~5 sorties/150j). Rouge réservé aux vraies sorties dures locales (fini le seuil alpin >50 absurde de l'ancien dashboard).",
       "gridPos": {
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 16
+        "y": 19
       },
       "datasource": {
         "type": "influxdb",
@@ -684,74 +467,161 @@
         "defaults": {
           "unit": "none",
           "decimals": 1,
+          "color": {
+            "mode": "thresholds"
+          },
           "custom": {
-            "lineWidth": 2,
-            "spanNulls": true,
-            "pointSize": 6,
             "drawStyle": "line",
-            "showPoints": "always"
+            "lineWidth": 1,
+            "fillOpacity": 0,
+            "pointSize": 7,
+            "showPoints": "always",
+            "spanNulls": true,
+            "lineInterpolation": "linear",
+            "gradientMode": "none",
+            "axisPlacement": "auto",
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
           },
           "thresholds": {
             "mode": "absolute",
             "steps": [
               {
-                "color": "blue"
+                "color": "#3274D9",
+                "value": null
               },
               {
-                "color": "green",
-                "value": 20
+                "color": "#56A64B",
+                "value": 8
               },
               {
-                "color": "yellow",
-                "value": 50
+                "color": "#E0B400",
+                "value": 15
               },
               {
-                "color": "red",
-                "value": 80
+                "color": "#C4162A",
+                "value": 22
               }
             ]
           }
-        }
+        },
+        "overrides": []
       },
       "options": {
         "legend": {
           "showLegend": true,
-          "calcs": [
-            "mean"
-          ],
           "displayMode": "list",
-          "placement": "bottom"
+          "placement": "bottom",
+          "calcs": [
+            "mean",
+            "max"
+          ]
         },
         "tooltip": {
-          "mode": "single"
+          "mode": "single",
+          "sort": "none"
         }
       },
       "targets": [
         {
           "refId": "A",
-          "alias": "m/km",
-          "measurement": "ActivitySummary",
-          "policy": "default",
-          "resultFormat": "time_series",
-          "orderByTime": "ASC",
-          "query": "SELECT (\"elevationGain\" / (\"distance\" / 1000)) AS \"m_per_km\" FROM \"ActivitySummary\" WHERE $timeFilter AND \"ActivitySelector\" =~ /running/ AND \"distance\" > 1000",
           "rawQuery": true,
-          "groupBy": [],
-          "tags": []
+          "query": "SELECT (\"elevationGain\"/(\"distance\"/1000)) AS \"D+/km\" FROM \"ActivitySummary\" WHERE \"activityType\"='running' AND \"distance\">1000 AND $timeFilter",
+          "resultFormat": "time_series",
+          "policy": "default",
+          "datasource": {
+            "type": "influxdb",
+            "uid": "garmin_influxdb"
+          }
         }
-      ],
-      "timeFrom": "90d"
+      ]
     },
     {
       "type": "timeseries",
-      "id": 10,
-      "title": "Altitude profile — runs (7d)",
-      "description": "Per-second altitude for all activities in the last 7 days. Each run appears as a distinct series.",
+      "id": 6,
+      "title": "Vitesse verticale (VAM, m/h) par sortie",
+      "description": "Travail vertical : mètres grimpés par heure de course, par sortie. Tendance = est-ce que je grimpe plus vite. Orthogonal à l'Efficiency Factor GAP/FC (dashboard 08) : ici aucune FC, juste du dénivelé/temps.\nHonnête : VAM moyenne sur TOUTE la sortie (dilue plat/descente), pas la VAM en montée seule — ça viendra avec le sidecar ClimbMetrics.",
       "gridPos": {
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 16
+        "y": 19
+      },
+      "datasource": {
+        "type": "influxdb",
+        "uid": "garmin_influxdb"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "none",
+          "decimals": 0,
+          "color": {
+            "mode": "fixed",
+            "fixedColor": "#2E9E8F"
+          },
+          "custom": {
+            "drawStyle": "line",
+            "lineWidth": 1,
+            "fillOpacity": 12,
+            "pointSize": 7,
+            "showPoints": "always",
+            "spanNulls": true,
+            "lineInterpolation": "linear",
+            "gradientMode": "opacity",
+            "axisPlacement": "auto",
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "showLegend": true,
+          "displayMode": "list",
+          "placement": "bottom",
+          "calcs": [
+            "mean",
+            "max"
+          ]
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "rawQuery": true,
+          "query": "SELECT (\"elevationGain\"/(\"movingDuration\"/3600)) AS \"VAM\" FROM \"ActivitySummary\" WHERE \"activityType\"='running' AND \"distance\">1000 AND $timeFilter",
+          "resultFormat": "time_series",
+          "policy": "default",
+          "datasource": {
+            "type": "influxdb",
+            "uid": "garmin_influxdb"
+          }
+        }
+      ]
+    },
+    {
+      "type": "timeseries",
+      "id": 7,
+      "title": "La montagne grimpée — D+ cumulé 2026",
+      "description": "D+ course à pied cumulé depuis le 1er janvier (YTD = 9 833 m). Ancré au 1er janvier — ignore le sélecteur de temps, par définition. Ligne grise = total glissant 365j (12 659 m), l'horizon à atteindre. La pente de la courbe = ta charge verticale ; les plats = déloads.",
+      "gridPos": {
+        "h": 7,
+        "w": 12,
+        "x": 0,
+        "y": 27
       },
       "datasource": {
         "type": "influxdb",
@@ -760,214 +630,428 @@
       "fieldConfig": {
         "defaults": {
           "unit": "lengthm",
+          "decimals": 0,
+          "color": {
+            "mode": "fixed",
+            "fixedColor": "#56A64B"
+          },
           "custom": {
-            "lineWidth": 2,
-            "fillOpacity": 20,
             "drawStyle": "line",
-            "spanNulls": false
+            "lineWidth": 2,
+            "fillOpacity": 25,
+            "pointSize": 6,
+            "showPoints": "never",
+            "spanNulls": true,
+            "lineInterpolation": "linear",
+            "gradientMode": "opacity",
+            "axisPlacement": "auto",
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "thresholdsStyle": {
+              "mode": "line"
+            }
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "transparent",
+                "value": null
+              },
+              {
+                "color": "#8e8e8e",
+                "value": 12659
+              }
+            ]
           }
-        }
+        },
+        "overrides": []
       },
       "options": {
         "legend": {
-          "showLegend": false
+          "showLegend": true,
+          "displayMode": "list",
+          "placement": "bottom",
+          "calcs": [
+            "lastNotNull"
+          ]
         },
         "tooltip": {
-          "mode": "single"
+          "mode": "single",
+          "sort": "none"
         }
       },
       "targets": [
         {
           "refId": "A",
-          "alias": "Altitude",
-          "measurement": "ActivityGPS",
-          "policy": "default",
-          "resultFormat": "time_series",
-          "orderByTime": "ASC",
-          "query": "SELECT mean(\"Altitude\") AS \"Altitude\" FROM \"ActivityGPS\" WHERE $timeFilter AND \"ActivitySelector\" =~ /running/ GROUP BY \"ActivityID\", time(30s) fill(none)",
           "rawQuery": true,
-          "groupBy": [],
-          "tags": []
-        }
-      ],
-      "timeFrom": "7d"
-    },
-    {
-      "type": "stat",
-      "id": 11,
-      "title": "D+ 365j glissants (m)",
-      "gridPos": {
-        "x": 18,
-        "y": 4,
-        "w": 6,
-        "h": 4
-      },
-      "datasource": {
-        "type": "influxdb",
-        "uid": "garmin_influxdb"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "unit": "locale",
-          "decimals": 0
-        }
-      },
-      "options": {
-        "colorMode": "value",
-        "graphMode": "area",
-        "reduceOptions": {
-          "calcs": [
-            "sum"
-          ],
-          "fields": "",
-          "values": false
-        }
-      },
-      "targets": [
-        {
-          "refId": "A",
-          "measurement": "ActivitySummary",
-          "policy": "default",
+          "query": "SELECT cumulative_sum(wk) AS \"Cumul D+ 2026\" FROM (SELECT sum(\"elevationGain\") AS wk FROM \"ActivitySummary\" WHERE \"activityType\"='running' AND \"distance\">1000 AND time >= '2026-01-01T00:00:00Z' GROUP BY time(7d) fill(0))",
           "resultFormat": "time_series",
-          "orderByTime": "ASC",
-          "select": [
-            [
-              {
-                "params": [
-                  "elevationGain"
-                ],
-                "type": "field"
-              },
-              {
-                "params": [],
-                "type": "sum"
-              }
-            ]
-          ],
-          "groupBy": [
-            {
-              "params": [
-                "1d"
-              ],
-              "type": "time"
-            },
-            {
-              "params": [
-                "null"
-              ],
-              "type": "fill"
-            }
-          ],
-          "tags": [
-            {
-              "key": "ActivitySelector",
-              "operator": "=~",
-              "value": "/running/"
-            }
-          ]
-        }
-      ],
-      "timeFrom": "365d"
-    },
-    {
-      "type": "stat",
-      "id": 12,
-      "title": "D+ YTD 2026 (m)",
-      "gridPos": {
-        "x": 12,
-        "y": 4,
-        "w": 6,
-        "h": 4
-      },
-      "datasource": {
-        "type": "influxdb",
-        "uid": "garmin_influxdb"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "unit": "locale",
-          "decimals": 0
-        }
-      },
-      "options": {
-        "colorMode": "value",
-        "graphMode": "area",
-        "reduceOptions": {
-          "calcs": [
-            "sum"
-          ],
-          "fields": "",
-          "values": false
-        }
-      },
-      "targets": [
-        {
-          "refId": "A",
-          "measurement": "ActivitySummary",
           "policy": "default",
-          "resultFormat": "time_series",
-          "orderByTime": "ASC",
-          "select": [
-            [
-              {
-                "params": [
-                  "elevationGain"
-                ],
-                "type": "field"
-              },
-              {
-                "params": [],
-                "type": "sum"
-              }
-            ]
-          ],
-          "groupBy": [
-            {
-              "params": [
-                "1d"
-              ],
-              "type": "time"
-            },
-            {
-              "params": [
-                "null"
-              ],
-              "type": "fill"
-            }
-          ],
-          "tags": [
-            {
-              "key": "ActivitySelector",
-              "operator": "=~",
-              "value": "/running/"
-            }
-          ],
-          "rawQuery": true,
-          "query": "SELECT sum(\"elevationGain\") FROM \"ActivitySummary\" WHERE time >= '2026-01-01' AND \"ActivitySelector\" =~ /running/"
+          "datasource": {
+            "type": "influxdb",
+            "uid": "garmin_influxdb"
+          }
         }
       ]
+    },
+    {
+      "type": "timeseries",
+      "id": 8,
+      "title": "Coût du terrain par sortie — GAP vs allure brute (%)",
+      "description": "Combien le relief ralentit l'allure : (GAP − allure brute) / allure brute × 100, par sortie. Aucune FC — c'est une taxe topographique, ≠ l'Efficiency Factor GAP/FC du dashboard 08.\nHonnête : moyenne sur la sortie → mesure une dérive d'économie même-terrain, pas le coût pur de la montée (grade-split = sidecar).",
+      "gridPos": {
+        "h": 7,
+        "w": 12,
+        "x": 12,
+        "y": 27
+      },
+      "datasource": {
+        "type": "influxdb",
+        "uid": "garmin_influxdb"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percent",
+          "decimals": 1,
+          "min": -1,
+          "max": 10,
+          "color": {
+            "mode": "fixed",
+            "fixedColor": "#3274D9"
+          },
+          "custom": {
+            "drawStyle": "line",
+            "lineWidth": 1,
+            "fillOpacity": 0,
+            "pointSize": 6,
+            "showPoints": "always",
+            "spanNulls": true,
+            "lineInterpolation": "linear",
+            "gradientMode": "none",
+            "axisPlacement": "auto",
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "showLegend": true,
+          "displayMode": "list",
+          "placement": "bottom",
+          "calcs": [
+            "mean"
+          ]
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "rawQuery": true,
+          "query": "SELECT (mean(\"GradeAdjustedSpeed\")-mean(\"Speed\"))/mean(\"Speed\")*100 AS \"Coût terrain %\" FROM \"ActivityGPS\" WHERE $timeFilter AND \"ActivitySelector\" =~ /running/ AND \"Speed\" > 0 GROUP BY time(1d) fill(none)",
+          "resultFormat": "time_series",
+          "policy": "default",
+          "datasource": {
+            "type": "influxdb",
+            "uid": "garmin_influxdb"
+          }
+        }
+      ]
+    },
+    {
+      "type": "table",
+      "id": 9,
+      "title": "Sorties récentes — détail terrain",
+      "description": "Une ligne par sortie sur la fenêtre sélectionnée. D+/km coloré sur les mêmes bandes locales que le graphe. Triable.",
+      "gridPos": {
+        "h": 9,
+        "w": 24,
+        "x": 0,
+        "y": 34
+      },
+      "datasource": {
+        "type": "influxdb",
+        "uid": "garmin_influxdb"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "filterable": true,
+            "inspect": false
+          },
+          "color": {
+            "mode": "thresholds"
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Time"
+            },
+            "properties": [
+              {
+                "id": "custom.hidden",
+                "value": true
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "km"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "none"
+              },
+              {
+                "id": "decimals",
+                "value": 1
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "D+"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "lengthm"
+              },
+              {
+                "id": "decimals",
+                "value": 0
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "D-"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "lengthm"
+              },
+              {
+                "id": "decimals",
+                "value": 0
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "D+/km"
+            },
+            "properties": [
+              {
+                "id": "decimals",
+                "value": 1
+              },
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "type": "color-background",
+                  "mode": "gradient"
+                }
+              },
+              {
+                "id": "thresholds",
+                "value": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "#3274D9",
+                      "value": null
+                    },
+                    {
+                      "color": "#56A64B",
+                      "value": 8
+                    },
+                    {
+                      "color": "#E0B400",
+                      "value": 15
+                    },
+                    {
+                      "color": "#C4162A",
+                      "value": 22
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "VAM m/h"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "none"
+              },
+              {
+                "id": "decimals",
+                "value": 0
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "FC moy"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "none"
+              },
+              {
+                "id": "decimals",
+                "value": 0
+              }
+            ]
+          }
+        ]
+      },
+      "options": {
+        "showHeader": true,
+        "cellHeight": "sm",
+        "footer": {
+          "show": false,
+          "reducer": [
+            "sum"
+          ],
+          "fields": ""
+        },
+        "sortBy": []
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "rawQuery": true,
+          "query": "SELECT \"activityName\" AS \"Sortie\", (\"distance\"/1000) AS \"km\", \"elevationGain\" AS \"D+\", \"elevationLoss\" AS \"D-\", (\"elevationGain\"/(\"distance\"/1000)) AS \"D+/km\", (\"elevationGain\"/(\"movingDuration\"/3600)) AS \"VAM m/h\", \"averageHR\" AS \"FC moy\" FROM \"ActivitySummary\" WHERE \"activityType\"='running' AND \"distance\">1000 AND $timeFilter ORDER BY time DESC",
+          "resultFormat": "table",
+          "policy": "default",
+          "datasource": {
+            "type": "influxdb",
+            "uid": "garmin_influxdb"
+          }
+        }
+      ]
+    },
+    {
+      "type": "row",
+      "id": 102,
+      "collapsed": false,
+      "title": "③ Lecture & feuille de route",
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 43
+      },
+      "panels": []
+    },
+    {
+      "type": "text",
+      "id": 10,
+      "title": "",
+      "gridPos": {
+        "h": 6,
+        "w": 24,
+        "x": 0,
+        "y": 44
+      },
+      "options": {
+        "mode": "markdown",
+        "content": "### Comment lire ce dashboard\n**Section ① — Garde-fou charge verticale.** La surcharge verticale est pilotée par la **rampée de dénivelé**, pas par la charge globale (→ dashboard 02). L'**ACWR vertical** (D+ aigu 7j / chronique 28j) trace exactement ce risque. Zone douce **0,80–1,30** · prudence **1,30–1,50** · surcharge **>1,50**. Le **rouge n'apparaît qu'à un seul endroit** : un D+ hebdo >800 m (ton plafond observé ~830).\n\n**Section ② — Caractère du terrain.** Tout est calibré **terrain local** (vallonné, jamais alpin) : D+/km **rouge seulement >22** (ton max réel ~21,4). VAM = vitesse verticale ; coût terrain = taxe topographique (≠ l'EF GAP/FC du 08).\n\n### Volontairement absent ici (nécessite un sidecar `ClimbMetrics`)\nCe dashboard ne **simule pas** ce qu'InfluxQL ne sait pas calculer (pas de GROUP BY sur une pente calculée par seconde). À construire ensuite, via un sidecar qui classe chaque seconde par bande de pente et persiste une mesure `ClimbMetrics` :\n- **Forme en côte** : cadence / FC / GCT / oscillation en **montée vs plat vs descente** (durabilité de la foulée — 'la cadence s'effondre-t-elle à 8% ?')\n- **VAM en montée seule** (la vraie, sans dilution plat/descente)\n- **Répartition du temps par bande de pente** (steep-up / up / flat / down / steep-down) par sortie\n\nNi Hill Score (→ 08), ni EF GAP/FC (→ 08), ni drill-down d'une sortie (→ 03), ni forme à plat (→ 04) ne sont répétés ici."
+      },
+      "transparent": false
     }
   ],
   "refresh": "30m",
   "schemaVersion": 39,
   "tags": [
-    "hill-score",
     "denivele",
+    "vertical-load",
+    "acwr-vertical",
+    "terrain",
     "trail",
-    "geomap",
-    "climb-rate",
-    "altitude"
+    "surcharge",
+    "d-plus"
   ],
   "templating": {
     "list": []
   },
   "time": {
-    "from": "now-90d",
+    "from": "now-150d",
     "to": "now"
   },
   "timezone": "browser",
   "title": "05 Hill & Trail Performance",
   "uid": "garvis-e-hill",
-  "version": 7,
-  "weekStart": ""
+  "version": 10,
+  "weekStart": "",
+  "timepicker": {
+    "quick_ranges": [
+      {
+        "display": "1 mois",
+        "from": "now-1M",
+        "to": "now"
+      },
+      {
+        "display": "2 mois",
+        "from": "now-2M",
+        "to": "now"
+      },
+      {
+        "display": "3 mois",
+        "from": "now-3M",
+        "to": "now"
+      },
+      {
+        "display": "5 mois",
+        "from": "now-5M",
+        "to": "now"
+      },
+      {
+        "display": "6 mois",
+        "from": "now-6M",
+        "to": "now"
+      },
+      {
+        "display": "1 an",
+        "from": "now-1y",
+        "to": "now"
+      },
+      {
+        "display": "Cette année",
+        "from": "now/y",
+        "to": "now"
+      }
+    ]
+  }
 }
