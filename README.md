@@ -127,17 +127,16 @@ workouts to my watch -- all from a conversation.
 
 ## Dashboards
 
-| # | Name | What it answers |
-|---|---|---|
-| 01 | Daily Readiness & Recovery | Can I train today? |
-| 02 | Training Load & ACWR | Am I overtraining? |
-| 03 | Activity Drill-Down | How was this run? (now with surface-aware map, dual elevation profiles, splits & workout steps) |
-| 04 | Running Form & Efficiency | Is my technique improving? |
-| 05 | Hill & Trail Performance | How strong am I on climbs? |
-| 06 | Recovery Diagnostics | Why am I tired? |
-| 07 | Sport-Science Validators | Is my plan actually working? |
-| 08 | Long-Term Trends | Big picture over months |
-| 10 | Calendar | Year-at-a-glance load heatmap |
+| Name | What it answers |
+|---|---|
+| Training Load & Terrain | Am I overtraining -- globally and on vertical/terrain load? (ACWR, polarization, PMC, weekly volume + D+ ACWR, climb intensity, VAM, terrain cost) |
+| Activity Drill-Down | How was this run? (surface-aware map, dual elevation profiles, per-km splits, workout steps, per-second telemetry, zones) |
+| Fitness Trends & Validation | Big picture over months + is the plan working? (VO2max, race predictions, scores, zone recalibration, aerobic decoupling, Z2 & Z4/Z5 pace, power/pace curves, heat impact) |
+
+> Three focused dashboards rather than nine: the views that get looked at daily. The underlying
+> data the stack captures (sleep, stress, body battery, recovery, running form, ...) all still
+> lives in InfluxDB and is queryable through the MCP servers even when it isn't on a dedicated
+> dashboard.
 
 ---
 
@@ -154,7 +153,7 @@ garmin-fetch-data (every 15 min)
     v
 InfluxDB 1.x
     |
-    |---> Grafana (9 dashboards, auto-provisioned)
+    |---> Grafana (3 dashboards, auto-provisioned)
     |        |
     |        v
     |    grafana MCP -----> Claude / LLM

@@ -53,7 +53,8 @@ See `workouts_data.example.py` for detailed examples.
 
 ## 3. Dashboard zone thresholds
 
-Dashboard 03 (Activity Drill-Down) and 07 (Validators) read your HR/Power zones
+Activity Drill-Down (`garvis-j-activity`) and the validators section of Fitness Trends &
+Validation (`garvis-c-fitness`) read your HR/Power zones
 from InfluxDB. The `HRZones` / `PowerZones` measurements (populated once the
 fetcher has run) feed Grafana dashboard variables (`z1_hr`…`z5_hr`,
 `z1_pwr`…`z5_pwr`) that the time-in-zone InfluxQL queries interpolate

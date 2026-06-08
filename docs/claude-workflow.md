@@ -44,8 +44,8 @@ Need to modify a workout?
 4. **Compute metrics**: `garmin-toolbox.compute_decoupling(selector=...)` for
    aerobic decoupling, `compute_hr_drift(selector=...)` for drift.
 
-5. **Cross-reference dashboards**: check dashboard 03 (Activity Drill-Down) for
-   visual confirmation, dashboard 02 for load impact.
+5. **Cross-reference dashboards**: check **Activity Drill-Down** (`garvis-j-activity`) for
+   visual confirmation, **Training Load & Terrain** (`garvis-b-load`) for load impact.
 
 ## Workflow: weekly review
 
@@ -60,7 +60,7 @@ Need to modify a workout?
 4. **Recovery check**: `garmin-coach.get_daily_recovery_tool()` for sleep, HRV,
    body battery, training readiness.
 
-5. **Review dashboards**: dashboard 01 (readiness), 02 (load), 07 (validators).
+5. **Review dashboards**: **Training Load & Terrain** (`garvis-b-load`, load + vertical/terrain) and the validators section of **Fitness Trends & Validation** (`garvis-c-fitness`). Readiness/recovery data is via `garmin-coach.get_daily_recovery_tool()` (no dedicated dashboard since the 2026-06-07 reorg).
 
 ## Workflow: modify a workout
 
@@ -82,10 +82,10 @@ Need to modify a workout?
 2. **Hill/Endurance Score**: `garmin-coach.get_hill_score_history_tool(days=90)`,
    `get_endurance_score_history_tool(days=90)`.
 
-3. **Long-term metrics**: dashboard 08 (Long-Term Trends) for visual review.
+3. **Long-term metrics**: **Fitness Trends & Validation** (`garvis-c-fitness`) for visual review.
 
-4. **Validator check**: dashboard 07 -- is pace improving at constant HR?
-   Is decoupling trending down? Is HRV stable?
+4. **Validator check**: the validators section of **Fitness Trends & Validation** -- is pace
+   improving at constant HR? Is decoupling trending down? Are Z2/Z4-Z5 pace & volume moving?
 
 5. **PMC trajectory**: `garmin-toolbox.compute_ctl_atl_tsb(days=180)` for
    full fitness/fatigue history.

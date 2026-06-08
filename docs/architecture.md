@@ -34,7 +34,7 @@ Garmin watch
 |                     |  ActivityGrade, ActivityTrack.
 +---------------------+
     |
-    +---> Grafana (9 dashboards, auto-provisioned)
+    +---> Grafana (3 dashboards, auto-provisioned)
     |        |
     |        v
     |    grafana-mcp (official, port 8768)
@@ -97,7 +97,7 @@ never blocks the ActivityGPS write.
 | `ActivityGrade` | one row per 100 m bin | steepness_class | distance_m, elev_m, avg_slope_pct |
 | `ActivityTrack` | downsampled GPS points (surface-colored map) | -- | Latitude, Longitude, Surface, Waytype, surf_id, distance_m |
 
-**Consumers.** Grafana dashboard 03 (ECharts panels) and 4 new garmin-coach
+**Consumers.** The Activity Drill-Down dashboard (`garvis-j-activity`, ECharts panels) and 4 new garmin-coach
 MCP tools: `get_activity_surface_tool`, `get_activity_grade_summary_tool`,
 `get_activity_splits_tool`, `get_activity_workout_steps_tool`.
 

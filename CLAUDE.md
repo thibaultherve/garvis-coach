@@ -34,8 +34,8 @@ Fix a rule/pitfall → edit the owner, never the copies (prevents drift across f
 2. **Read `./services/garmin-toolbox/workouts_data.py`** — the header covers the full plan (objectives, profile, zones, constraints, cycles, decisions). The `WORKOUTS` list below shows where we are. You can also list workouts via MCP: `garmin-toolbox.list_workouts(start_date, end_date)`.
 3. **Read this CLAUDE.md** for infra (dashboards, MCP, InfluxDB).
 4. **Before any analysis**: query fresh data via MCP `garmin-coach` (read InfluxDB raw) or MCP `grafana` / dashboards `garvis-*`. For derived metrics (TRIMP, ACWR, CTL/ATL/TSB, polarization, decoupling, HR drift), use MCP `garmin-toolbox.compute_*`. Never do mental math.
-   - **For any running activity analysis**: always query the **03 Activity Drill-Down** dashboard (`garvis-j-activity`) panels via MCP Grafana for each activity being analyzed. The per-second curves (HR, pace, power, cadence, GCT, vertical oscillation, stride length, vertical ratio) + GPS map + zone distributions reveal drift, decoupling, and form degradation far better than numbers alone.
-   - **For weekly reviews / bilans**: always query the **02 Training Load & ACWR** dashboard (`garvis-b-load`) panels via MCP Grafana. ACWR, acute vs chronic load, polarization, weekly volume, PMC (CTL/ATL/TSB), and training status timeline provide the full picture needed to assess the week and plan the next one.
+   - **For any running activity analysis**: always query the **Activity Drill-Down** dashboard (`garvis-j-activity`) panels via MCP Grafana for each activity being analyzed. The per-second curves (HR, pace, power, cadence, GCT, vertical oscillation, stride length, vertical ratio) + GPS map + zone distributions reveal drift, decoupling, and form degradation far better than numbers alone.
+   - **For weekly reviews / bilans**: always query the **Training Load & Terrain** dashboard (`garvis-b-load`) panels via MCP Grafana. ACWR, acute vs chronic load, polarization, weekly volume, PMC (CTL/ATL/TSB), training status timeline, **and the vertical-load section (ACWR vertical D+, weekly D+/D-, D+/km, VAM, terrain cost)** provide the full picture needed to assess the week and plan the next one.
 5. **To modify a workout**: edit `workouts_data.py` then call `garmin-toolbox.garmin_upload_workout(code=..., replace=True)`.
 6. **NEVER** modify workouts directly in Garmin Connect (source of truth is workouts_data.py).
 
@@ -111,13 +111,11 @@ garvis-coach/                          <- this monorepo
 |       |-- workouts_data.example.py   <- template (committed)
 |       +-- workouts_data.py           <- GITIGNORED (your training plan)
 |
-|-- dashboards/
-|   |-- README.md                      <- canonical-JSON conventions + dashboard-03 build invariants
-|   |-- 01-daily-readiness-recovery.json
-|   |-- 02-training-load-acwr.json
-|   |-- 03-activity-drill-down.json
-|   |-- ...
-|   +-- 10-calendar-volume.json
+|-- dashboards/                        <- 3 dashboards (reorg 2026-06-07)
+|   |-- README.md                      <- canonical-JSON conventions + Activity-Drill-Down build invariants
+|   |-- 02-training-load-acwr.json     <- "Training Load & Terrain" (garvis-b-load) — inclut l'ex-05 Hill/Trail
+|   |-- 03-activity-drill-down.json    <- "Activity Drill-Down" (garvis-j-activity)
+|   +-- 08-long-term-trends.json       <- "Fitness Trends & Validation" (garvis-c-fitness) — inclut l'ex-07 Validators
 |
 |-- provisioning/
 |   |-- dashboards.yml
@@ -142,34 +140,31 @@ garvis-coach/                          <- this monorepo
 
 ## Dashboards
 
-9 thematic dashboards numbered by workflow (morning readiness -> planning -> post-run -> quality -> terrain -> recovery -> validators -> long-term -> calendar). Auto-provisioned via `provisioning/dashboards.yml` — JSON in `dashboards/` is auto-loaded by Grafana on change (~10s).
+3 thematic dashboards (post-run drill-down · load & terrain planning · long-term & validation). Auto-provisioned via `provisioning/dashboards.yml` — JSON in `dashboards/` is auto-loaded by Grafana on change (~10s).
+
+> **Reorg 2026-06-07** : passé de 9 à 3 dashboards. Supprimés : 01 Readiness, 04 Running Form, 06 Recovery Diagnostics (peu utilisés ; la donnée sous-jacente reste lisible via MCP `garmin-coach`). Fusionnés : 05 Hill & Trail → `garvis-b-load`, 07 Sport-Science Validators → `garvis-c-fitness`. Numérotation des titres retirée. Pas de dashboard calendrier (le fichier `10-calendar-volume.json` n'existe pas / n'est pas provisionné).
 
 ### Overview
 
 | File | UID | Title | Use case |
 |---|---|---|---|
-| `01-daily-readiness-recovery.json` | `garvis-a-daily` | 01 Daily Readiness & Recovery | Morning routine: can I train today? |
-| `02-training-load-acwr.json` | `garvis-b-load` | 02 Training Load & ACWR | Weekly load management, overtraining prevention |
-| `03-activity-drill-down.json` | `garvis-j-activity` | 03 Activity Drill-Down | Per-run drill-down (hand-maintained canonical JSON — see `dashboards/README.md`). ECharts panels: surface map, 2 elevation profiles, splits, workout analysis, surface/waytype donuts, zone bars. |
-| `04-running-form-efficiency.json` | `garvis-d-runq` | 04 Running Form & Efficiency | Running form (cadence, GCT, vertical ratio, stride) |
-| `05-hill-trail-performance.json` | `garvis-e-hill` | 05 Hill & Trail Performance | Hill Score, D+, climb rate |
-| `06-recovery-diagnostics.json` | `garvis-f-sleep` | 06 Recovery Diagnostics | Sleep, stress, body battery diagnostics |
-| `07-sport-science-validators.json` | `garvis-k-validators` | 07 Sport-Science Validators | Validate that the plan produces measurable adaptations |
-| `08-long-term-trends.json` | `garvis-c-fitness` | 08 Long-Term Trends | Monthly / end-of-cycle review (VO2max, scores, zones, race predictions) |
-| `10-calendar-volume.json` | `garvis-n-calendar` | 10 Calendar - Training Load | Calendar heatmap of runs colored by training load (1 year) |
+| `02-training-load-acwr.json` | `garvis-b-load` | Training Load & Terrain | Pilotage charge (ACWR, polarisation, CTL/ATL/TSB, monotonie/strain, volume, training status, HRV, chaleur) **+ charge verticale & terrain** (ACWR vertical D+, budget D+ vs plafond ~830 m, D+/km, VAM, coût terrain, cumul D+). Inclut l'ex-05 Hill & Trail. |
+| `03-activity-drill-down.json` | `garvis-j-activity` | Activity Drill-Down | Per-run drill-down (hand-maintained canonical JSON — see `dashboards/README.md`). ECharts panels: surface map, 2 elevation profiles, splits, workout analysis, surface/waytype donuts, zone bars. |
+| `08-long-term-trends.json` | `garvis-c-fitness` | Fitness Trends & Validation | Review mensuel / fin de cycle : trajectoires long-terme (VO2max, race predictions, Hill/Endurance Score, zones FCmax/LTHR/FTP, poids, Eddington, EF GAP/HR, acclimatation) **+ validateurs sport-science** (aerobic decoupling, allure/volume Z2 & Z4-Z5, power/pace curves, allure à FC fixée, impact chaleur EF/WBGT). Inclut l'ex-07 Validators. |
 
 ### Panels by dashboard
 
-> Owner: `PANELS_CATALOG.md` (same dir) — every panel across the 9 dashboards with
+> Owner: `PANELS_CATALOG.md` (same dir) — every panel across the 3 dashboards with
 > title, description, and source query. Read it before any analysis/bilan.
-> Panel counts: 01 (16), 02 (21), 03 (27), 04 (7), 05 (12), 06 (29), 07 (22), 08 (37), 10 (1).
+> Content-panel counts (2026-06-07): `garvis-b-load` 26 (+4 rows), `garvis-j-activity` 20, `garvis-c-fitness` 29 (+1 row).
 
 ### Structural notes
 
 - **Datasource**: UID `garmin_influxdb`, schema v39, filter `"ActivitySelector" =~ /running/` on all activity panels.
-- **ECharts plugin**: `volkovlabs-echarts-panel` is installed via `GF_PLUGINS_PREINSTALL`. Used by the new dashboard-03 surface/elevation/splits/workout panels.
+- **ECharts plugin**: `volkovlabs-echarts-panel` is installed via `GF_PLUGINS_PREINSTALL`. Used by the Activity-Drill-Down surface/elevation/splits/workout panels and several `garvis-c-fitness` ECharts panels.
+- **Live HR-zone variables**: `garvis-j-activity` and `garvis-c-fitness` (validators section) carry hidden query variables `z1_hr`…`z5_hr` + `fcmax` (live from `HRZones`), so the Z2 / Z4-Z5 panels auto-adapt to the athlete's current Garmin zones.
 - **Editing**: modify JSON in `dashboards/`, Grafana auto-reloads in ~10s. For rapid iteration, use `PUT /api/dashboards/db` (may be overwritten on next file reload).
-- Panel IDs are stable (not renumbered after refactors — gaps are normal, preserving deeplink `?viewPanel=N`).
+- Panel IDs are stable (not renumbered after refactors — gaps are normal, preserving deeplink `?viewPanel=N`). On the 2026-06-07 merge only colliding source IDs were renumbered: into `garvis-b-load`, ex-05 content ids 5/6/7/8/10 + row 101 → 152-157, and the pre-existing duplicate id 12 (Weekly Volume) → 151; into `garvis-c-fitness`, ex-07 ids 8/13 → 501/502 — so existing `#120`/`#300` cross-references stay valid.
 
 ---
 
@@ -210,7 +205,14 @@ Surface/grade/splits tools (all accept an `ActivitySelector`, fall back to the l
 
 ### 3. MCP `grafana` (dashboards + InfluxQL proxy)
 
-Official `grafana/mcp-grafana`. Key tools: `search_dashboards`, `get_dashboard_summary`, `get_dashboard_panel_queries`, `get_dashboard_property`. ⚠️ Avoid `query_influxdb` for reads (anonymises columns + broken time window — see Common pitfalls); use curl direct or `garmin-coach.get_activity_profile_tool`. No PNG/panel render tool exists (so "visual" dashboard analysis isn't available to the LLM today).
+Official `grafana/mcp-grafana`. Key tools: `search_dashboards`, `get_dashboard_summary`, `get_dashboard_panel_queries`, `get_dashboard_property`. ⚠️ Avoid `query_influxdb` for reads (anonymises columns + broken time window — see Common pitfalls); use curl direct or `garmin-coach.get_activity_profile_tool`.
+
+**Visual screenshots (PNG) — `get_panel_image`** *(activé 2026-06-07, nécessite le Grafana Image Renderer désormais installé)* : rend un panel **ou un dashboard entier** en PNG et **retourne l'image en base64** → le LLM la VOIT (analyse visuelle des courbes, debug d'un panel, ou simplement donner l'image à l'utilisateur). C'est LE tool pour "screenshot un dashboard / un graph". Params :
+- `dashboardUid` **(requis)** — ex. `garvis-b-load`, `garvis-j-activity`, `garvis-c-fitness`. ⚠️ le nom du param est `dashboardUid`, **pas** `uid` (sinon Grafana rend une page "Page not found" en PNG, sans erreur).
+- `panelId` *(optionnel)* — un panel précis ; **omis = dashboard entier**. (Récupérer les IDs via `get_dashboard_summary`.)
+- `timeRange` `{from,to}` (ex. `{"from":"now-90d","to":"now"}`), `width` (déf. 1000), `height` (déf. 500), `scale` 1-3, `theme` light/dark, `variables`, `timeout` (déf. 60s).
+- Pile technique : `get_panel_image` → endpoint `/render` de Grafana → conteneur sidecar `grafana-image-renderer` (Chromium headless). Le `--enabled-tools` du service `grafana-mcp` doit inclure `rendering`. Un full-dashboard met ~10 s.
+- ⚠️ Après (ré)activation côté serveur, **une session Claude Code déjà ouverte ne voit pas le nouveau tool** tant que la connexion MCP grafana n'a pas été relancée (`/mcp` reconnect, ou redémarrer la session).
 
 ### 4. InfluxDB direct (fallback)
 
@@ -257,4 +259,4 @@ curl -G http://$INFLUXDB_HOST:$INFLUXDB_PORT/query \
 
 ## Panel catalog
 
-**Before any training analysis or bilan**, read `PANELS_CATALOG.md` (same directory) — it lists every panel across all 9 dashboards with title, description, and source query. Use it to know which metrics are available and what they measure.
+**Before any training analysis or bilan**, read `PANELS_CATALOG.md` (same directory) — it lists every panel across all 3 dashboards with title, description, and source query. Use it to know which metrics are available and what they measure.

@@ -250,7 +250,7 @@ Pour un recreatif visant le club :
 ## 13. Zones FC — source live
 
 - **FCmax, LTHR et zones sont lues en live depuis la mesure InfluxDB `HRZones`** (`maxHeartRate`/`lactateThresholdHeartRate`, sport=RUNNING), recalibree chaque jour par le fetcher.
-- **Ne jamais coder la FCmax/LTHR en dur.** Le toolbox (TRIMP/ACWR/CTL) les lit en live ; les dashboards 07/08 via la variable `$fcmax` / requetes HRZones. `ATHLETE_HR_MAX` du `.env` n'est qu'un fallback.
+- **Ne jamais coder la FCmax/LTHR en dur.** Le toolbox (TRIMP/ACWR/CTL) les lit en live ; le dashboard `garvis-c-fitness` (Fitness Trends & Validation, section validateurs) et `garvis-j-activity` via la variable `$fcmax` / `$z*_hr` / requetes HRZones. `ATHLETE_HR_MAX` du `.env` n'est qu'un fallback.
 - **Valeurs perso courantes** (FCmax, LTHR, pace seuil, ratio, zones Friel) : voir `COACHING_RULES.local.md` (non versionne — donnees de sante perso, hors repo public).
 
 ---

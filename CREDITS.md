@@ -21,7 +21,7 @@ Official Grafana MCP server for dashboard search, panel query extraction, and In
 Time-series database storing all Garmin data.
 
 **[Grafana](https://github.com/grafana/grafana)** (AGPL-3.0)
-Dashboard visualization platform hosting 9 thematic training dashboards.
+Dashboard visualization platform hosting 3 thematic training dashboards.
 
 ## Sport science references
 
