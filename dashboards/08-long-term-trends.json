@@ -15,7 +15,7 @@
       }
     ]
   },
-  "description": "Trajectoires long-terme : cardio capacity (VO2max, race predictions, fitness age, scores), zones recalibration (FCmax/LTHR/FTP boundaries), body composition (poids). Use case : review mensuel / fin de cycle pour valider l effet du plan.",
+  "description": "Trajectoires long-terme (VO2max, race predictions, fitness age, Hill & Endurance Score, recalibration des zones FCmax/LTHR/FTP, poids, Eddington, EF GAP/HR, acclimatation chaleur/altitude) + validateurs sport-science (aerobic decoupling, allure & volume Z2 et Z4-Z5, power/pace curves, allure a FC fixee, impact chaleur EF/WBGT). Review mensuel / fin de cycle : le plan produit-il des adaptations mesurables. Inclut l'ex-« Sport-Science Validators ».",
   "editable": true,
   "graphTooltip": 0,
   "id": null,
@@ -1060,6 +1060,1286 @@
       ],
       "title": "Profil athlète — KPI",
       "type": "volkovlabs-echarts-panel"
+    },
+    {
+      "type": "row",
+      "id": 503,
+      "collapsed": false,
+      "title": "Validateurs sport-science — adaptations du plan",
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 90
+      },
+      "panels": []
+    },
+    {
+      "type": "timeseries",
+      "id": 7,
+      "title": "Aerobic Decoupling — EF 1st vs 2nd half per run",
+      "description": "Median EF over the first 30 min vs 30-90 min. If 2nd half drops = endurance not yet solid. Target: gap < 5%.",
+      "gridPos": {
+        "h": 9,
+        "w": 24,
+        "x": 0,
+        "y": 91
+      },
+      "datasource": {
+        "type": "influxdb",
+        "uid": "garmin_influxdb"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "none",
+          "decimals": 4,
+          "custom": {
+            "lineWidth": 2,
+            "spanNulls": true,
+            "showPoints": "always",
+            "pointSize": 5,
+            "fillOpacity": 5
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "EF 1st half (0-30min)"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "green"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "EF 2nd half (30-90min)"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "orange"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "options": {
+        "legend": {
+          "showLegend": true,
+          "calcs": [
+            "mean",
+            "min",
+            "max"
+          ],
+          "displayMode": "table",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "multi"
+        }
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "alias": "EF 1st half (0-30min)",
+          "measurement": "ActivityGPS",
+          "policy": "default",
+          "resultFormat": "time_series",
+          "orderByTime": "ASC",
+          "query": "SELECT median(\"RunningEfficiency\") AS \"EF 1st half (0-30min)\" FROM \"ActivityGPS\" WHERE $timeFilter AND \"ActivitySelector\" =~ /running/ AND \"DurationSeconds\" < 1800 AND \"RunningEfficiency\" > 0 GROUP BY time(1d) fill(null)",
+          "rawQuery": true,
+          "groupBy": [],
+          "tags": []
+        },
+        {
+          "refId": "B",
+          "alias": "EF 2nd half (30-90min)",
+          "measurement": "ActivityGPS",
+          "policy": "default",
+          "resultFormat": "time_series",
+          "orderByTime": "ASC",
+          "query": "SELECT median(\"RunningEfficiency\") AS \"EF 2nd half (30-90min)\" FROM \"ActivityGPS\" WHERE $timeFilter AND \"ActivitySelector\" =~ /running/ AND \"DurationSeconds\" >= 1800 AND \"DurationSeconds\" < 5400 AND \"RunningEfficiency\" > 0 GROUP BY time(1d) fill(null)",
+          "rawQuery": true,
+          "groupBy": [],
+          "tags": []
+        }
+      ]
+    },
+    {
+      "type": "barchart",
+      "id": 501,
+      "title": "Pace Z2 + Volume Z2 — weekly Mon→Sun (side-by-side bars)",
+      "description": "Weekly bucket Mon-Sun (Europe/Paris TZ, current week included). Purple bar = mean Z2 pace weighted per-second (left axis, lower = faster). Grey bar = Z2 volume in minutes (right axis, pace reliability). Speed filter 1.5-6 m/s excludes walking/GPS spikes. Volume benchmarks: <30 min/wk = noisy (ignore pace), 30-60 = decent, >60 = robust.",
+      "gridPos": {
+        "h": 12,
+        "w": 24,
+        "x": 0,
+        "y": 100
+      },
+      "datasource": {
+        "type": "influxdb",
+        "uid": "garmin_influxdb"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "lineWidth": 1,
+            "fillOpacity": 90,
+            "axisPlacement": "auto",
+            "axisColorMode": "text",
+            "gradientMode": "none"
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Z2 Pace weekly (weighted)"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "dthms"
+              },
+              {
+                "id": "decimals",
+                "value": 0
+              },
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "purple"
+                }
+              },
+              {
+                "id": "custom.axisPlacement",
+                "value": "left"
+              },
+              {
+                "id": "custom.axisLabel",
+                "value": "Pace (min/km)"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Z2 Volume (min)"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "m"
+              },
+              {
+                "id": "decimals",
+                "value": 0
+              },
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "#9CA3AF"
+                }
+              },
+              {
+                "id": "custom.axisPlacement",
+                "value": "right"
+              },
+              {
+                "id": "custom.axisLabel",
+                "value": "Volume Z2 (min)"
+              }
+            ]
+          }
+        ]
+      },
+      "options": {
+        "orientation": "vertical",
+        "stacking": "none",
+        "groupWidth": 0.7,
+        "barWidth": 0.97,
+        "barRadius": 0,
+        "xTickLabelRotation": 0,
+        "xTickLabelSpacing": 100,
+        "xTickLabelMaxLength": 0,
+        "showValue": "never",
+        "legend": {
+          "showLegend": true,
+          "calcs": [
+            "mean",
+            "min",
+            "max"
+          ],
+          "displayMode": "table",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "alias": "Z2 Pace weekly (weighted)",
+          "measurement": "ActivityGPS",
+          "policy": "default",
+          "resultFormat": "time_series",
+          "orderByTime": "ASC",
+          "query": "SELECT 1000.0 / mean(\"Speed\") AS \"Z2 Pace weekly (weighted)\" FROM \"ActivityGPS\" WHERE $timeFilter AND \"ActivitySelector\" =~ /running/ AND \"HeartRate\" >= $z2_hr AND \"HeartRate\" <= $z3_hr AND \"Speed\" >= 1.5 AND \"Speed\" <= 6 GROUP BY time(7d, 4d) fill(null) tz('Europe/Paris')",
+          "rawQuery": true,
+          "groupBy": [],
+          "tags": []
+        },
+        {
+          "refId": "B",
+          "alias": "Z2 Volume (min)",
+          "measurement": "ActivityGPS",
+          "policy": "default",
+          "resultFormat": "time_series",
+          "orderByTime": "ASC",
+          "query": "SELECT count(\"HeartRate\") / 60.0 AS \"Z2 Volume (min)\" FROM \"ActivityGPS\" WHERE $timeFilter AND \"ActivitySelector\" =~ /running/ AND \"HeartRate\" >= $z2_hr AND \"HeartRate\" <= $z3_hr GROUP BY time(7d, 4d) fill(0) tz('Europe/Paris')",
+          "rawQuery": true,
+          "groupBy": [],
+          "tags": []
+        }
+      ],
+      "transformations": [
+        {
+          "id": "joinByField",
+          "options": {
+            "byField": "Time",
+            "mode": "outer"
+          }
+        }
+      ]
+    },
+    {
+      "type": "barchart",
+      "id": 502,
+      "title": "Pace Z4+Z5 + Volume Z4+Z5 — weekly Mon→Sun (side-by-side bars)",
+      "description": "Weekly bucket Mon-Sun (Europe/Paris TZ, current week included). Red bar = mean Z4+Z5 pace (HR >= 166) weighted per-second (left axis, lower = faster). Grey bar = Z4+Z5 volume in minutes (right axis, pace reliability). Speed filter 1.5-7 m/s. Tracks VO2max/threshold progression.",
+      "gridPos": {
+        "h": 12,
+        "w": 24,
+        "x": 0,
+        "y": 112
+      },
+      "datasource": {
+        "type": "influxdb",
+        "uid": "garmin_influxdb"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "lineWidth": 1,
+            "fillOpacity": 90,
+            "axisPlacement": "auto",
+            "axisColorMode": "text",
+            "gradientMode": "none"
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Z4+Z5 Pace weekly (weighted)"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "dthms"
+              },
+              {
+                "id": "decimals",
+                "value": 0
+              },
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "red"
+                }
+              },
+              {
+                "id": "custom.axisPlacement",
+                "value": "left"
+              },
+              {
+                "id": "custom.axisLabel",
+                "value": "Pace (min/km)"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Z4+Z5 Volume (min)"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "m"
+              },
+              {
+                "id": "decimals",
+                "value": 0
+              },
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "#9CA3AF"
+                }
+              },
+              {
+                "id": "custom.axisPlacement",
+                "value": "right"
+              },
+              {
+                "id": "custom.axisLabel",
+                "value": "Volume Z4+Z5 (min)"
+              }
+            ]
+          }
+        ]
+      },
+      "options": {
+        "orientation": "vertical",
+        "stacking": "none",
+        "groupWidth": 0.7,
+        "barWidth": 0.97,
+        "barRadius": 0,
+        "xTickLabelRotation": 0,
+        "xTickLabelSpacing": 100,
+        "xTickLabelMaxLength": 0,
+        "showValue": "never",
+        "legend": {
+          "showLegend": true,
+          "calcs": [
+            "mean",
+            "min",
+            "max"
+          ],
+          "displayMode": "table",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "alias": "Z4+Z5 Pace weekly (weighted)",
+          "measurement": "ActivityGPS",
+          "policy": "default",
+          "resultFormat": "time_series",
+          "orderByTime": "ASC",
+          "query": "SELECT 1000.0 / mean(\"Speed\") AS \"Z4+Z5 Pace weekly (weighted)\" FROM \"ActivityGPS\" WHERE $timeFilter AND \"ActivitySelector\" =~ /running/ AND \"HeartRate\" >= $z4_hr AND \"HeartRate\" <= $fcmax AND \"Speed\" >= 1.5 AND \"Speed\" <= 7 GROUP BY time(7d, 4d) fill(null) tz('Europe/Paris')",
+          "rawQuery": true,
+          "groupBy": [],
+          "tags": []
+        },
+        {
+          "refId": "B",
+          "alias": "Z4+Z5 Volume (min)",
+          "measurement": "ActivityGPS",
+          "policy": "default",
+          "resultFormat": "time_series",
+          "orderByTime": "ASC",
+          "query": "SELECT count(\"HeartRate\") / 60.0 AS \"Z4+Z5 Volume (min)\" FROM \"ActivityGPS\" WHERE $timeFilter AND \"ActivitySelector\" =~ /running/ AND \"HeartRate\" >= $z4_hr AND \"HeartRate\" <= $fcmax GROUP BY time(7d, 4d) fill(0) tz('Europe/Paris')",
+          "rawQuery": true,
+          "groupBy": [],
+          "tags": []
+        }
+      ],
+      "transformations": [
+        {
+          "id": "joinByField",
+          "options": {
+            "byField": "Time",
+            "mode": "outer"
+          }
+        }
+      ]
+    },
+    {
+      "id": 111,
+      "type": "bargauge",
+      "title": "Running Power Curve — best mean power by duration (90d)",
+      "description": "Best sustained mean power per duration over the last 90 days. Shape reflects energy system balance. 20-60 min plateau = Critical Power.",
+      "datasource": {
+        "type": "influxdb",
+        "uid": "garmin_influxdb"
+      },
+      "gridPos": {
+        "h": 11,
+        "w": 12,
+        "x": 0,
+        "y": 124
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "watt",
+          "decimals": 0,
+          "color": {
+            "mode": "fixed",
+            "fixedColor": "#A78BFA"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "#A78BFA",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byFrameRefID",
+              "options": "A"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "1s"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byFrameRefID",
+              "options": "B"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "5s"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byFrameRefID",
+              "options": "C"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "30s"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byFrameRefID",
+              "options": "D"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "1min"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byFrameRefID",
+              "options": "E"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "5min"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byFrameRefID",
+              "options": "F"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "20min"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byFrameRefID",
+              "options": "G"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "60min"
+              }
+            ]
+          }
+        ]
+      },
+      "options": {
+        "orientation": "horizontal",
+        "displayMode": "basic",
+        "showUnfilled": true,
+        "valueMode": "color",
+        "minVizWidth": 0,
+        "minVizHeight": 10,
+        "namePlacement": "auto",
+        "sizing": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        }
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "rawQuery": true,
+          "datasource": {
+            "type": "influxdb",
+            "uid": "garmin_influxdb"
+          },
+          "query": "SELECT max(\"Power\") FROM \"ActivityGPS\" WHERE time > now() - 90d AND \"ActivitySelector\" =~ /running/"
+        },
+        {
+          "refId": "B",
+          "rawQuery": true,
+          "datasource": {
+            "type": "influxdb",
+            "uid": "garmin_influxdb"
+          },
+          "query": "SELECT max(mp) FROM (SELECT moving_average(\"Power\", 5)    AS mp FROM \"ActivityGPS\" WHERE time > now() - 90d AND \"ActivitySelector\" =~ /running/)"
+        },
+        {
+          "refId": "C",
+          "rawQuery": true,
+          "datasource": {
+            "type": "influxdb",
+            "uid": "garmin_influxdb"
+          },
+          "query": "SELECT max(mp) FROM (SELECT moving_average(\"Power\", 30)   AS mp FROM \"ActivityGPS\" WHERE time > now() - 90d AND \"ActivitySelector\" =~ /running/)"
+        },
+        {
+          "refId": "D",
+          "rawQuery": true,
+          "datasource": {
+            "type": "influxdb",
+            "uid": "garmin_influxdb"
+          },
+          "query": "SELECT max(mp) FROM (SELECT moving_average(\"Power\", 60)   AS mp FROM \"ActivityGPS\" WHERE time > now() - 90d AND \"ActivitySelector\" =~ /running/)"
+        },
+        {
+          "refId": "E",
+          "rawQuery": true,
+          "datasource": {
+            "type": "influxdb",
+            "uid": "garmin_influxdb"
+          },
+          "query": "SELECT max(mp) FROM (SELECT moving_average(\"Power\", 300)  AS mp FROM \"ActivityGPS\" WHERE time > now() - 90d AND \"ActivitySelector\" =~ /running/)"
+        },
+        {
+          "refId": "F",
+          "rawQuery": true,
+          "datasource": {
+            "type": "influxdb",
+            "uid": "garmin_influxdb"
+          },
+          "query": "SELECT max(mp) FROM (SELECT moving_average(\"Power\", 1200) AS mp FROM \"ActivityGPS\" WHERE time > now() - 90d AND \"ActivitySelector\" =~ /running/)"
+        },
+        {
+          "refId": "G",
+          "rawQuery": true,
+          "datasource": {
+            "type": "influxdb",
+            "uid": "garmin_influxdb"
+          },
+          "query": "SELECT max(mp) FROM (SELECT moving_average(\"Power\", 3600) AS mp FROM \"ActivityGPS\" WHERE time > now() - 90d AND \"ActivitySelector\" =~ /running/)"
+        }
+      ]
+    },
+    {
+      "id": 112,
+      "type": "bargauge",
+      "title": "Critical Pace Curve — best mean speed by duration (90d)",
+      "description": "Best sustained mean speed per duration. 20-60 min plateau = Critical Pace (FTPace).",
+      "datasource": {
+        "type": "influxdb",
+        "uid": "garmin_influxdb"
+      },
+      "gridPos": {
+        "h": 11,
+        "w": 12,
+        "x": 12,
+        "y": 124
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "velocitykmh",
+          "decimals": 2,
+          "color": {
+            "mode": "fixed",
+            "fixedColor": "#34D399"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "#34D399",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byFrameRefID",
+              "options": "A"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "1s"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byFrameRefID",
+              "options": "B"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "5s"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byFrameRefID",
+              "options": "C"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "30s"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byFrameRefID",
+              "options": "D"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "1min"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byFrameRefID",
+              "options": "E"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "5min"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byFrameRefID",
+              "options": "F"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "20min"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byFrameRefID",
+              "options": "G"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "60min"
+              }
+            ]
+          }
+        ]
+      },
+      "options": {
+        "orientation": "horizontal",
+        "displayMode": "basic",
+        "showUnfilled": true,
+        "valueMode": "color",
+        "minVizWidth": 0,
+        "minVizHeight": 10,
+        "namePlacement": "auto",
+        "sizing": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        }
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "rawQuery": true,
+          "datasource": {
+            "type": "influxdb",
+            "uid": "garmin_influxdb"
+          },
+          "query": "SELECT max(\"Speed\") * 3.6 FROM \"ActivityGPS\" WHERE time > now() - 90d AND \"ActivitySelector\" =~ /running/"
+        },
+        {
+          "refId": "B",
+          "rawQuery": true,
+          "datasource": {
+            "type": "influxdb",
+            "uid": "garmin_influxdb"
+          },
+          "query": "SELECT max(ms) * 3.6 FROM (SELECT moving_average(\"Speed\", 5)    AS ms FROM \"ActivityGPS\" WHERE time > now() - 90d AND \"ActivitySelector\" =~ /running/)"
+        },
+        {
+          "refId": "C",
+          "rawQuery": true,
+          "datasource": {
+            "type": "influxdb",
+            "uid": "garmin_influxdb"
+          },
+          "query": "SELECT max(ms) * 3.6 FROM (SELECT moving_average(\"Speed\", 30)   AS ms FROM \"ActivityGPS\" WHERE time > now() - 90d AND \"ActivitySelector\" =~ /running/)"
+        },
+        {
+          "refId": "D",
+          "rawQuery": true,
+          "datasource": {
+            "type": "influxdb",
+            "uid": "garmin_influxdb"
+          },
+          "query": "SELECT max(ms) * 3.6 FROM (SELECT moving_average(\"Speed\", 60)   AS ms FROM \"ActivityGPS\" WHERE time > now() - 90d AND \"ActivitySelector\" =~ /running/)"
+        },
+        {
+          "refId": "E",
+          "rawQuery": true,
+          "datasource": {
+            "type": "influxdb",
+            "uid": "garmin_influxdb"
+          },
+          "query": "SELECT max(ms) * 3.6 FROM (SELECT moving_average(\"Speed\", 300)  AS ms FROM \"ActivityGPS\" WHERE time > now() - 90d AND \"ActivitySelector\" =~ /running/)"
+        },
+        {
+          "refId": "F",
+          "rawQuery": true,
+          "datasource": {
+            "type": "influxdb",
+            "uid": "garmin_influxdb"
+          },
+          "query": "SELECT max(ms) * 3.6 FROM (SELECT moving_average(\"Speed\", 1200) AS ms FROM \"ActivityGPS\" WHERE time > now() - 90d AND \"ActivitySelector\" =~ /running/)"
+        },
+        {
+          "refId": "G",
+          "rawQuery": true,
+          "datasource": {
+            "type": "influxdb",
+            "uid": "garmin_influxdb"
+          },
+          "query": "SELECT max(ms) * 3.6 FROM (SELECT moving_average(\"Speed\", 3600) AS ms FROM \"ActivityGPS\" WHERE time > now() - 90d AND \"ActivitySelector\" =~ /running/)"
+        }
+      ]
+    },
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "garmin_influxdb"
+      },
+      "description": "Progression de l'efficience cardiaque - allure a FC fixee, moyenne mensuelle (30j).\n\n3 bandes de FC moyenne NON chevauchantes : ~140 (easy, 135-144 bpm) | ~150 (steady, 145-154) | ~160 (tempo, 155-164). Chaque point = 1000 / moyenne(vitesse) des runs plats dont la FC moy tombe dans la bande, agrege par 30 jours. Bandes <135 et >=165 retirees (2-5 runs, trop bruite).\n\nAxe Y : allure mm:ss/km (plus bas = plus rapide). Filtre terrain : D+/km < 25. Distance > 1 km.\n\nCORRECTION vs ancienne version : bins non chevauchants (plus de double-comptage aux bornes), seulement les 3 bandes qui portent des donnees, et lissage mensuel (fini la spaghetti de points bruts).\n\nATTENTION CONFONDANT METEO : sur une fenetre Dec->Mai l'allure a FC fixee MONTE (ralentit) surtout a cause de la chaleur croissante, PAS d'une perte de forme - a allure libre l'athlete ralentit quand il fait chaud (cf panel 'Heat impact' #120). Version corrigee chaleur : EF vs WBGT (#120) et EF GAP/HR (#300, ce dashboard). Lire la tendance en gardant la saison en tete.",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "axisLabel": "Pace mm:ss/km (lower = faster)",
+            "axisPlacement": "auto",
+            "drawStyle": "line",
+            "lineInterpolation": "smooth",
+            "lineWidth": 3,
+            "fillOpacity": 8,
+            "pointSize": 7,
+            "showPoints": "always",
+            "spanNulls": true,
+            "lineStyle": {
+              "fill": "solid"
+            }
+          },
+          "decimals": 0,
+          "unit": "dthms"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "~140 (easy)"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "#3B82F6",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "~150 (steady)"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "#22C55E",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "~160 (tempo)"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "#F59E0B",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 10,
+        "w": 12,
+        "x": 0,
+        "y": 135
+      },
+      "id": 16,
+      "options": {
+        "legend": {
+          "calcs": [
+            "last",
+            "mean"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "asc"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "garmin_influxdb"
+          },
+          "query": "SELECT 1000 / MEAN(\"averageSpeed\") AS \"~140 (easy)\" FROM \"ActivitySummary\" WHERE $timeFilter AND \"ActivitySelector\" =~ /running/ AND \"distance\" > 1000 AND \"elevationGain\" * 1000 < \"distance\" * 25 AND \"averageHR\" >= 135 AND \"averageHR\" < 145 GROUP BY time(30d) fill(none)",
+          "rawQuery": true,
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "garmin_influxdb"
+          },
+          "query": "SELECT 1000 / MEAN(\"averageSpeed\") AS \"~150 (steady)\" FROM \"ActivitySummary\" WHERE $timeFilter AND \"ActivitySelector\" =~ /running/ AND \"distance\" > 1000 AND \"elevationGain\" * 1000 < \"distance\" * 25 AND \"averageHR\" >= 145 AND \"averageHR\" < 155 GROUP BY time(30d) fill(none)",
+          "rawQuery": true,
+          "refId": "B"
+        },
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "garmin_influxdb"
+          },
+          "query": "SELECT 1000 / MEAN(\"averageSpeed\") AS \"~160 (tempo)\" FROM \"ActivitySummary\" WHERE $timeFilter AND \"ActivitySelector\" =~ /running/ AND \"distance\" > 1000 AND \"elevationGain\" * 1000 < \"distance\" * 25 AND \"averageHR\" >= 155 AND \"averageHR\" < 165 GROUP BY time(30d) fill(none)",
+          "rawQuery": true,
+          "refId": "C"
+        }
+      ],
+      "title": "Pace @ fixed HR - monthly trend, 3 bands (flat runs, D+/km < 25)",
+      "transformations": [
+        {
+          "id": "renameByRegex",
+          "options": {
+            "regex": "^ActivitySummary\\.(.*)$",
+            "renamePattern": "$1"
+          }
+        }
+      ],
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "garmin_influxdb"
+      },
+      "description": "Nuage allure vs FC - chaque point = 1 run plat (D+/km < 25, 180j). X = FC moyenne (effort cardiaque), Y = allure mm:ss/km (plus bas = plus rapide). COULEUR = recence (degrade) : bleu = ancien (~6 mois) -> jaune -> rouge = recent.\n\nLECTURE : a FC donnee, si les points rouges (recents) sont PLUS BAS (plus rapides) que les bleus (anciens) = gain d'efficience cardiaque. S'ils montent = cout. Ici le nuage recent monte surtout a cause de la chaleur croissante (Dec->Mai, cf #120) - ce n'est pas une regression de forme.\n\nAvantage vs binning : pas de bornes arbitraires ni de double-comptage, chaque run apparait une fois et on voit la relation FC<->allure complete.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "fillOpacity": 70,
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "pointShape": "circle",
+            "pointSize": {
+              "fixed": 9
+            },
+            "pointStrokeWidth": 1,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "show": "points"
+          },
+          "decimals": 0,
+          "unit": "dthms"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "HR"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "short"
+              },
+              {
+                "id": "decimals",
+                "value": 0
+              },
+              {
+                "id": "custom.axisLabel",
+                "value": "Avg HR (bpm) - cardiac effort - higher = harder"
+              },
+              {
+                "id": "custom.axisPlacement",
+                "value": "bottom"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Pace"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "dthms"
+              },
+              {
+                "id": "custom.axisLabel",
+                "value": "Pace mm:ss/km (lower = faster)"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Time"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "mode": "continuous-BlYlRd"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 10,
+        "w": 12,
+        "x": 12,
+        "y": 135
+      },
+      "id": 17,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "series": [
+          {
+            "x": "HR",
+            "y": "Pace",
+            "frame": 0,
+            "name": "Older (>18 mo)"
+          },
+          {
+            "x": "HR",
+            "y": "Pace",
+            "frame": 1,
+            "name": "Mid (6-18 mo)"
+          },
+          {
+            "x": "HR",
+            "y": "Pace",
+            "frame": 2,
+            "name": "Recent (<6 mo)"
+          }
+        ],
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        },
+        "seriesMapping": "manual"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "garmin_influxdb"
+          },
+          "query": "SELECT \"averageHR\" AS \"HR\", 1000 / \"averageSpeed\" AS \"Pace\" FROM \"ActivitySummary\" WHERE $timeFilter AND time < now() - 540d AND \"ActivitySelector\" =~ /running/ AND \"averageHR\" > 110 AND \"distance\" > 1000 AND \"elevationGain\" * 1000 < \"distance\" * 25",
+          "rawQuery": true,
+          "refId": "A",
+          "resultFormat": "table"
+        },
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "garmin_influxdb"
+          },
+          "query": "SELECT \"averageHR\" AS \"HR\", 1000 / \"averageSpeed\" AS \"Pace\" FROM \"ActivitySummary\" WHERE $timeFilter AND time >= now() - 540d AND time < now() - 180d AND \"ActivitySelector\" =~ /running/ AND \"averageHR\" > 110 AND \"distance\" > 1000 AND \"elevationGain\" * 1000 < \"distance\" * 25",
+          "rawQuery": true,
+          "refId": "B",
+          "resultFormat": "table"
+        },
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "garmin_influxdb"
+          },
+          "query": "SELECT \"averageHR\" AS \"HR\", 1000 / \"averageSpeed\" AS \"Pace\" FROM \"ActivitySummary\" WHERE $timeFilter AND time >= now() - 180d AND \"ActivitySelector\" =~ /running/ AND \"averageHR\" > 110 AND \"distance\" > 1000 AND \"elevationGain\" * 1000 < \"distance\" * 25",
+          "rawQuery": true,
+          "refId": "C",
+          "resultFormat": "table"
+        }
+      ],
+      "title": "Pace vs avg HR - colored by recency (flat runs, D+/km < 25)",
+      "transformations": [
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {},
+            "indexByName": {},
+            "renameByName": {
+              "ActivitySummary.HR": "HR",
+              "ActivitySummary.Pace": "Pace"
+            }
+          }
+        }
+      ],
+      "type": "xychart"
+    },
+    {
+      "id": 120,
+      "type": "xychart",
+      "title": "Heat impact — Efficiency Factor vs WBGT",
+      "datasource": {
+        "type": "influxdb",
+        "uid": "garmin_influxdb"
+      },
+      "gridPos": {
+        "h": 11,
+        "w": 24,
+        "x": 0,
+        "y": 145
+      },
+      "description": "Impact reel de la chaleur sur la physiologie. Chaque point = 1 run (365j). X = WBGT (indice de stress thermique : integre temperature + humidite + soleil + vent). Y = Efficiency Factor = vitesse/FC (m.min-1/bpm), plus haut = plus efficient.\n\nPourquoi EF et pas la FC : a allure libre l'athlete ralentit quand il fait chaud, donc la FC moyenne ne monte pas (effet ~ 0 bpm/degC a allure egale). Le cout de la chaleur se voit sur l'EFFICIENCE : EF baisse ~0.32%/degC (EF~WBGT p=0.004, n=92). Nuage qui descend vers la droite = impact chaleur.\n\nZones WBGT : <18 faible / 18-23 modere / 23-28 eleve / >28 extreme. Optimum perf ~8-15 degC.\nLimites : peu de runs >25 degC ; surtout des runs easy/steady ; allure auto-selectionnee (le cout apparait aussi en pace perdue, pas que sur l'EF).",
+      "targets": [
+        {
+          "refId": "A",
+          "rawQuery": true,
+          "datasource": {
+            "type": "influxdb",
+            "uid": "garmin_influxdb"
+          },
+          "query": "SELECT (\"averageSpeed\" * 60 / \"averageHR\") AS \"EF\" FROM \"ActivitySummary\" WHERE $timeFilter AND \"ActivitySelector\" =~ /running/ AND \"averageHR\" > 80 AND \"averageHR\" < 210 AND \"averageSpeed\" > 1.5 AND \"averageSpeed\" < 6.5",
+          "resultFormat": "table"
+        },
+        {
+          "refId": "B",
+          "rawQuery": true,
+          "datasource": {
+            "type": "influxdb",
+            "uid": "garmin_influxdb"
+          },
+          "query": "SELECT \"wbgt_estimated\" AS \"WBGT\" FROM \"ActivityWeather\" WHERE $timeFilter",
+          "resultFormat": "table"
+        }
+      ],
+      "transformations": [
+        {
+          "id": "renameByRegex",
+          "options": {
+            "regex": "^[^.]+\\.(.+)$",
+            "renamePattern": "$1"
+          }
+        },
+        {
+          "id": "joinByField",
+          "options": {
+            "byField": "Time",
+            "mode": "inner"
+          }
+        },
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "Time": true
+            },
+            "indexByName": {
+              "WBGT": 0,
+              "EF": 1
+            },
+            "renameByName": {}
+          }
+        }
+      ],
+      "options": {
+        "seriesMapping": "manual",
+        "series": [
+          {
+            "x": "WBGT",
+            "y": "EF"
+          }
+        ],
+        "legend": {
+          "showLegend": true,
+          "displayMode": "list",
+          "placement": "bottom",
+          "calcs": []
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "show": "points",
+            "pointSize": {
+              "fixed": 7
+            },
+            "pointShape": "circle",
+            "pointStrokeWidth": 1,
+            "fillOpacity": 70,
+            "axisPlacement": "auto"
+          },
+          "color": {
+            "mode": "fixed",
+            "fixedColor": "#F97316"
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "EF"
+            },
+            "properties": [
+              {
+                "id": "custom.axisLabel",
+                "value": "Efficiency Factor (vitesse/FC, m.min-1/bpm) — haut = plus efficient"
+              },
+              {
+                "id": "decimals",
+                "value": 3
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "WBGT"
+            },
+            "properties": [
+              {
+                "id": "custom.axisLabel",
+                "value": "WBGT (degC) — stress thermique — haut = plus chaud"
+              },
+              {
+                "id": "unit",
+                "value": "celsius"
+              },
+              {
+                "id": "decimals",
+                "value": 1
+              }
+            ]
+          }
+        ]
+      }
     }
   ],
   "refresh": "1h",
@@ -1070,26 +2350,145 @@
     "fitness-age",
     "hill-score",
     "endurance-score",
-    "lthr",
-    "rhr",
     "hr-zones",
     "power-zones",
+    "lthr",
     "fcmax",
     "ftp",
     "weight",
-    "bmi",
     "long-term",
-    "calibration"
+    "calibration",
+    "aerobic-decoupling",
+    "efficiency-factor",
+    "pace-zones",
+    "power-curve",
+    "heat-impact",
+    "plan-validation"
   ],
   "templating": {
-    "list": []
+    "list": [
+      {
+        "name": "z1_hr",
+        "label": "HR Zone 1 Floor",
+        "type": "query",
+        "datasource": {
+          "type": "influxdb",
+          "uid": "garmin_influxdb"
+        },
+        "query": "SELECT last(\"zone1Floor\") FROM \"HRZones\" WHERE \"sport\" =~ /RUNNING/",
+        "hide": 2,
+        "refresh": 1,
+        "current": {
+          "selected": true,
+          "text": "120",
+          "value": "120"
+        },
+        "multi": false,
+        "includeAll": false
+      },
+      {
+        "name": "z2_hr",
+        "label": "HR Zone 2 Floor",
+        "type": "query",
+        "datasource": {
+          "type": "influxdb",
+          "uid": "garmin_influxdb"
+        },
+        "query": "SELECT last(\"zone2Floor\") FROM \"HRZones\" WHERE \"sport\" =~ /RUNNING/",
+        "hide": 2,
+        "refresh": 1,
+        "current": {
+          "selected": true,
+          "text": "140",
+          "value": "140"
+        },
+        "multi": false,
+        "includeAll": false
+      },
+      {
+        "name": "z3_hr",
+        "label": "HR Zone 3 Floor",
+        "type": "query",
+        "datasource": {
+          "type": "influxdb",
+          "uid": "garmin_influxdb"
+        },
+        "query": "SELECT last(\"zone3Floor\") FROM \"HRZones\" WHERE \"sport\" =~ /RUNNING/",
+        "hide": 2,
+        "refresh": 1,
+        "current": {
+          "selected": true,
+          "text": "155",
+          "value": "155"
+        },
+        "multi": false,
+        "includeAll": false
+      },
+      {
+        "name": "z4_hr",
+        "label": "HR Zone 4 Floor",
+        "type": "query",
+        "datasource": {
+          "type": "influxdb",
+          "uid": "garmin_influxdb"
+        },
+        "query": "SELECT last(\"zone4Floor\") FROM \"HRZones\" WHERE \"sport\" =~ /RUNNING/",
+        "hide": 2,
+        "refresh": 1,
+        "current": {
+          "selected": true,
+          "text": "170",
+          "value": "170"
+        },
+        "multi": false,
+        "includeAll": false
+      },
+      {
+        "name": "z5_hr",
+        "label": "HR Zone 5 Floor",
+        "type": "query",
+        "datasource": {
+          "type": "influxdb",
+          "uid": "garmin_influxdb"
+        },
+        "query": "SELECT last(\"zone5Floor\") FROM \"HRZones\" WHERE \"sport\" =~ /RUNNING/",
+        "hide": 2,
+        "refresh": 1,
+        "current": {
+          "selected": true,
+          "text": "185",
+          "value": "185"
+        },
+        "multi": false,
+        "includeAll": false
+      },
+      {
+        "name": "fcmax",
+        "label": "FCmax (live)",
+        "type": "query",
+        "datasource": {
+          "type": "influxdb",
+          "uid": "garmin_influxdb"
+        },
+        "query": "SELECT last(\"maxHeartRate\") FROM \"HRZones\" WHERE \"sport\" =~ /RUNNING/",
+        "hide": 2,
+        "refresh": 1,
+        "current": {
+          "selected": true,
+          "text": "",
+          "value": ""
+        },
+        "multi": false,
+        "includeAll": false
+      }
+    ]
   },
   "time": {
     "from": "now-6M",
     "to": "now"
   },
   "timezone": "browser",
-  "title": "08 Long-Term Trends",
+  "title": "Fitness Trends & Validation",
   "uid": "garvis-c-fitness",
   "version": 25,
   "weekStart": "monday",

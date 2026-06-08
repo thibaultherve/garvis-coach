@@ -1,57 +1,30 @@
-## 01 Daily Readiness & Recovery (garvis-a-daily)
+# Panels catalog — Garvis Coach dashboards
 
-### Body Battery (now)
+> **3 dashboards** (reorg 2026-06-07). Auto-généré depuis les JSON canoniques de `dashboards/`. Chaque entrée = titre du panel + description + 1ʳᵉ(s) requête(s) source. Avant toute analyse/bilan, lire la section du dashboard concerné.
+> Les lignes **▸ …** sont des séparateurs de section (panneaux `row`), pas des données.
 
-### Sleep Score (last night)
+---
 
-### HRV last night vs 7d avg
+## Training Load & Terrain (`garvis-b-load`)
 
-### RHR last night
+*Pilotage de la charge d'entrainement (ACWR, polarisation, CTL/ATL/TSB, monotonie/strain, volume, training status, HRV, acclimatation chaleur) + charge verticale & terrain (ACWR vertical D+, budget D+ vs plafond ~830 m, D+/km, VAM, cout terrain, cumul denivele). Prevention de la surcharge globale ET verticale. Inclut l'ex-« Hill & Trail ».*
 
-### Training Readiness
-
-### Recovery Time (h)
-Garmin native recoveryTime (minutes) divided by 60.
-Source: SELECT last("recoveryTime") / 60 AS "h" FROM "TrainingReadiness" WHERE $timeFilt...
-
-### Body Battery 24h
-
-### Stress 24h
-
-### RHR & HRV 30d
-
-### Training Readiness composantes (30d)
-
-### Month at a Glance — Daily Average (30j)
-Calendar multi-metric view: RHR, Stress, Active, BB, Steps, SpO2, Sleep score, Sleep, HRV.
-
-### HR Distribution (histogram intraday)
-HR distribution over selected range with sleep/active/peak thresholds.
-Source: select mean_value from (SELECT mean("HeartRate") as mean_value FROM "HeartRateIn...; select mean_value from (SELECT mean("HeartRate") as mean_value FROM "HeartRateIn...
-
-### HR Range daily (Max-Min)
-Daily HR spread (max-min). Low spread = stressed autonomic system.
-
-### Selected time range at a Glance
-Summary table for the selected time range.
-Source: SELECT max("totalDistanceMeters") FROM "DailyStats" WHERE $timeFilter GROUP BY t...; SELECT max("totalSteps") FROM "DailyStats" WHERE $timeFilter GROUP BY time(1d) f...
-
-## 02 Training Load & ACWR (garvis-b-load)
+`02-training-load-acwr.json` — 26 panneaux + 4 sections (rows)
 
 ### Training Status Timeline — 180d
 Garmin training status bands (Productive / Peaking / Maintaining / Recovery / Strained / Unproductive / Detraining / Overreaching). Garmin enum suffix _N indicates duration in state — grouped by main category here.
-Source: SELECT "trainingStatusFeedbackPhrase" AS Status FROM "TrainingStatus" WHERE $tim...
+_Source:_ `SELECT "trainingStatusFeedbackPhrase" AS Status FROM "TrainingStatus" WHERE $timeFilter`
 
 ### Load Focus History — 180d
 Garmin trainingBalanceFeedbackPhrase: BALANCED (ideal) / AEROBIC_LOW_FOCUS (base focus = OK for Seiler polarized plan) / AEROBIC_LOW/HIGH_SHORTAGE / ANAEROBIC_SHORTAGE/FOCUS. Garmin _N suffixes stripped via regex.
-Source: SELECT "trainingBalanceFeedbackPhrase" AS "Load Focus" FROM "TrainingStatus" WHE...
+_Source:_ `SELECT "trainingBalanceFeedbackPhrase" AS "Load Focus" FROM "TrainingStatus" WHERE $timeFilter`
 
 ### Training Status
 Raw Garmin phrase (e.g. PRODUCTIVE_1, MAINTAINING_2, RECOVERY_2). Numeric trainingStatus code not used (mapping uncertain across firmware).
 
 ### Load Focus
 Official Garmin source (trainingBalanceFeedbackPhrase). Requires extended fetcher patch.
-Source: SELECT last("trainingBalanceFeedbackPhrase") AS "shortage" FROM "TrainingStatus"...
+_Source:_ `SELECT last("trainingBalanceFeedbackPhrase") AS "shortage" FROM "TrainingStatus" WHERE $timeFilter`
 
 ### Acute Training Load (ACWR)
 
@@ -59,31 +32,35 @@ Source: SELECT last("trainingBalanceFeedbackPhrase") AS "shortage" FROM "Trainin
 
 ### Load Focus 28d — vs Optimal Range
 Bands: blue = shortage (below target_min), green = optimal range, red = overload (above target_max). Thresholds calibrated on current Garmin target_min/max (recalibrate if Garmin adjusts).
-Source: SELECT last("monthlyLoadAnaerobic") AS "Anaerobic", last("monthlyLoadAerobicHigh...
+_Source:_ `SELECT last("monthlyLoadAnaerobic") AS "Anaerobic", last("monthlyLoadAerobicHigh") AS "High Aerobic", last("monthlyLoadAerobicLow") AS "Low ...`
 
 ### Polarization 80/10/10 — Weekly (12 wk)
 Weekly % time in HR zones (Mon-Sun, Europe/Paris TZ). Garmin colors: Z1+Z2 blue (target >= 80%), Z3 green (target 10%), Z4+Z5 red (target <= 10%). Rolling 12 weeks including current week.
-Source: SELECT sum("hrTimeInZone_1") + sum("hrTimeInZone_2") AS "Z1+Z2 (cible 80%)", sum...
+_Source:_ `SELECT sum("hrTimeInZone_1") + sum("hrTimeInZone_2") AS "Z1+Z2 (cible 80%)", sum("hrTimeInZone_3") AS "Z3 (cible 10%)", sum("hrTimeInZone_4"...`
 
 ### Training Intensity (Aerobic + Anaerobic + Load + Endurance)
 Daily summary: aerobic/anaerobic TE + acute/chronic load + endurance score.
 
-### Weekly Volume — 6 Months (Mon-Sun)
-Source: SELECT sum("distance") FROM "ActivitySummary" WHERE $timeFilter AND "ActivitySel...; SELECT sum("elapsedDuration") FROM "ActivitySummary" WHERE $timeFilter AND "Acti...
+### Weekly Volume (Mon-Sun)
+_Source:_ `SELECT sum("distance") FROM "ActivitySummary" WHERE $timeFilter AND "ActivitySelector" =~ /running/ GROUP BY time(7d, 4d) fill(0); SELECT sum("elapsedDuration") FROM "ActivitySummary" WHERE $timeFilter AND "ActivitySelector" =~ /running/ GROUP BY time(7d, 4d) fill(0)`
 
 ### Foster Monotony & Strain (7d Rolling)
 Foster Monotony & Strain (Foster et al., J Strength Cond Res 2001).
 
 Monotony = mean(daily_load_7d) / stddev(daily_load_7d). High monotony (>2.0) = increased illness/staleness risk. Strain = weekly_load × Monotony.
-Source: SELECT moving_average(daily_tl, 7) / sqrt(moving_average(daily_tl_sq, 7) - movin...; SELECT (moving_average(daily_tl, 7) * 7) * (moving_average(daily_tl, 7) / sqrt(m...
+
+Source: activityTrainingLoad summed daily, running only, rest days = 0. Variance via identity Var(X) = E[X²] - E[X]². Strain = (mean_7d × 7) × Monotony.
+
+Monotony thresholds: <1.5 green (varied), 1.5-2.0 yellow (caution), >2.0 red (risk). Strain: no absolute threshold — watch for >50% spikes above 4-week baseline.
+_Source:_ `SELECT moving_average(daily_tl, 7) / sqrt(moving_average(daily_tl_sq, 7) - moving_average(daily_tl, 7) * moving_average(daily_tl, 7)) AS "Mo...; SELECT (moving_average(daily_tl, 7) * 7) * (moving_average(daily_tl, 7) / sqrt(moving_average(daily_tl_sq, 7) - moving_average(daily_tl, 7) ...`
 
 ### PMC — Fitness (CTL 42d) / Fatigue (ATL 7d) / Form (TSB)
 Rolling mean approximation of TrainingPeaks EWMA. CTL = 6-week aerobic fitness. ATL = 7-day fatigue. TSB = CTL - ATL: negative = overload, positive = peak form. Competition sweet spot: TSB +5 to +15.
-Source: SELECT moving_average(daily_tl, 42) AS "CTL (fitness 42j)", moving_average(daily...; SELECT moving_average(daily_tl, 42) - moving_average(daily_tl, 7) AS "TSB (form)...
+_Source:_ `SELECT moving_average(daily_tl, 42) AS "CTL (fitness 42j)", moving_average(daily_tl, 7) AS "ATL (fatigue 7j)" FROM (SELECT sum("activityTrai...; SELECT moving_average(daily_tl, 42) - moving_average(daily_tl, 7) AS "TSB (form)" FROM (SELECT sum("activityTrainingLoad") AS daily_tl FROM ...`
 
 ### HRV Status (7-day avg + baseline)
 Replicates Garmin Connect HRV Status graph. Grey band = personal baseline. Colored markers by status: green = Balanced, orange = Unbalanced, red = Low.
-Source: SELECT mean("weeklyAvg") AS "Balanced" FROM "HRVStatus" WHERE "status" = 'BALANC...; SELECT mean("weeklyAvg") AS "Unbalanced" FROM "HRVStatus" WHERE "status" = 'UNBA...
+_Source:_ `SELECT mean("weeklyAvg") AS "Balanced" FROM "HRVStatus" WHERE "status" = 'BALANCED' AND $timeFilter GROUP BY time(1d) fill(null); SELECT mean("weeklyAvg") AS "Unbalanced" FROM "HRVStatus" WHERE "status" = 'UNBALANCED' AND $timeFilter GROUP BY time(1d) fill(null)` (+1 more)
 
 ### Heat Trend
 Current heat acclimation trend from Garmin.
@@ -94,413 +71,229 @@ Garmin heat acclimation %. Increases with training in hot conditions. >75% = wel
 ### Heat Acclimation
 Garmin heat acclimation %. >75 = well adapted.
 
-## 03 Activity Drill-Down (garvis-j-activity)
+**▸ Dénivelé, charge verticale & terrain**
 
-### Distance
-Source: SELECT last("distance")/1000 FROM "ActivitySummary" WHERE "ActivitySelector" = '...
+**▸ ① Garde-fou charge verticale — prévention surcharge**
 
-### Duration
-Source: SELECT last("elapsedDuration") FROM "ActivitySummary" WHERE "ActivitySelector" =...
+### ACWR vertical — D+ aigu:chronique (le garde-fou surcharge)
+Ratio de charge verticale : moyenne glissante 7j du D+ quotidien / moyenne glissante 28j (fenêtres ACWR de Gabbett, appliquées au D+ — le facteur de charge verticale documenté, pas à la charge globale de ce dashboard).
+Zone douce 0,80–1,30 (vert) · 1,30–1,50 prudence (ambre) · >1,50 surcharge verticale (rouge).
+Aujourd'hui ~0,93. La semaine de surcharge (17/05) a culminé à 1,50. fill(0) = les jours de repos comptent 0 D+.
+_Source:_ `SELECT moving_average(d,7)/moving_average(d,28) AS "ACWR D+" FROM (SELECT sum("elevationGain") AS d FROM "ActivitySummary" WHERE "activityTy...`
 
-### Avg HR
-Source: SELECT last("averageHR") FROM "ActivitySummary" WHERE "ActivitySelector" = '$act...
+### ACWR vertical — maintenant
+Valeur actuelle de l'ACWR vertical (mêmes bandes Gabbett que la courbe). Vert = montée en charge maîtrisée.
+_Source:_ `SELECT moving_average(d,7)/moving_average(d,28) AS acwr FROM (SELECT sum("elevationGain") AS d FROM "ActivitySummary" WHERE "activityType"='...`
 
-### Max HR
-Source: SELECT last("maxHR") FROM "ActivitySummary" WHERE "ActivitySelector" = '$activit...
+### D+ / D- hebdomadaire + charge chronique — vs plafond perso
+D+ (barres, colorées par seuil) et D- (ligne bleue, miroir excentrique) par semaine. Rouge uniquement >800 m (ton plafond observé ~830). Ligne grise pointillée = D+ chronique (moyenne 4 semaines). Les semaines de surcharge (700 / 766 m) ressortent en ambre.
+_Source:_ `SELECT sum("elevationGain") AS "D+", sum("elevationLoss") AS "D-" FROM "ActivitySummary" WHERE "activityType"='running' AND "distance">1000 ...; SELECT moving_average(w,4) AS "D+ chronique (4 sem)" FROM (SELECT sum("elevationGain") AS w FROM "ActivitySummary" WHERE "activityType"='run...`
 
-### Avg Pace (per km)
-Source: SELECT 1000.0/last("averageSpeed") FROM "ActivitySummary" WHERE "ActivitySelecto...
+### Budget vertical 4 sem. vs plafond
+Moyenne glissante 4 semaines du D+ hebdo vs ton plafond observé (~830 m). Traduit l'ACWR abstrait en 'où j'en suis vs ma ligne rouge perso'. Actuellement ~481 m (58%).
+_Source:_ `SELECT moving_average(wk,4) AS "Budget 4 sem" FROM (SELECT sum("elevationGain") AS wk FROM "ActivitySummary" WHERE "activityType"='running' ...`
 
-### Calories
-Source: SELECT last("calories") FROM "ActivitySummary" WHERE "ActivitySelector" = '$acti...
+**▸ ② Caractère du terrain — par sortie dans le temps**
 
-### Elev gain (D+)
-Source: SELECT last("elevationGain") FROM "ActivitySummary" WHERE "ActivitySelector" = '...
+### Intensité de grimpe par sortie — D+/km (bandes locales)
+Intensité de grimpe par sortie, calibrée terrain local : <8 plat / 8–15 vallonné (ton pain quotidien) / 15–22 costaud / >22 raide (rare, ~5 sorties/150j). Rouge réservé aux vraies sorties dures locales (fini le seuil alpin >50 absurde de l'ancien dashboard).
+_Source:_ `SELECT ("elevationGain"/("distance"/1000)) AS "D+/km" FROM "ActivitySummary" WHERE "activityType"='running' AND "distance">1000 AND $timeFil...`
 
-### Elev loss (D-)
-Source: SELECT last("elevationLoss") FROM "ActivitySummary" WHERE "ActivitySelector" = '...
+### Vitesse verticale (VAM, m/h) par sortie
+Travail vertical : mètres grimpés par heure de course, par sortie. Tendance = est-ce que je grimpe plus vite. Orthogonal à l'Efficiency Factor GAP/FC (« Fitness Trends & Validation ») : ici aucune FC, juste du dénivelé/temps.
+Honnête : VAM moyenne sur TOUTE la sortie (dilue plat/descente), pas la VAM en montée seule — ça viendra avec le sidecar ClimbMetrics.
+_Source:_ `SELECT ("elevationGain"/("movingDuration"/3600)) AS "VAM" FROM "ActivitySummary" WHERE "activityType"='running' AND "distance">1000 AND $tim...`
 
-### Aerobic TE
-Source: SELECT last("aerobicTrainingEffect") FROM "ActivitySummary" WHERE "ActivitySelec...
+### La montagne grimpée — D+ cumulé 2026
+D+ course à pied cumulé depuis le 1er janvier (YTD = 9 833 m). Ancré au 1er janvier — ignore le sélecteur de temps, par définition. Ligne grise = total glissant 365j (12 659 m), l'horizon à atteindre. La pente de la courbe = ta charge verticale ; les plats = déloads.
+_Source:_ `SELECT cumulative_sum(wk) AS "Cumul D+ 2026" FROM (SELECT sum("elevationGain") AS wk FROM "ActivitySummary" WHERE "activityType"='running' A...`
 
-### Anaerobic TE
-Source: SELECT last("anaerobicTrainingEffect") FROM "ActivitySummary" WHERE "ActivitySel...
+### Coût du terrain par sortie — GAP vs allure brute (%)
+Combien le relief ralentit l'allure : (GAP − allure brute) / allure brute × 100, par sortie. Aucune FC — c'est une taxe topographique, ≠ l'Efficiency Factor GAP/FC de « Fitness Trends & Validation ».
+Honnête : moyenne sur la sortie → mesure une dérive d'économie même-terrain, pas le coût pur de la montée (grade-split = sidecar).
+_Source:_ `SELECT (mean("GradeAdjustedSpeed")-mean("Speed"))/mean("Speed")*100 AS "Coût terrain %" FROM "ActivityGPS" WHERE $timeFilter AND "ActivitySe...`
 
-### Exercise Load
-Source: SELECT last("activityTrainingLoad") FROM "ActivitySummary" WHERE "ActivitySelect...
+### Sorties récentes — détail terrain
+Une ligne par sortie sur la fenêtre sélectionnée. D+/km coloré sur les mêmes bandes locales que le graphe. Triable.
+_Source:_ `SELECT "activityName" AS "Sortie", ("distance"/1000) AS "km", "elevationGain" AS "D+", "elevationLoss" AS "D-", ("elevationGain"/("distance"...`
 
-### VO2max (post-run)
-Source: SELECT last("vO2MaxValue") FROM "ActivitySummary" WHERE "ActivitySelector" = '$a...
+**▸ ③ Lecture & feuille de route**
 
-### Carte — type de surface (id 13, geomap)
-Full-width GPS track colored by OSM surface type. Replaced the two old geomaps
-("GPS Track by Velocity" + "GPS Track by Heart Rate", id 14, both removed 2026-06).
-Reads the enriched ActivitySurface measurement joined to ActivityGPS coordinates.
-Source: SELECT "Latitude" FROM "ActivityGPS" WHERE "ActivitySelector" = '$activity'; SELECT "Longitude" FROM "ActivityGPS" WHERE "ActivitySelector" = '$activity'
+### (panel id 157, text)
+_(panneau texte / guide de lecture)_
 
-### Profil d'élévation — coloré par pente (id 100, ECharts)
-Elevation vs distance, line/area colored by 6 grade-band colors. Tooltip shows
-surface + waytype + grade at the hovered point. ECharts panel (volkovlabs-echarts-panel).
-Reads ActivityGrade / ActivitySurface / ActivityTrack.
+---
 
-### Profil d'élévation — coloré par surface (id 104, ECharts)
-Same elevation profile as id 100, colored by OSM surface type instead of grade.
-ECharts panel. Reads ActivitySurface / ActivityTrack.
+## Activity Drill-Down (`garvis-j-activity`)
 
-### Répartition surfaces & types de chemin (id 103, ECharts)
-Two % donut charts side-by-side: surface % (paved/gravel/dirt/…) and waytype %
-(path/track/road/…). ECharts panel. Reads ActivitySurface / ActivityTrack.
+*Drill-down par activite course a pied. Cliquer un lien dans le tableau du haut pour zoomer sur une activite (set time range + variable). Le panel markdown en bas liste les prescriptions de toutes les seances.*
 
-### Splits (id 101, ECharts)
-Strava-style per-km columns: Km · Pace · horizontal bar · Elev · HR. Bars colored
-by pace band, Elev value colored by grade, HR number colored by HR zone. ECharts
-panel rendered with pure `graphic`. Reads ActivityLap / ActivityGrade.
+`03-activity-drill-down.json` — 20 panneaux
 
-### Workout Analysis (id 102, ECharts)
-One column per workout step (warmup / rep / recovery / cooldown, consecutive easy
-blocks merged). Bar colored by step type, plus Elev + HR columns. ECharts panel.
-Reads WorkoutStep-derived steps + ActivityLap / ActivityGPS.
+### Carte — type de surface
+Trace GPS colorée par surface OSM (map-matching Valhalla). Bleu-gris=asphalte, tan=compacté, brun=terre, olive=sentier.
+_Source:_ `SELECT "Latitude" FROM "ActivityTrack" WHERE "ActivitySelector" = '$activity'; SELECT "Longitude" FROM "ActivityTrack" WHERE "ActivitySelector" = '$activity'` (+2 more)
 
-### Time in HR Zones (%) - reference plan (id 15, ECharts)
-% time per HR zone (Garmin zones at time of recording). Target for Z2-strict easy
-runs: >75% Z2. Converted from bargauge to ECharts horizontal % bars.
-Source: SELECT 100.0 * last("hrTimeInZone_1") / (last("hrTimeInZone_1")+last("hrTimeInZo...; SELECT 100.0 * last("hrTimeInZone_2") / (last("hrTimeInZone_1")+last("hrTimeInZo...
+### Time in HR Zones (%) - reference plan
+% time per HR zone (Garmin zones at time of recording). Target for Z2-strict easy runs: >75% Z2.
+_Source:_ `SELECT 100.0 * last("hrTimeInZone_1") / (last("hrTimeInZone_1")+last("hrTimeInZone_2")+last("hrTimeInZone_3")+last("hrTimeInZone_4")+last("h...; SELECT 100.0 * last("hrTimeInZone_2") / (last("hrTimeInZone_1")+last("hrTimeInZone_2")+last("hrTimeInZone_3")+last("hrTimeInZone_4")+last("h...` (+3 more)
 
-### Time in Power Zones (%) - computed from per-second (id 16, ECharts)
-% time per power zone computed on-the-fly from per-second ActivityGPS data. Garmin
-auto-FTP zones. Converted from bargauge to ECharts horizontal % bars.
-Source: SELECT 100.0 * count("Power") / $activity_end FROM "ActivityGPS" WHERE "Activity...; SELECT 100.0 * count("Power") / $activity_end FROM "ActivityGPS" WHERE "Activity...
+### Time in Power Zones (%) - computed from per-second
+% time per power zone computed on-the-fly from per-second ActivityGPS data. Garmin auto-FTP zones.
+_Source:_ `SELECT 100.0 * count("Power") / $activity_end FROM "ActivityGPS" WHERE "ActivitySelector" = '$activity' AND "Power" >= $z1_pwr AND "Power" <...; SELECT 100.0 * count("Power") / $activity_end FROM "ActivityGPS" WHERE "ActivitySelector" = '$activity' AND "Power" >= $z2_pwr AND "Power" <...` (+3 more)
 
-### Heart Rate (bpm) with HR zone bands + prescribed target overlay
-Z1-Z5 bands (auto-populated from InfluxDB HRZones). Purple band = prescribed HR target. Dashed orange staircase = avg HR per step. Y-axis auto-fits HR + target union.
-Source: SELECT "HeartRate" AS "HR" FROM "ActivityGPS" WHERE "ActivitySelector" = '$activ...; SELECT "DurationSeconds" AS "Duration" FROM "ActivityGPS" WHERE "ActivitySelecto...
+### Heart Rate (bpm) — zones + cible prescrite
+FC par seconde (lissée) vs durée. Bandes Z1-Z5. Bande violette = cible FC prescrite, pointillé violet = cible médiane, pointillé orange = moy/step.
+_Source:_ `SELECT "HeartRate" AS "v" FROM "ActivityGPS" WHERE "ActivitySelector" = '$activity' AND "HeartRate" > 60 AND "DurationSeconds" <= $activity_...; SELECT "DurationSeconds" AS "d" FROM "ActivityGPS" WHERE "ActivitySelector" = '$activity'` (+5 more)
 
-### Workout steps — prescribed vs executed
-One row per prescription step. TargetType=open means no HR target (e.g. tests, sprints). DurationS = prescribed duration (s). ActualDurationS = actual executed duration.
-Source: SELECT "StepIndex", "IntensityType", "TargetType", "TargetLowBPM", "TargetHighBP...
+### Structure de la séance — chaque rep + counts
+Segmente la séance par step exécuté (changement de FC moyenne par seconde dans WorkoutTarget). Chaque segment = un rep/bloc, coloré par zone FC. Le titre résume la structure avec le nombre de répétitions détecté (ex. 10×(1:00/2:00)). NB : Garmin n'exporte pas le compteur de reps → il est déduit du motif des cibles.
+_Source:_ `SELECT "DurationSeconds","StepAvgHR","TargetLowBPM","TargetHighBPM" FROM "WorkoutTarget" WHERE "ActivitySelector" = '$activity' ORDER BY tim...; SELECT "StepStartOffsetS","Notes","IntensityType" FROM "WorkoutStep" WHERE "ActivitySelector" = '$activity' ORDER BY time ASC` (+1 more)
 
-### Pace (min/km) — lower = faster + avg per step
-Per-second pace (mm:ss/km). Lower on Y-axis = faster. Orange staircase = avg pace per step (1000/StepAvgSpeed, fetcher filters Speed>0.5 m/s to exclude pauses).
-Source: SELECT 1000.0/"Speed" AS "Pace" FROM "ActivityGPS" WHERE "ActivitySelector" = '$...; SELECT "DurationSeconds" AS "Duration" FROM "ActivityGPS" WHERE "ActivitySelecto...
+### Pace (min/km) + moy/step
+Allure par seconde (mm:ss/km). Plus bas = plus rapide. Pointillé orange = allure moy/step.
+_Source:_ `SELECT 1000.0/"Speed" AS "v" FROM "ActivityGPS" WHERE "ActivitySelector" = '$activity' AND "Speed" > 0.5 AND "DurationSeconds" <= $activity_...; SELECT "DurationSeconds" AS "d" FROM "ActivityGPS" WHERE "ActivitySelector" = '$activity'` (+1 more)
 
-### Power (W) with power zone bands + prescribed target overlay
-Z1-Z5 bands (auto-populated from InfluxDB PowerZones). Purple band = prescribed power target (empty if session targets HR only). Orange staircase = avg power per step.
-Source: SELECT "Power" AS "Power" FROM "ActivityGPS" WHERE "ActivitySelector" = '$activi...; SELECT "DurationSeconds" AS "Duration" FROM "ActivityGPS" WHERE "ActivitySelecto...
+### Power (W) — zones + cible prescrite
+Puissance par seconde (lissée) vs durée. Bandes Z1-Z5 puissance. Bande violette = cible puissance prescrite, pointillé orange = moy/step.
+_Source:_ `SELECT "Power" AS "v" FROM "ActivityGPS" WHERE "ActivitySelector" = '$activity' AND "Power" > 0 AND "DurationSeconds" <= $activity_end; SELECT "DurationSeconds" AS "d" FROM "ActivityGPS" WHERE "ActivitySelector" = '$activity'` (+5 more)
 
-### Cadence (spm) with prescribed target overlay
-Healthy cadence depends on pace (170 spm at 7:00/km is OK). Purple band = target cadence (if prescribed). Orange staircase = avg cadence per step.
-Source: SELECT "Cadence" * 2 AS "Cadence" FROM "ActivityGPS" WHERE "ActivitySelector" = ...; SELECT "DurationSeconds" AS "Duration" FROM "ActivityGPS" WHERE "ActivitySelecto...
+### Cadence (spm) + cible prescrite
+Cadence par seconde (×2) vs durée. Bande verte = cadence cible 170-190. Bande violette = cible prescrite, pointillé orange = moy/step.
+_Source:_ `SELECT "Cadence" * 2 AS "v" FROM "ActivityGPS" WHERE "ActivitySelector" = '$activity' AND "Cadence" > 30 AND "DurationSeconds" <= $activity_...; SELECT "DurationSeconds" AS "d" FROM "ActivityGPS" WHERE "ActivitySelector" = '$activity'` (+4 more)
 
-### Stride Length (m) + avg per step
-Per-second stride length (meters). Orange staircase = avg stride per step (StepAvgStride/1000).
-Source: SELECT "Step_Length"/1000 AS "Stride" FROM "ActivityGPS" WHERE "ActivitySelector...; SELECT "DurationSeconds" AS "Duration" FROM "ActivityGPS" WHERE "ActivitySelecto...
+### Stride Length (m) + moy/step
+Longueur de foulée par seconde (m). Pointillé orange = moy/step.
+_Source:_ `SELECT "Step_Length"/1000 AS "v" FROM "ActivityGPS" WHERE "ActivitySelector" = '$activity' AND "Step_Length" > 0 AND "DurationSeconds" <= $a...; SELECT "DurationSeconds" AS "d" FROM "ActivityGPS" WHERE "ActivitySelector" = '$activity'` (+1 more)
 
-### Vertical Ratio (%) — target <7% + avg per step
-Vertical Ratio (vertical oscillation / stride length, %). <7% = good efficiency. Orange staircase = avg VR per step.
-Source: SELECT "Vertical_Ratio" AS "VR" FROM "ActivityGPS" WHERE "ActivitySelector" = '$...; SELECT "DurationSeconds" AS "Duration" FROM "ActivityGPS" WHERE "ActivitySelecto...
+### Vertical Ratio (%) — cible <7%
+Vertical Ratio par seconde (%). Vert <7% = bonne efficacité. Pointillé orange = moy/step.
+_Source:_ `SELECT "Vertical_Ratio" AS "v" FROM "ActivityGPS" WHERE "ActivitySelector" = '$activity' AND "Vertical_Ratio" > 0 AND "DurationSeconds" <= $...; SELECT "DurationSeconds" AS "d" FROM "ActivityGPS" WHERE "ActivitySelector" = '$activity'` (+1 more)
 
 ### Vertical Oscillation (cm)
-Source: SELECT "Vertical_Oscillation"/10 AS "VO" FROM "ActivityGPS" WHERE "ActivitySelec...; SELECT "DurationSeconds" AS "Duration" FROM "ActivityGPS" WHERE "ActivitySelecto...
+Oscillation verticale par seconde (cm).
+_Source:_ `SELECT "Vertical_Oscillation"/10 AS "v" FROM "ActivityGPS" WHERE "ActivitySelector" = '$activity' AND "Vertical_Oscillation" > 0 AND "Durati...; SELECT "DurationSeconds" AS "d" FROM "ActivityGPS" WHERE "ActivitySelector" = '$activity'`
 
-### Ground Contact Time (ms) — target <250
-Source: SELECT "Stance_Time" AS "GCT" FROM "ActivityGPS" WHERE "ActivitySelector" = '$ac...; SELECT "DurationSeconds" AS "Duration" FROM "ActivityGPS" WHERE "ActivitySelecto...
+### Ground Contact Time (ms) — cible <250
+Temps de contact au sol par seconde (ms). Vert <260 = bon.
+_Source:_ `SELECT "Stance_Time" AS "v" FROM "ActivityGPS" WHERE "ActivitySelector" = '$activity' AND "Stance_Time" > 0 AND "DurationSeconds" <= $activi...; SELECT "DurationSeconds" AS "d" FROM "ActivityGPS" WHERE "ActivitySelector" = '$activity'`
 
-### Avg HR per lap (drift = aerobic decoupling) + altitude
-Avg + max HR per lap (1 km). Altitude in light background to distinguish cardiac drift from topographic effort. X-axis = elapsed time.
-Source: SELECT "Avg_HR" AS "Avg HR", "Max_HR" AS "Max HR" FROM "ActivityLap" WHERE "Acti...; SELECT "DurationSeconds" AS "Duration" FROM "ActivityGPS" WHERE "ActivitySelecto...
+### FC par lap — dérive (efficacité GAP/FC) + altitude
+FC moyenne par lap, colorée par EFFICACITÉ (allure GAP / FC, vs la moyenne des premiers laps frais) : vert = efficace, rouge = dérive cardiaque réelle. La GAP neutralise la pente, donc une lap rouge = vraie dérive (fatigue/chaleur), PAS une côte. Altitude en fond. Découplage Pa:HR global (hors 10 min, 1re vs 2e moitié) chiffré en haut à droite — seuils Friel <5/5-7/>7 %.
+_Source:_ `SELECT "Avg_HR" AS "lhr","Max_HR" AS "lmax","Ascent" AS "lasc","Descent" AS "ldesc","Distance" AS "ldist","Elapsed_Time" AS "lela" FROM "Act...; SELECT "DurationSeconds" AS "gdur","HeartRate" AS "ghr","GradeAdjustedSpeed" AS "ggap","Altitude" AS "galt" FROM "ActivityGPS" WHERE "Activi...` (+1 more)
 
-### Splits per lap (km)
-Garmin auto-laps per km. First column 'Index' = order. Pace in mm:ss/km, Power in W, HR in bpm.
-Source: SELECT "Index", "Distance" AS "Distance (m)", "Elapsed_Time" AS "Time", 1000.0/(...
+### Splits par km
+GROUNDED on ActivityGPS (selector 20260522T083908UTC verified): Distance=cumulative meters, DurationSeconds=1Hz seconds, Altitude>0 filter, HeartRate=bpm. Pace derived from time/distance (Report B), never from Speed. Per-km algorithm exactly matches Report B (d>=lo && d<hi contig
+_Source:_ `SELECT "Distance" AS "d","DurationSeconds" AS "t","Altitude" AS "alt","HeartRate" AS "hr" FROM "ActivityGPS" WHERE "ActivitySelector"='$acti...`
 
-## 04 Running Form & Efficiency (garvis-d-runq)
+### Conditions météo
+Conditions météo de la sortie (Open-Meteo) : température, ressenti, WBGT, humidité, vent/rafales, nuages, pression.
+_Source:_ `SELECT "temperature_c" AS "TempStart", "mid_temperature_c" AS "TempMid", "end_temperature_c" AS "TempEnd", "wbgt_estimated" AS "WBGT", "humi...`
 
-### Avg Cadence per run (target 175-185 spm)
-Garmin cadence ×2 (native ActivityGPS value is half-cadence).
-Source: SELECT mean("Cadence") * 2 AS "Cadence (spm)" FROM "ActivityGPS" WHERE $timeFilt...
+### Profil d'élévation — coloré par pente
+Altitude vs distance (ActivityGPS), ligne+aire colorées par la pente (bleu descente → vert plat → rouge montée). Tooltip Après/Élévation/Pente. Surface + Type de voie ajoutés via visualMap quand ActivitySurface (Valhalla) sera peuplé.
+_Source:_ `SELECT "Distance" AS "distance", "Altitude" AS "altitude" FROM "ActivityGPS" WHERE "ActivitySelector" = '$activity' AND "Altitude" > 0; SELECT "surface","waytype","start_m","end_m" FROM "ActivitySurface" WHERE "ActivitySelector" = '$activity' ORDER BY time`
 
-### Vertical Ratio (form — target <7%)
-Vertical oscillation / step length. Lower = less vertical bounce = better running economy.
+### Workout Analysis
+Workout Analysis par step : barres horizontales colorees par type (Echauffement/Rep/Recup/Repos/Retour calme), longueur proportionnelle a la vitesse, allure+FC par step.
+_Source:_ `SELECT "Index" AS "lapidx","Intensity" AS "intensity","Distance" AS "dist","Elapsed_Time" AS "secs","Avg_HR" AS "hr","Ascent" AS "asc","Desc...`
 
-### Ground Contact Time (ms) — target <250
+### Répartition surfaces & types de chemin
+Répartition par surface et par type de voie (ActivitySurface / Valhalla).
+_Source:_ `SELECT "surface","waytype","length_m" FROM "ActivitySurface" WHERE "ActivitySelector" = '$activity'`
 
-### Step Length (m)
-Longer stride at equivalent speed = improving. Target: 1.20-1.50 m at easy pace.
-Source: SELECT mean("Step_Length") AS "Step length (m)" FROM "ActivityGPS" WHERE $timeFi...
+### Profil d'élévation — coloré par surface
+Même profil, bandes colorées par surface OSM (Asphalte/Compacté/Terre/Sentier…). Tooltip surface + type de voie + pente.
+_Source:_ `SELECT "Distance" AS "distance","Altitude" AS "altitude" FROM "ActivityGPS" WHERE "ActivitySelector" = '$activity' AND "Altitude" > 0; SELECT "surface","waytype","start_m","end_m" FROM "ActivitySurface" WHERE "ActivitySelector" = '$activity' ORDER BY time`
 
-### Avg Speed per run (m/s)
-Correlate with EF: speed rising while EF stable = fitness improvement.
-Source: SELECT mean("Speed") AS "Speed (m/s)" FROM "ActivityGPS" WHERE $timeFilter AND "...
+### Résumé de l'activité — KPI
+KPI de l'activité sélectionnée (1 panel) : distance, durée, FC moy/max, allure, calories, D+/D−, TE aérobie/anaérobie, charge, VO2max. Cartes ECharts, couleur par seuil pour FC et TE.
+_Source:_ `SELECT last("distance")/1000 AS "v" FROM "ActivitySummary" WHERE "ActivitySelector" = '$activity'; SELECT last("elapsedDuration") AS "v" FROM "ActivitySummary" WHERE "ActivitySelector" = '$activity'` (+10 more)
 
-### Recent Runs (last 15)
-Source: SELECT "activityName", "distance", "elapsedDuration", "averageHR", "maxHR", "ele...
+---
 
-### HR difference per activity (Max - Avg)
-Per-session HR spread. Shrinking spread may indicate reduced capacity to push (fatigue).
+## Fitness Trends & Validation (`garvis-c-fitness`)
 
-## 05 Hill & Trail Performance (garvis-e-hill)
+*Trajectoires long-terme (VO2max, race predictions, fitness age, Hill & Endurance Score, recalibration des zones FCmax/LTHR/FTP, poids, Eddington, EF GAP/HR, acclimatation chaleur/altitude) + validateurs sport-science (aerobic decoupling, allure & volume Z2 et Z4-Z5, power/pace curves, allure a FC fixee, impact chaleur EF/WBGT). Review mensuel / fin de cycle : le plan produit-il des adaptations mesurables. Inclut l'ex-« Sport-Science Validators ».*
 
-### Hill Score Overall
-
-### Strength
-
-### Endurance
-
-### Balance Gap (str - end)
-Positive = strength dominant (hilly long runs need work). Target: balance within ±5.
-Source: SELECT last("strengthScore") - last("enduranceScore") AS "gap" FROM "HillScore" ...
-
-### D+ 30j (m)
-
-### D+ 7j (m)
-
-### Hill Score : Overall / Strength / Endurance
-
-### Weekly D+ — last 12 weeks (m)
-Source: SELECT sum("elevationGain") FROM "ActivitySummary" WHERE $timeFilter AND "Activi...
-
-### D+/km per run (hill intensity)
-Higher = hillier course. >50 m/km = sustained trail intensity.
-Source: SELECT ("elevationGain" / ("distance" / 1000)) AS "m_per_km" FROM "ActivitySumma...
-
-### Altitude profile — runs (7d)
-Per-second altitude for all activities in the last 7 days. Each run appears as a distinct series.
-Source: SELECT mean("Altitude") AS "Altitude" FROM "ActivityGPS" WHERE $timeFilter AND "...
-
-### D+ 365j glissants (m)
-
-### D+ YTD 2026 (m)
-Source: SELECT sum("elevationGain") FROM "ActivitySummary" WHERE time >= '2026-01-01' AN...
-
-## 06 Recovery Diagnostics (garvis-f-sleep)
-
-### Sleep Score (last)
-
-### Sleep duration (last)
-
-### Overnight HRV (last)
-
-### Avg Breathing Rate
-
-### Awakenings
-
-### Overnight SpO2 min
-
-### Sleep Score 30d
-
-### Sleep Stages (h) per night — 14d
-Target: >1h30 deep + >1h30 REM. Low awake time.
-
-### Overnight HRV + Breathing Rate (30d)
-
-### Avg Sleep Stress (30d)
-Average stress during sleep. Target: low (<25). High = poor parasympathetic recovery.
-
-### Avg Stress Today
-
-### High stress duration today
-
-### Body Battery (now)
-
-### BB drained today
-
-### BB charged today
-
-### Stress %
-
-### Body Battery 14d
-
-### Stress heatmap (hour x day)
-
-### Stress vs Sleep Score — correlation
-Rising stress + falling sleep score over several days = pre-overreaching or anxiety signal.
-
-### Stress vs Training Load — overreaching detector
-Daily stress vs training load. Both rising together + declining performance = signal to reduce load.
-
-### Sleep Regularity (heatmap hour × day)
-Bed/wake regularity over selected range. Clear horizontal bands = stable rhythm.
-Source: SELECT median("level") FROM "Sleep Levels" WHERE $timeFilter GROUP BY time(1h)
-
-### Month at a Glance — Intraday (30d)
-Band wearing (watch observance) + HR zones + BB + Stress + Steps per hour.
-
-### HR Histogram Heatmap
-HR distribution over time. Light night bands (low HR) / active daytime.
-
-### Body Battery Level Change (low/high per day)
-Daily low/high BB trajectory — different from day-only stat.
-
-### Sleep Intraday — HR + SpO2 + Overnight HRV
-Overlaid nightly metrics to correlate poor sleep with desaturation or elevated HR.
-
-### Last Sleep (piechart, last night)
-Last night snapshot — complements the 14-day barchart.
-Source: SELECT distinct("minutes_deep") FROM "sleep" WHERE is_main_sleep = true AND $tim...; SELECT distinct("minutes_deep") FROM "sleep" WHERE is_main_sleep = true AND $tim...
-
-### Stress Overview stacked (30d)
-Breakdown by level (low/rest/medium/uncategorized/high) over selected range.
-
-## 07 Sport-Science Validators (garvis-k-validators)
-
-### Z2 Pace median 30d
-Median pace when HR is in Z2 (auto from InfluxDB HRZones). Faster at constant HR = improving endurance. Speed filter: 1.5-6 m/s.
-Source: SELECT 1000.0 / mean("Speed") AS "pace" FROM "ActivityGPS" WHERE $timeFilter AND...
-
-### HRV CV (14j)
-HRV coefficient of variation. Stable (<10%) = good. High (>15%) = nervous system stress.
-Source: SELECT 100 * stddev("avgOvernightHrv") / mean("avgOvernightHrv") AS "CV %" FROM ...
-
-### Avg HR at High Altitude
-Average HR when altitude > 200m (high portions of local hills).
-Source: SELECT mean("HeartRate") AS "HR" FROM "ActivityGPS" WHERE $timeFilter AND "Activ...
-
-### Avg Climb Rate 30d
-Average vertical speed per run (m/h). Higher = more vertical work.
-Source: SELECT ("elevationGain" / "elapsedDuration") * 3600 AS "m/h" FROM "ActivitySumma...
-
-### Avg Decoupling %
-EF drift: (1st half - 2nd half) / 1st half × 100. <5% = solid base, >8% = started too fast.
-Source: SELECT median("RunningEfficiency") AS "ef_first" FROM "ActivityGPS" WHERE $timeF...; SELECT median("RunningEfficiency") AS "ef_after" FROM "ActivityGPS" WHERE $timeF...
-
-### Aerobic Decoupling — EF 1st vs 2nd half per run
-Median EF over the first 30 min vs 30-90 min. If 2nd half drops = endurance not yet solid. Target: gap < 5%.
-Source: SELECT median("RunningEfficiency") AS "EF 1st half (0-30min)" FROM "ActivityGPS"...; SELECT median("RunningEfficiency") AS "EF 2nd half (30-90min)" FROM "ActivityGPS...
-
-### Pace Z2 + Volume Z2 — weekly Mon→Sun (side-by-side bars)
-Weekly bucket Mon-Sun (Europe/Paris TZ, current week included). Purple bar = mean Z2 pace weighted per-second (left axis, lower = faster). Grey bar = Z2 volume in minutes (right axis, pace reliability). Speed filter 1.5-6 m/s excludes walking/GPS spikes. Volume benchmarks: <30 min/wk = noisy (ignore pace), 30-60 = decent, >60 = robust.
-Source: SELECT 1000.0 / mean("Speed") AS "Z2 Pace weekly (weighted)" FROM "ActivityGPS" ...; SELECT count("HeartRate") / 60.0 AS "Z2 Volume (min)" FROM "ActivityGPS" WHERE $...
-
-### Pace Z4+Z5 + Volume Z4+Z5 — weekly Mon→Sun (side-by-side bars)
-Weekly bucket Mon-Sun (Europe/Paris TZ, current week included). Red bar = mean Z4+Z5 pace (HR >= 166) weighted per-second (left axis, lower = faster). Grey bar = Z4+Z5 volume in minutes (right axis, pace reliability). Speed filter 1.5-7 m/s. Tracks VO2max/threshold progression.
-Source: SELECT 1000.0 / mean("Speed") AS "Z4+Z5 Pace weekly (weighted)" FROM "ActivityGP...; SELECT count("HeartRate") / 60.0 AS "Z4+Z5 Volume (min)" FROM "ActivityGPS" WHER...
-
-### Overnight HRV (ms) + CV% (stability)
-Raw overnight HRV in blue (left). CV% in red (right) = stddev/mean. Low CV = stable nervous system.
-Source: SELECT 100 * stddev("avgOvernightHrv") / mean("avgOvernightHrv") AS "HRV CV %" F...
-
-### Climb Rate per run (m/h)
-elevationGain / duration × 3600. Average vertical intensity per run.
-Source: SELECT ("elevationGain" / "elapsedDuration") * 3600 AS "Climb rate (m/h)" FROM "...
-
-### HR vs Pace aggregate (Z2, window)
-Z2 points only (HR 130-150 bpm). Speed (km/h) left axis, HR right axis. Speed rising at constant HR = improving aerobic base.
-Source: SELECT mean("Speed")*3.6 AS "Speed Z2 (km/h)" FROM "ActivityGPS" WHERE "Activity...; SELECT mean("HeartRate") AS "HR Z2 (bpm)" FROM "ActivityGPS" WHERE "ActivitySele...
-
-### Running Power Curve — best mean power by duration (90d)
-Best sustained mean power per duration over the last 90 days. Shape reflects energy system balance. 20-60 min plateau = Critical Power.
-Source: SELECT max("Power") FROM "ActivityGPS" WHERE time > now() - 90d AND "ActivitySel...; SELECT max(mp) FROM (SELECT moving_average("Power", 5)    AS mp FROM "ActivityGP...
-
-### Critical Pace Curve — best mean speed by duration (90d)
-Best sustained mean speed per duration. 20-60 min plateau = Critical Pace (FTPace).
-Source: SELECT max("Speed") * 3.6 FROM "ActivityGPS" WHERE time > now() - 90d AND "Activ...; SELECT max(ms) * 3.6 FROM (SELECT moving_average("Speed", 5)    AS ms FROM "Acti...
-
-### Pace @ fixed HR — 7 bins (120→180 ±5 bpm) — flat runs (D+/km < 25)
-Cardiac efficiency progression — pace at fixed HR.
-
-Each run binned by avg HR into 7 bands (120-180 ±5 bpm), plotting avg pace per bin. Descending trend = faster at same cardiac effort = aerobic adaptation.
-Source: SELECT 1000 / "averageSpeed" AS "FC 120" FROM "ActivitySummary" WHERE $timeFilte...; SELECT 1000 / "averageSpeed" AS "FC 130" FROM "ActivitySummary" WHERE $timeFilte...
-
-## 08 Long-Term Trends (garvis-c-fitness)
-
-### VO2max Running
-
-### Endurance Score
-
-### Hill Score (overall)
-Numeric rating of your ability to run uphill, based on VO2 Max and training history.
-
-Tiers: Recreational (1-24) | Challenger (25-49) | Trained (50-69) | Skilled (70-84) | Expert (85-94) | Elite (95-100).
-
-### Fitness Age
-
-### Current Weight
-Source: SELECT last("weight") / 1000 AS "kg" FROM "BodyComposition" WHERE $timeFilter
-
-### HRmax (Running)
-Max HR used by Garmin for running zone calculation. Recalibrated after max HR test.
-Source: SELECT last("maxHeartRate") FROM "HRZones" WHERE "sport"='RUNNING' AND $timeFilt...
-
-### LTHR (Running)
-Lactate Threshold HR used by Garmin. Recalibrated after 30-min threshold test or auto-detection during efforts.
-Source: SELECT last("lactateThresholdHeartRate") FROM "HRZones" WHERE "sport"='RUNNING' ...
-
-### Resting HR
-Resting HR used to compute HRR (Heart Rate Reserve). Auto-updated by Garmin (sleep average).
-Source: SELECT last("restingHeartRate") FROM "HRZones" WHERE "sport"='RUNNING' AND $time...
-
-### FTP Power (Running)
-Functional Threshold Power (running). Auto-FTP computed by the watch from efforts.
-Source: SELECT last("functionalThresholdPower") FROM "PowerZones" WHERE "sport"='RUNNING...
-
-### Delta vs 30d
-Change from ~30 days ago.
-Source: SELECT (last("weight") - first("weight")) / 1000 AS "delta" FROM "BodyCompositio...
+`08-long-term-trends.json` — 29 panneaux + 1 sections (rows)
 
 ### VO2max
-VO2max running, ranked by percentile tiers:
-Iron <28 (bottom 3%) | Bronze 28-37 (3-20%) | Silver 37-42 (20-42%) | Gold 42-47 (42-67%) | Platinum 47-53 (67-85%) | Emerald 53-60 (85-95%) | Diamond 60-68 (95-99.2%) | Master 68-75 (99.2-99.9%) | Grandmaster 75-80 (99.9-99.98%) | Challenger >=80 (top 0.02%).
+VO2max running, age-graded fitness categories (Cooper Institute norms, males 20-29):
+Poor to Very Poor <41.7 | Fair 41.7-45.4 | Good 45.4-51.1 | Excellent 51.1-55.4 | Superior >=55.4 (ml/kg/min). Bandes de couleur = catégorie selon la valeur.
+_Source:_ `SELECT last("VO2_max_value") AS "val" FROM "VO2_Max" WHERE $timeFilter GROUP BY time(1d) fill(null)`
 
 ### Endurance Score (Weekly)
+Endurance Score (Garmin), tendance hebdomadaire. Paliers : Recreational <5100 | Intermediate 5100 | Trained 5800 | Well-trained 6600 | Expert 7300 | Superior 8100 | Elite 8800. Bandes de couleur = palier selon la valeur.
+_Source:_ `SELECT last("EnduranceScore") AS "val" FROM "EnduranceScore" WHERE $timeFilter GROUP BY time(7d) fill(null)`
 
 ### Hill Score — Overall
 Numeric rating of your ability to run uphill, based on VO2 Max and training history.
 
 Tiers: Recreational (1-24) | Challenger (25-49) | Trained (50-69) | Skilled (70-84) | Expert (85-94) | Elite (95-100).
 
+Factors: Hill Endurance (sustain pace uphill, elevation gain + time on hills at low intensity), Hill Strength (maintain running power on hills, higher-intensity efforts), VO2 Max (peak oxygen consumption, predictor of uphill ability).
+_Source:_ `SELECT last("overallScore") AS "val" FROM "HillScore" WHERE $timeFilter GROUP BY time(1d) fill(null)`
+
 ### Hill Score — Strength
 Hill Strength measures your ability to maintain running power on hills. Based on higher-intensity hill efforts.
+_Source:_ `SELECT last("strengthScore") AS "val" FROM "HillScore" WHERE $timeFilter GROUP BY time(1d) fill(null)`
 
 ### Hill Score — Endurance
 Hill Endurance measures how well you can sustain pace and performance when running uphill. Based on elevation gain and time spent on hills with low intensity.
+_Source:_ `SELECT last("enduranceScore") AS "val" FROM "HillScore" WHERE $timeFilter GROUP BY time(1d) fill(null)`
 
 ### Race Prediction — 5K
-Garmin Race Prediction 5K. Tiers based on Daniels VDOT table.
-Source: SELECT mean("time5K") / 5 AS "Pace /km" FROM "RacePredictions" WHERE $timeFilter...
+Garmin Race Prediction 5K. Paliers VDOT (Daniels) en bandes de couleur — la couleur change selon le temps prévu.
+_Source:_ `SELECT mean("time5K") AS "secs" FROM "RacePredictions" WHERE $timeFilter GROUP BY time(1d) fill(null)`
 
 ### Race Prediction — 10K
-Garmin Race Prediction 10K. Tiers based on Daniels VDOT table.
-Source: SELECT mean("time10K") / 10 AS "Pace /km" FROM "RacePredictions" WHERE $timeFilt...
+Garmin Race Prediction 10K. Paliers VDOT (Daniels) en bandes de couleur — la couleur change selon le temps prévu.
+_Source:_ `SELECT mean("time10K") AS "secs" FROM "RacePredictions" WHERE $timeFilter GROUP BY time(1d) fill(null)`
 
 ### Race Prediction — Half Marathon
-Garmin Race Prediction Half Marathon. Tiers based on Daniels VDOT table.
-Source: SELECT mean("timeHalfMarathon") / 21.0975 AS "Pace /km" FROM "RacePredictions" W...
+Garmin Race Prediction Half Marathon. Paliers VDOT (Daniels) en bandes de couleur — la couleur change selon le temps prévu.
+_Source:_ `SELECT mean("timeHalfMarathon") AS "secs" FROM "RacePredictions" WHERE $timeFilter GROUP BY time(1d) fill(null)`
 
 ### Race Prediction — Full Marathon
-Garmin Race Prediction Marathon. Tiers based on Daniels VDOT table.
-Source: SELECT mean("timeMarathon") / 42.195 AS "Pace /km" FROM "RacePredictions" WHERE ...
+Garmin Race Prediction Marathon. Paliers VDOT (Daniels) en bandes de couleur — la couleur change selon le temps prévu.
+_Source:_ `SELECT mean("timeMarathon") AS "secs" FROM "RacePredictions" WHERE $timeFilter GROUP BY time(1d) fill(null)`
 
 ### HR Zone Boundaries — Trajectory
-Z1-Z5 HR floor evolution over time. Zone recalibrations by Garmin appear as steps. (LTHR & FCmax
-overlays removed 2026-06-04 — now in their own "Seuil" panels.)
-Source: SELECT last("zone1Floor") AS "Z1", ..., last("zone5Floor") AS "Z5" FROM "HRZones"...
+Z1-Z5 HR floor evolution over time. Zone recalibrations by Garmin appear as steps. LTHR & FCmax ont leurs panneaux dedies (section Seuil).
+_Source:_ `SELECT last("zone1Floor") AS "Z1", last("zone2Floor") AS "Z2", last("zone3Floor") AS "Z3", last("zone4Floor") AS "Z4", last("zone5Floor") AS...`
 
 ### Power Zone Boundaries — Trajectory
-Z1-Z5 power floor evolution. Garmin auto-FTP drives zone scale; rising floors = progression.
-(FTP overlay removed 2026-06-04 — FTP still shown via the top stat panel.)
-Source: SELECT last("zone1Floor") AS "Z1", ..., last("zone5Floor") AS "Z5" FROM "PowerZones"...
+Z1-Z5 power floor evolution. Garmin auto-FTP drives zone scale; a hausse des floors = progression. (FTP retiree de l'overlay — visible via le stat FTP en haut.)
+_Source:_ `SELECT last("zone1Floor") AS "Z1", last("zone2Floor") AS "Z2", last("zone3Floor") AS "Z3", last("zone4Floor") AS "Z4", last("zone5Floor") AS...`
 
-### Seuil — FC (LTHR & FCmax) / LTHR / FCmax (%) / Allure  (3 panels, replaced "LTHR as % of HRmax" 2026-06-04)
-Threshold metrics, split into 3 single-scale panels (was 1 panel hiding 3 of 4 series).
-• "Seuil — FC (LTHR & FCmax)": LTHR + FCmax in bpm, live from "HRZones".
-• "Seuil — LTHR / FCmax (%)": ratio, marker of threshold fitness (~90% = well-trained).
-• "Seuil — Allure (min/km)": threshold pace, live from "LactateThreshold" (Garmin LT detection,
-  100/SpeedThreshold_RUNNING = sec/km). Lower = faster.
-Note: the old hand-seeded "ThresholdComputed" measurement (no writer, frozen) was DROPPED 2026-06-04.
-Source: SELECT last("lactateThresholdHeartRate") AS "LTHR", last("maxHeartRate") AS "FCmax" FROM "HRZones"...; SELECT 100/last("SpeedThreshold_RUNNING") AS "Allure seuil" FROM "LactateThreshold"...
+### Seuil — FC (LTHR & FCmax)
+Fréquences cardiaques liées au seuil lactique — source live HRZones (recalibrée chaque jour par Garmin).
+• LTHR : FC au seuil (stable)
+• FCmax : FC maximale (paliers dans le temps)
+L'écart LTHR↔FCmax = réserve au-dessus du seuil.
+_Source:_ `SELECT last("lactateThresholdHeartRate") AS "LTHR", last("maxHeartRate") AS "FCmax" FROM "HRZones" WHERE $timeFilter AND "sport" =~ /RUNNING...`
+
+### Seuil — LTHR / FCmax (%)
+LTHR exprimée en % de la FCmax — marqueur de forme au seuil (~88-92 % = bien entraîné ; ligne verte = repère 90 %).
+⚠️ Une baisse du % peut venir d'une FCmax révisée à la hausse, pas d'une perte de forme.
+_Source:_ `SELECT last("lactateThresholdHeartRate") / last("maxHeartRate") * 100 AS "% FCmax" FROM "HRZones" WHERE $timeFilter AND "sport" =~ /RUNNING/...`
+
+### Seuil — Allure (min/km)
+Allure au seuil lactique — source live LactateThreshold (détection Garmin, 100 / SpeedThreshold_RUNNING = sec/km).
+Plus bas = plus rapide. Mise à jour quand Garmin détecte un nouveau seuil.
+_Source:_ `SELECT 100 / last("SpeedThreshold_RUNNING") AS "Allure seuil" FROM "LactateThreshold" WHERE $timeFilter GROUP BY time(1d) fill(previous) tz(...`
 
 ### Weight 3m
-Source: SELECT mean("weight") / 1000 AS "kg" FROM "BodyComposition" WHERE $timeFilter GR...
+_Source:_ `SELECT mean("weight") / 1000 AS "kg" FROM "BodyComposition" WHERE $timeFilter GROUP BY time(1d) fill(null)`
 
 ### Cardiac Efficiency (Power/HR) — 14d avg
 Ratio mean(Power) / mean(HR) per day (running, Power>100W and HR>130bpm to exclude warmup/cooldown). Rising ratio = more watts per bpm. Ascending trend over 90d = successful aerobic adaptation.
-Source: SELECT mean("Power") / mean("HeartRate") AS "W/bpm" FROM "ActivityGPS" WHERE $ti...
+_Source:_ `SELECT mean("Power") / mean("HeartRate") AS "val" FROM "ActivityGPS" WHERE $timeFilter AND "ActivitySelector" =~ /running/ AND "Power" > 100...`
 
 ### Eddington — Running (Lifetime)
-Eddington number: how many runs of >= N km for each N.
-
-Blue bars = count of runs >= N km. Grey dashed line = y=x threshold. The Eddington E = last bar exceeding the diagonal. At N=E+1, the gap between diagonal and bar = runs needed to level up.
-Source: SELECT "distance" FROM "ActivitySummary" WHERE "ActivitySelector" =~ /running/ A...
+Nombre d'Eddington (course, lifetime) : pour chaque N, nombre de sorties >= N km. Barre verte = E (plus grand N tel que sorties>=N soit >= N), calcule dynamiquement. Diagonale pointillee = y=x ; E est le dernier N ou la barre depasse la diagonale. Source : ActivitySummary, toutes courses >= 1 km.
+_Source:_ `SELECT "distance" FROM "ActivitySummary" WHERE "ActivitySelector" =~ /running/ AND "distance" > 1000 AND time > '2010-01-01T00:00:00Z' LIMIT...`
 
 ### Heat Acclimation
 Heat acclimation percentage from Garmin. >75% = well acclimated. Seasonal pattern expected.
@@ -512,10 +305,71 @@ Altitude acclimation from Garmin. Shows the altitude (in meters) you are fully a
 TrainingPeaks canonical Efficiency Factor: mean(GradeAdjustedSpeed) / mean(HR) x 100.
 
 METHOD
-Source: SELECT mean("GradeAdjustedSpeed") * 100.0 / mean("HeartRate") AS "EF" FROM "Acti...; SELECT moving_average("EF", 7) AS "EF_ma7" FROM (SELECT mean("GradeAdjustedSpeed...
+• GradeAdjustedSpeed (Garmin GAP/NGP) normalizes for terrain grade
+• mean(GAP) / mean(HR), not mean(GAP/HR) — per TrainingPeaks spec
+• First 10 min excluded (HR stabilization per Friel)
+• Speed > 0.5 m/s (exclude stops)
+• No HR zone filter — full workout EF, compare similar session types
 
-## 10 Calendar - Training Load 1 Year (garvis-n-calendar)
+HOW TO READ
+• Higher = faster at lower cardiac cost = better aerobic fitness
+• Rising trend over 4-8 weeks = confirmed aerobic adaptation
+• Orange line = 7-day moving average
 
-### Training Load Calendar — last 12 months (running)
-Color = daily activityTrainingLoad (green <60, yellow 60-120, orange 120-200, red >200).
-Source: SELECT sum("activityTrainingLoad") AS tl, sum("distance")/1000 AS km FROM "Activ...
+Ref: TrainingPeaks EF, Joe Friel (2009), Coggan/Allen power-based training.
+_Source:_ `SELECT mean("GradeAdjustedSpeed") * 100.0 / mean("HeartRate") AS "val" FROM "ActivityGPS" WHERE $timeFilter AND "ActivitySelector" =~ /runni...`
+
+### Profil athlète — KPI
+Tableau de bord KPI (1 panel) : VO2max, Endurance, Hill, Fitness Age, poids, FCmax, LTHR, FC repos, FTP, delta poids 30j. Chaque carte : valeur + palier (quand applicable) + sparkline de tendance. Rendu custom ECharts (graphic).
+_Source:_ `SELECT last("VO2_max_value") AS "v" FROM "VO2_Max" WHERE $timeFilter GROUP BY time(14d) fill(previous); SELECT last("EnduranceScore") AS "v" FROM "EnduranceScore" WHERE $timeFilter GROUP BY time(14d) fill(previous)` (+8 more)
+
+**▸ Validateurs sport-science — adaptations du plan**
+
+### Aerobic Decoupling — EF 1st vs 2nd half per run
+Median EF over the first 30 min vs 30-90 min. If 2nd half drops = endurance not yet solid. Target: gap < 5%.
+_Source:_ `SELECT median("RunningEfficiency") AS "EF 1st half (0-30min)" FROM "ActivityGPS" WHERE $timeFilter AND "ActivitySelector" =~ /running/ AND "...; SELECT median("RunningEfficiency") AS "EF 2nd half (30-90min)" FROM "ActivityGPS" WHERE $timeFilter AND "ActivitySelector" =~ /running/ AND ...`
+
+### Pace Z2 + Volume Z2 — weekly Mon→Sun (side-by-side bars)
+Weekly bucket Mon-Sun (Europe/Paris TZ, current week included). Purple bar = mean Z2 pace weighted per-second (left axis, lower = faster). Grey bar = Z2 volume in minutes (right axis, pace reliability). Speed filter 1.5-6 m/s excludes walking/GPS spikes. Volume benchmarks: <30 min/wk = noisy (ignore pace), 30-60 = decent, >60 = robust.
+_Source:_ `SELECT 1000.0 / mean("Speed") AS "Z2 Pace weekly (weighted)" FROM "ActivityGPS" WHERE $timeFilter AND "ActivitySelector" =~ /running/ AND "H...; SELECT count("HeartRate") / 60.0 AS "Z2 Volume (min)" FROM "ActivityGPS" WHERE $timeFilter AND "ActivitySelector" =~ /running/ AND "HeartRat...`
+
+### Pace Z4+Z5 + Volume Z4+Z5 — weekly Mon→Sun (side-by-side bars)
+Weekly bucket Mon-Sun (Europe/Paris TZ, current week included). Red bar = mean Z4+Z5 pace (HR >= 166) weighted per-second (left axis, lower = faster). Grey bar = Z4+Z5 volume in minutes (right axis, pace reliability). Speed filter 1.5-7 m/s. Tracks VO2max/threshold progression.
+_Source:_ `SELECT 1000.0 / mean("Speed") AS "Z4+Z5 Pace weekly (weighted)" FROM "ActivityGPS" WHERE $timeFilter AND "ActivitySelector" =~ /running/ AND...; SELECT count("HeartRate") / 60.0 AS "Z4+Z5 Volume (min)" FROM "ActivityGPS" WHERE $timeFilter AND "ActivitySelector" =~ /running/ AND "Heart...`
+
+### Running Power Curve — best mean power by duration (90d)
+Best sustained mean power per duration over the last 90 days. Shape reflects energy system balance. 20-60 min plateau = Critical Power.
+_Source:_ `SELECT max("Power") FROM "ActivityGPS" WHERE time > now() - 90d AND "ActivitySelector" =~ /running/; SELECT max(mp) FROM (SELECT moving_average("Power", 5) AS mp FROM "ActivityGPS" WHERE time > now() - 90d AND "ActivitySelector" =~ /running/...` (+5 more)
+
+### Critical Pace Curve — best mean speed by duration (90d)
+Best sustained mean speed per duration. 20-60 min plateau = Critical Pace (FTPace).
+_Source:_ `SELECT max("Speed") * 3.6 FROM "ActivityGPS" WHERE time > now() - 90d AND "ActivitySelector" =~ /running/; SELECT max(ms) * 3.6 FROM (SELECT moving_average("Speed", 5) AS ms FROM "ActivityGPS" WHERE time > now() - 90d AND "ActivitySelector" =~ /ru...` (+5 more)
+
+### Pace @ fixed HR - monthly trend, 3 bands (flat runs, D+/km < 25)
+Progression de l'efficience cardiaque - allure a FC fixee, moyenne mensuelle (30j).
+
+3 bandes de FC moyenne NON chevauchantes : ~140 (easy, 135-144 bpm) | ~150 (steady, 145-154) | ~160 (tempo, 155-164). Chaque point = 1000 / moyenne(vitesse) des runs plats dont la FC moy tombe dans la bande, agrege par 30 jours. Bandes <135 et >=165 retirees (2-5 runs, trop bruite).
+
+Axe Y : allure mm:ss/km (plus bas = plus rapide). Filtre terrain : D+/km < 25. Distance > 1 km.
+
+CORRECTION vs ancienne version : bins non chevauchants (plus de double-comptage aux bornes), seulement les 3 bandes qui portent des donnees, et lissage mensuel (fini la spaghetti de points bruts).
+
+ATTENTION CONFONDANT METEO : sur une fenetre Dec->Mai l'allure a FC fixee MONTE (ralentit) surtout a cause de la chaleur croissante, PAS d'une perte de forme - a allure libre l'athlete ralentit quand il fait chaud (cf panel 'Heat impact' #120). Version corrigee chaleur : EF vs WBGT (#120) et EF GAP/HR (#300, ce dashboard). Lire la tendance en gardant la saison en tete.
+_Source:_ `SELECT 1000 / MEAN("averageSpeed") AS "~140 (easy)" FROM "ActivitySummary" WHERE $timeFilter AND "ActivitySelector" =~ /running/ AND "distan...; SELECT 1000 / MEAN("averageSpeed") AS "~150 (steady)" FROM "ActivitySummary" WHERE $timeFilter AND "ActivitySelector" =~ /running/ AND "dist...` (+1 more)
+
+### Pace vs avg HR - colored by recency (flat runs, D+/km < 25)
+Nuage allure vs FC - chaque point = 1 run plat (D+/km < 25, 180j). X = FC moyenne (effort cardiaque), Y = allure mm:ss/km (plus bas = plus rapide). COULEUR = recence (degrade) : bleu = ancien (~6 mois) -> jaune -> rouge = recent.
+
+LECTURE : a FC donnee, si les points rouges (recents) sont PLUS BAS (plus rapides) que les bleus (anciens) = gain d'efficience cardiaque. S'ils montent = cout. Ici le nuage recent monte surtout a cause de la chaleur croissante (Dec->Mai, cf #120) - ce n'est pas une regression de forme.
+
+Avantage vs binning : pas de bornes arbitraires ni de double-comptage, chaque run apparait une fois et on voit la relation FC<->allure complete.
+_Source:_ `SELECT "averageHR" AS "HR", 1000 / "averageSpeed" AS "Pace" FROM "ActivitySummary" WHERE $timeFilter AND time < now() - 540d AND "ActivitySe...; SELECT "averageHR" AS "HR", 1000 / "averageSpeed" AS "Pace" FROM "ActivitySummary" WHERE $timeFilter AND time >= now() - 540d AND time < now...` (+1 more)
+
+### Heat impact — Efficiency Factor vs WBGT
+Impact reel de la chaleur sur la physiologie. Chaque point = 1 run (365j). X = WBGT (indice de stress thermique : integre temperature + humidite + soleil + vent). Y = Efficiency Factor = vitesse/FC (m.min-1/bpm), plus haut = plus efficient.
+
+Pourquoi EF et pas la FC : a allure libre l'athlete ralentit quand il fait chaud, donc la FC moyenne ne monte pas (effet ~ 0 bpm/degC a allure egale). Le cout de la chaleur se voit sur l'EFFICIENCE : EF baisse ~0.32%/degC (EF~WBGT p=0.004, n=92). Nuage qui descend vers la droite = impact chaleur.
+
+Zones WBGT : <18 faible / 18-23 modere / 23-28 eleve / >28 extreme. Optimum perf ~8-15 degC.
+Limites : peu de runs >25 degC ; surtout des runs easy/steady ; allure auto-selectionnee (le cout apparait aussi en pace perdue, pas que sur l'EF).
+_Source:_ `SELECT ("averageSpeed" * 60 / "averageHR") AS "EF" FROM "ActivitySummary" WHERE $timeFilter AND "ActivitySelector" =~ /running/ AND "average...; SELECT "wbgt_estimated" AS "WBGT" FROM "ActivityWeather" WHERE $timeFilter`

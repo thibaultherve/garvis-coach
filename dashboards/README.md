@@ -9,7 +9,7 @@ Panel IDs are stable (gaps after refactors are intentional — they preserve
 
 ---
 
-## 03 Activity Drill-Down (`garvis-j-activity`) — hand-maintained, do NOT regenerate
+## Activity Drill-Down (`garvis-j-activity`) — hand-maintained, do NOT regenerate
 
 This dashboard used to be emitted by `scripts/generate_dashboard_drilldown.py`.
 **That generator was retired and deleted on 2026-05-29.** The JSON here is the
