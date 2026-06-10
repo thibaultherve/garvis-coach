@@ -156,7 +156,7 @@ garvis-coach/                          <- this monorepo
 
 > Owner: `PANELS_CATALOG.md` (same dir) — every panel across the 3 dashboards with
 > title, description, and source query. Read it before any analysis/bilan.
-> Content-panel counts (2026-06-07): `garvis-b-load` 26 (+4 rows), `garvis-j-activity` 20, `garvis-c-fitness` 29 (+1 row).
+> Content-panel counts (2026-06-08): `garvis-b-load` 27 (+4 rows), `garvis-j-activity` 20, `garvis-c-fitness` 29 (+1 row).
 
 ### Structural notes
 

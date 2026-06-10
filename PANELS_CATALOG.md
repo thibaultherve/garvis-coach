@@ -9,7 +9,7 @@
 
 *Pilotage de la charge d'entrainement (ACWR, polarisation, CTL/ATL/TSB, monotonie/strain, volume, training status, HRV, acclimatation chaleur) + charge verticale & terrain (ACWR vertical D+, budget D+ vs plafond ~830 m, D+/km, VAM, cout terrain, cumul denivele). Prevention de la surcharge globale ET verticale. Inclut l'ex-« Hill & Trail ».*
 
-`02-training-load-acwr.json` — 26 panneaux + 4 sections (rows)
+`02-training-load-acwr.json` — 27 panneaux + 4 sections (rows)
 
 ### Training Status Timeline — 180d
 Garmin training status bands (Productive / Peaking / Maintaining / Recovery / Strained / Unproductive / Detraining / Overreaching). Garmin enum suffix _N indicates duration in state — grouped by main category here.
@@ -33,6 +33,10 @@ _Source:_ `SELECT last("trainingBalanceFeedbackPhrase") AS "shortage" FROM "Trai
 ### Load Focus 28d — vs Optimal Range
 Bands: blue = shortage (below target_min), green = optimal range, red = overload (above target_max). Thresholds calibrated on current Garmin target_min/max (recalibrate if Garmin adjusts).
 _Source:_ `SELECT last("monthlyLoadAnaerobic") AS "Anaerobic", last("monthlyLoadAerobicHigh") AS "High Aerobic", last("monthlyLoadAerobicLow") AS "Low ...`
+
+### Load Focus 28d — historique jour/jour vs zone optimale
+Trajectoire quotidienne des 3 charges (28j glissants) vs la zone optimale Garmin — à droite de la jauge id12. 3 sous-graphes (Aérobie basse / Aérobie haute / Anaérobie) : ligne = charge du jour, bande verte = **médiane** des cibles min/max sur la fenêtre affichée, valeur + état (manque / optimal / surcharge) + zone à droite, pastille de fin colorée par état. ⚠️ Les champs `*Target{Min,Max}` sautent ~1,3× sur une minorité de jours (<20 %, **non** lié au statut PRODUCTIVE) → bande tirée de la médiane (pas `last()`), sinon dents de scie. Les *valeurs* de charge ne sautent pas. Peut différer de ±quelques points de la jauge (médiane par fenêtre vs cible figée).
+_Source:_ `SELECT last("monthlyLoadAerobicLow") AS "lo", last("monthlyLoadAerobicLowTargetMin") AS "lo_min", last("monthlyLoadAerobicLowTargetMax") AS "lo_max", last("monthlyLoadAerobicHigh") AS "hi", … (hi_min/max, an, an_min/max idem) … FROM "TrainingStatus" WHERE $timeFilter GROUP BY time(1d) fill(none)`
 
 ### Polarization 80/10/10 — Weekly (12 wk)
 Weekly % time in HR zones (Mon-Sun, Europe/Paris TZ). Garmin colors: Z1+Z2 blue (target >= 80%), Z3 green (target 10%), Z4+Z5 red (target <= 10%). Rolling 12 weeks including current week.
