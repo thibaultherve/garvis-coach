@@ -1,0 +1,127 @@
+{
+  "annotations": { "list": [] },
+  "description": "All activities, newest first. Click an activity name to open the matching drill-down with that activity pre-selected.",
+  "editable": true,
+  "graphTooltip": 0,
+  "id": null,
+  "links": [],
+  "panels": [
+    {
+      "type": "table",
+      "id": 1,
+      "title": "Runs",
+      "description": "All running-family activities. Click the name to open the running drill-down with this activity pre-selected.",
+      "datasource": { "type": "influxdb", "uid": "garmin_influxdb" },
+      "gridPos": { "h": 13, "w": 24, "x": 0, "y": 0 },
+      "targets": [
+        {
+          "datasource": { "type": "influxdb", "uid": "garmin_influxdb" },
+          "refId": "A",
+          "rawQuery": true,
+          "resultFormat": "table",
+          "query": "SELECT \"activityName\" AS \"Activity\", \"distance\"/1000 AS \"Distance\", \"elapsedDuration\" AS \"Duration\", \"averageHR\" AS \"Avg HR\", \"elevationGain\" AS \"D+\", \"activityTrainingLoad\" AS \"Load\", \"ActivitySelector\" AS \"sel\" FROM \"ActivitySummary\" WHERE \"activityName\" != 'END' AND \"ActivitySelector\" =~ /running/ ORDER BY time DESC"
+        }
+      ],
+      "transformations": [
+        {
+          "id": "organize",
+          "options": {
+            "indexByName": { "Time": 0, "Activity": 1, "Distance": 2, "Duration": 3, "Avg HR": 4, "D+": 5, "Load": 6, "sel": 7 },
+            "renameByName": { "Time": "Date" }
+          }
+        }
+      ],
+      "fieldConfig": {
+        "defaults": { "custom": { "align": "left", "filterable": true } },
+        "overrides": [
+          { "matcher": { "id": "byName", "options": "sel" }, "properties": [ { "id": "custom.hidden", "value": true } ] },
+          {
+            "matcher": { "id": "byName", "options": "Activity" },
+            "properties": [
+              { "id": "links", "value": [
+                { "title": "Open running drill-down", "url": "/d/garvis-j-activity/activity-drill-down?var-activity=${__data.fields.sel}", "targetBlank": false }
+              ] },
+              { "id": "custom.width", "value": 430 }
+            ]
+          },
+          { "matcher": { "id": "byName", "options": "Distance" }, "properties": [ { "id": "unit", "value": "lengthkm" }, { "id": "decimals", "value": 1 } ] },
+          { "matcher": { "id": "byName", "options": "Duration" }, "properties": [ { "id": "unit", "value": "dthms" } ] },
+          { "matcher": { "id": "byName", "options": "Avg HR" }, "properties": [ { "id": "unit", "value": "none" }, { "id": "decimals", "value": 0 } ] },
+          { "matcher": { "id": "byName", "options": "D+" }, "properties": [ { "id": "unit", "value": "lengthm" }, { "id": "decimals", "value": 0 } ] },
+          { "matcher": { "id": "byName", "options": "Load" }, "properties": [ { "id": "unit", "value": "none" }, { "id": "decimals", "value": 0 } ] }
+        ]
+      },
+      "options": {
+        "showHeader": true,
+        "cellHeight": "sm",
+        "footer": { "show": false, "reducer": ["sum"] },
+        "sortBy": [ { "displayName": "Date", "desc": true } ]
+      }
+    },
+    {
+      "type": "table",
+      "id": 2,
+      "title": "Rides",
+      "description": "All cycling activities. Click the name to open the cycling drill-down with this activity pre-selected.",
+      "datasource": { "type": "influxdb", "uid": "garmin_influxdb" },
+      "gridPos": { "h": 11, "w": 24, "x": 0, "y": 13 },
+      "targets": [
+        {
+          "datasource": { "type": "influxdb", "uid": "garmin_influxdb" },
+          "refId": "A",
+          "rawQuery": true,
+          "resultFormat": "table",
+          "query": "SELECT \"activityName\" AS \"Activity\", \"distance\"/1000 AS \"Distance\", \"averageSpeed\"*3.6 AS \"Avg Speed\", \"elapsedDuration\" AS \"Duration\", \"averageHR\" AS \"Avg HR\", \"elevationGain\" AS \"D+\", \"activityTrainingLoad\" AS \"Load\", \"ActivitySelector\" AS \"sel\" FROM \"ActivitySummary\" WHERE \"activityName\" != 'END' AND \"ActivitySelector\" =~ /cycling/ ORDER BY time DESC"
+        }
+      ],
+      "transformations": [
+        {
+          "id": "organize",
+          "options": {
+            "indexByName": { "Time": 0, "Activity": 1, "Distance": 2, "Avg Speed": 3, "Duration": 4, "Avg HR": 5, "D+": 6, "Load": 7, "sel": 8 },
+            "renameByName": { "Time": "Date" }
+          }
+        }
+      ],
+      "fieldConfig": {
+        "defaults": { "custom": { "align": "left", "filterable": true } },
+        "overrides": [
+          { "matcher": { "id": "byName", "options": "sel" }, "properties": [ { "id": "custom.hidden", "value": true } ] },
+          {
+            "matcher": { "id": "byName", "options": "Activity" },
+            "properties": [
+              { "id": "links", "value": [
+                { "title": "Open cycling drill-down", "url": "/d/garvis-k-cycling/cycling-drill-down?var-activity=${__data.fields.sel}", "targetBlank": false }
+              ] },
+              { "id": "custom.width", "value": 430 }
+            ]
+          },
+          { "matcher": { "id": "byName", "options": "Distance" }, "properties": [ { "id": "unit", "value": "lengthkm" }, { "id": "decimals", "value": 1 } ] },
+          { "matcher": { "id": "byName", "options": "Avg Speed" }, "properties": [ { "id": "unit", "value": "velocitykmh" }, { "id": "decimals", "value": 1 } ] },
+          { "matcher": { "id": "byName", "options": "Duration" }, "properties": [ { "id": "unit", "value": "dthms" } ] },
+          { "matcher": { "id": "byName", "options": "Avg HR" }, "properties": [ { "id": "unit", "value": "none" }, { "id": "decimals", "value": 0 } ] },
+          { "matcher": { "id": "byName", "options": "D+" }, "properties": [ { "id": "unit", "value": "lengthm" }, { "id": "decimals", "value": 0 } ] },
+          { "matcher": { "id": "byName", "options": "Load" }, "properties": [ { "id": "unit", "value": "none" }, { "id": "decimals", "value": 0 } ] }
+        ]
+      },
+      "options": {
+        "showHeader": true,
+        "cellHeight": "sm",
+        "footer": { "show": false, "reducer": ["sum"] },
+        "sortBy": [ { "displayName": "Date", "desc": true } ]
+      }
+    }
+  ],
+  "preload": false,
+  "refresh": "",
+  "schemaVersion": 39,
+  "tags": ["activities", "index", "navigation"],
+  "templating": { "list": [] },
+  "time": { "from": "now-10y", "to": "now" },
+  "timepicker": {},
+  "timezone": "browser",
+  "title": "Activities",
+  "uid": "garvis-a-activities",
+  "version": 1,
+  "weekStart": ""
+}
