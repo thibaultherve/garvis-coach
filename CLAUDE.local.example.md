@@ -29,8 +29,8 @@
 
 ## Paths
 
-- Docker project root: /path/to/garvis-coach/
-- SMB share (if applicable): \\\\YOUR_IP\\docker\\projects\\garvis-coach\\
+- Docker project root: /path/to/garvis-running-coach/
+- SMB share (if applicable): \\\\YOUR_IP\\docker\\projects\\garvis-running-coach\\
 - Activity dumps: ./data/activities/
 
 ## Training plan context

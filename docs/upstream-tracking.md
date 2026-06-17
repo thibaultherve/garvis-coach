@@ -58,7 +58,7 @@ Added tools: `get_zones_snapshot_tool`, `get_hill_score_history_tool`,
 After syncing a fork, update the submodule pointer in the monorepo:
 
 ```bash
-cd /path/to/garvis-coach
+cd /path/to/garvis-running-coach
 git add services/garmin-grafana   # or services/garmin-coach-mcp
 git commit -m "chore: update garmin-grafana submodule to latest"
 ```

@@ -183,8 +183,8 @@ InfluxDB 1.x
 
 1. Clone with submodules:
    ```bash
-   git clone --recurse-submodules https://github.com/thibaultherve/garvis-coach.git
-   cd garvis-coach
+   git clone --recurse-submodules https://github.com/thibaultherve/garvis-running-coach.git
+   cd garvis-running-coach
    ```
 
 2. Configure:
@@ -215,7 +215,7 @@ InfluxDB 1.x
 
 | Component | Repo | License |
 |---|---|---|
-| Garvis Coach (this repo) | [garvis-coach](https://github.com/thibaultherve/garvis-coach) | MIT |
+| Garvis Coach (this repo) | [garvis-running-coach](https://github.com/thibaultherve/garvis-running-coach) | MIT |
 | garmin-toolbox (MCP) | [garmin-toolbox](https://github.com/thibaultherve/garmin-toolbox) | MIT |
 | garmin-grafana (fetcher) | [garmin-grafana](https://github.com/thibaultherve/garmin-grafana) fork, branch `extended-fetch-fields` | Upstream |
 | garmin-grafana-mcp-server | [garmin-grafana-mcp-server](https://github.com/thibaultherve/garmin-grafana-mcp-server) fork, branch `extended-coaching-tools` | MIT |

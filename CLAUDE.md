@@ -8,7 +8,7 @@
 > objectives, athlete profile, zones, constraints, cycles, and decisions.
 
 **Vocabulary**:
-- **garvis-coach** = this monorepo: docker-compose, Grafana dashboards, scripts, docs.
+- **garvis-running-coach** = this monorepo: docker-compose, Grafana dashboards, scripts, docs.
 - **garmin-toolbox** = MCP server (submodule in `./services/garmin-toolbox/`): pace conversions, training metrics, activity dumps, workout plan read/write, Garmin Connect operations.
 - **garmin-coach-mcp** = MCP server (submodule in `./services/garmin-coach-mcp/`): raw read access to all Garmin data in InfluxDB (33 tools).
 
@@ -94,7 +94,7 @@ garmin-toolbox.garmin_list_uploaded(name_pattern="C1-S3")
 ## File architecture
 
 ```
-garvis-coach/                          <- this monorepo
+garvis-running-coach/                          <- this monorepo
 |-- docker-compose.yml
 |-- .env.example
 |-- CLAUDE.md                          <- this file (generic)

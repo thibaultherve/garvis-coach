@@ -90,7 +90,7 @@ OPENTOPO_DATASETS = ["eudem25m", "srtm30m"]    # fallback chain
 
 HIGHWAY_FILTER = r"^(path|track|footway|bridleway|cycleway|unclassified|tertiary|residential|service)$"
 
-UA = "garvis-coach-discover-climbs/1.0"
+UA = "garvis-running-coach-discover-climbs/1.0"
 
 
 # ============================================================================

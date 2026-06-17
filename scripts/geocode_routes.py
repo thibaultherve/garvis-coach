@@ -19,7 +19,7 @@ import requests
 
 ROOT = Path(__file__).parent
 URL = "https://nominatim.openstreetmap.org/reverse"
-HEADERS = {"User-Agent": "garvis-coach-geocode/1.0"}
+HEADERS = {"User-Agent": "garvis-running-coach-geocode/1.0"}
 SAMPLE_PTS = 7
 SLEEP_S = 1.1   # respect Nominatim 1 req/s
 
