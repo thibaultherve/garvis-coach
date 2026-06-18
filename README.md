@@ -9,6 +9,16 @@ I also pull in things Garmin doesn't give you on its own — like the terrain an
 
 With everything in one place, the LLM can cross-reference it and actually coach me — why a run felt hard, whether I'm ready for intervals, how two runs compare once you account for heat and elevation — analyze those graphs, and even build a workout and push it to my watch. It all runs privately on my NAS.
 
+<p align="center"><em>Three custom Grafana dashboards — <strong>click any to open it full size.</strong></em></p>
+
+<table align="center">
+  <tr>
+    <td align="center" width="33%"><a href="docs/images/full/b-load.png"><img src="docs/images/full/b-load.png" width="265" alt="Training Load and Terrain dashboard"></a><br><sub><b>Training Load &amp; Terrain</b></sub></td>
+    <td align="center" width="33%"><a href="docs/images/full/j-activity.png"><img src="docs/images/full/j-activity.png" width="265" alt="Activity Drill-Down dashboard"></a><br><sub><b>Activity Drill-Down</b></sub></td>
+    <td align="center" width="33%"><a href="docs/images/full/c-fitness.png"><img src="docs/images/full/c-fitness.png" width="265" alt="Fitness Trends and Validation dashboard"></a><br><sub><b>Fitness Trends &amp; Validation</b></sub></td>
+  </tr>
+</table>
+
 ## What is this?
 
 It's not a product, and it's not meant to work out of the box for everyone --
@@ -67,7 +77,7 @@ workouts to my watch -- all from a conversation.
 - **Terrain & surface enrichment**: every GPS activity is map-matched to OpenStreetMap to reconstruct the real surface (asphalt, gravel, dirt, grass...) and way type (path, track, road...) along the trace -- *Garmin gives no surface info; ~0% "unknown" vs ~60% with the old route-based approach*
 - **Strava/Komoot-style profiles**: GPS map colored by surface, two elevation profiles (one shaded by grade, one by surface), per-kilometer splits, per-step workout analysis, and surface/way-type breakdown donuts
 - **Lap-by-lap splits**: distance, time, HR, pace, cadence, power for each lap
-- **HR zone and power zone distribution**: time in each zone as percentages (5 HR zones, 7 Coggan power zones)
+- **HR zone and power zone distribution**: time in each zone as percentages (5 HR zones, 5 Garmin auto-FTP power zones)
 - **Planned workout vs actual execution** side by side: prescribed steps and targets next to what you actually ran -- *not available in Garmin post-activity*
 - **Peak power curve**: best average watts over 1s, 5s, 10s, 30s, 1min, 5min, 20min
 - **Aerobic decoupling**: how much efficiency drops between first and second half of a steady run (<5% = solid base, >7% = needs work) -- *not computed by Garmin*
