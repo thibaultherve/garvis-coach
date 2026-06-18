@@ -81,6 +81,10 @@ services:
     expose: ["8081"]
     environment:
       ENABLE_METRICS: "false"
+      # Lift the default 3000px viewport cap (Go renderer) so full tall dashboards export in
+      # one image, and give the many ECharts panels time to finish before the screenshot.
+      BROWSER_MAX_HEIGHT: "8000"
+      BROWSER_READINESS_TIMEOUT: "90s"
       # Doit correspondre a GF_RENDERING_RENDERER_TOKEN cote Grafana (gate de securite 13+).
       AUTH_TOKEN: ${GRAFANA_RENDERER_TOKEN}
     restart: unless-stopped
